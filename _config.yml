@@ -1,0 +1,10 @@
+title: "GrainyDays Devlog"
+description: "A devlog and documentation site for my granular synth project"
+url: "https://matthiaspeene.github.io"
+baseurl: "/GrainyDays"  # include the leading slash
+theme: minima  # simple default Jekyll theme
+
+markdown: kramdown
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
