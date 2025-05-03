@@ -30,3 +30,37 @@
 *.exe
 *.out
 *.app
+
+# JUCE auto-generated code
+/Rain/JuceLibraryCode/
+
+# Visual Studio build files
+/Rain/Builds/VisualStudio*/**
+
+# Build artifacts
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.user
+*.opensdf
+*.sdf
+*.obj
+*.pdb
+*.ipch
+*.db
+*.idb
+*.log
+*.tlog
+*.lastbuildstate
+*.aps
+*.ncb
+*.suo
+*.cache
+*.ilk
+*.tmp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
