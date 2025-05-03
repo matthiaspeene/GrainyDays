@@ -3,12 +3,9 @@ title: Grain Spawning and Processing
 date: 2025-05-03
 layout: post
 categories: devlog
-tags:
-  - granular
-  - synthesis
-  - engine
-  - performance
+tags: [granular synthesis, engine, performance]
 ---
+
 ---
 
 # Grain Spawning
