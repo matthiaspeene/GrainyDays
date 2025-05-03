@@ -1,5 +1,5 @@
-# GrainyDay-Dev
-Development repository for GrainyDays / Rain Granular Synth
+# GrainyDays
+Repository for GrainyDays Granular Synth
 
 # GrainyDays
 
