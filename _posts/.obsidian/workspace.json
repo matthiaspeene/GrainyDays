@@ -170,11 +170,19 @@
   },
   "active": "c712c16b9c501106",
   "lastOpenFiles": [
-    "Attachments/ThreadSafetyVisualization.png",
+    "1crcbhqm.m40~",
+    "2025-05-03-grainhandeling.md",
     "2025-05-04-parameter-threadsafety.md",
+    "assets/images/ThreadSafetyVisualization.png",
+    "assets/images/VisualizationWithoutSync.png",
+    "assets/images",
+    "assets/New folder",
+    "assets/VisualizationWithoutSync.png",
+    "assets/ThreadSafetyVisualization.png",
+    "assets",
+    "Attachments/ThreadSafetyVisualization.png",
     "Attachments",
     "Attachments/VisualizationWithoutSync.png",
-    "2025-05-03-grainhandeling.md",
     "🔧 Grain Parameter Thread Safety in a Granular Synth.md"
   ]
 }
