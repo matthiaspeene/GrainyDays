@@ -21,7 +21,7 @@ Whether you're here to learn about granular synthesis, peek into engine developm
 
 {% endfor %}
 
-[View all posts](/blog) or [Subscribe via RSS](/feed.xml)
+[View all posts]({{ site.baseurl }}/blog) or [Subscribe via RSS]({{ site.baseurl }}/feed.xml)
 
 ---
 
