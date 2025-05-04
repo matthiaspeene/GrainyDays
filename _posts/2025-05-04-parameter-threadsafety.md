@@ -42,7 +42,8 @@ Here’s how I solved it:
    After that, grains are fully self-contained. They do not read shared parameters anymore, so the audio thread is completely deterministic and real-time safe.
 
 Here’s a visual summary of the flow:
-![ThreadSafetyVisualization.png]{{ site.baseurl }}(/assets/images/ThreadSafetyVisualization.png)
+![Thread Safety Visualization]({{ site.baseurl }}/assets/images/ThreadSafetyVisualization.png)
+
 
 ---
 
@@ -70,7 +71,7 @@ From that, the UI can calculate:
 This makes it completely thread-safe with no need for ring buffers or shadow copies — just a simple **immutable snapshot** and a shared clock.
 
 Here's a simplified visualization added to the flowchart.
-![VisualizationWithoutSync.png]{{ site.baseurl }}(/assets/images/VisualizationWithoutSync.png)
+![VisualizationWithoutSync.png]({{ site.baseurl }}/assets/images/VisualizationWithoutSync.png)
 
 
 > “Since we’re using DOD, it’s probably faster to copy the initial data and calculate the path using that data than getting the data from the other thread every frame.”  
