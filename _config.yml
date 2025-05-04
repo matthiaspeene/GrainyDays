@@ -10,3 +10,4 @@ plugins:
   - jekyll-seo-tag
  
 permalink: /blog/:title/
+baseurl: "/GrainyDays"

@@ -17,7 +17,8 @@ Whether you're here to learn about granular synthesis, peek into engine developm
 ## 📬 Latest Posts
 
 {% for post in site.posts limit:5 %}
-- 📅 {{ post.date | date: "%B %d, %Y" }} — [**{{ post.title }}**]({{ post.url }})
+- 📅 {{ post.date | date: "%B %d, %Y" }} — [**{{ post.title }}**]({{ site.baseurl }}{{ post.url }})
+
 {% endfor %}
 
 [View all posts](/blog) or [Subscribe via RSS](/feed.xml)
