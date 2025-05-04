@@ -9,7 +9,6 @@ tags:
   - timing
   - midi-events
 ---
----
 ### 🎯 Why this post exists
 
 In [[2025-05-03-grainhandeling]] we decided to pull MIDI triggers once per audio block, drop new grains into one global pool, and iterate the pool in a cache‑friendly linear pass . That post stopped right before the sticky question:
