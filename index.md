@@ -21,8 +21,6 @@ Whether you're here to learn about granular synthesis, peek into engine developm
 
 {% endfor %}
 
-[View all posts]({{ site.baseurl }}/blog) or [Subscribe via RSS]({{ site.baseurl }}/feed.xml)
-
 ---
 
 ## 🎯 What Is GrainyDays?
