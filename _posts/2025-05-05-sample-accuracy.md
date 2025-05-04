@@ -12,7 +12,7 @@ tags:
 ---
 ### 🎯 Why this post exists
 
-In *reference* we decided to pull MIDI triggers once per audio block, drop new grains into one global pool, and iterate the pool in a cache‑friendly linear pass . That post stopped right before the sticky question:
+In [[2025-05-03-grainhandeling]] we decided to pull MIDI triggers once per audio block, drop new grains into one global pool, and iterate the pool in a cache‑friendly linear pass . That post stopped right before the sticky question:
 
 > _How do you make a grain start on_ ****_any_**** _sample, not just on buffer boundaries?_
 
@@ -94,7 +94,7 @@ for (int i = 0; i < kMaxGrains; ++i) {
 | **Sample‑accurate starts** | Grains can fire on _any_ of the 128 samples in a 48 kHz / 128‑frame buffer (≈2.7 ms).                                                                                                        |
 | **Zero structural change** | Still one global pool, still SoA, still one pass.                                                                                                                                            |
 | **Tiny overhead**          | One integer decrement per active grain—negligible beside envelope multiplies and interpolation.                                                                                              |
-| **Thread‑safe**            | `delaySamples[]` is written only inside the audio thread at spawn time, aligning with the copy‑on‑init rule from the **Parameter Thread‑Safety** post *reference*. |
+| **Thread‑safe**            | `delaySamples[]` is written only inside the audio thread at spawn time, aligning with the copy‑on‑init rule from the **Parameter Thread‑Safety** post [[2025-05-04-parameter-threadsafety]]. |
 
 ---
 
