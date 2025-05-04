@@ -1,5 +1,5 @@
 # GrainyDays
-Repository for GrainyDays Granular Synth
+Repository for Rain Granular Synth
 
 # GrainyDays
 
