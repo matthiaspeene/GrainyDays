@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "8ea10456b6103e75",
+        "id": "4e22c5cc58d2313f",
         "type": "tabs",
         "children": [
           {
-            "id": "c712c16b9c501106",
+            "id": "4cae6b1a4a4c7ffd",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "2025-05-04-parameter-threadsafety.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "2025-05-04-parameter-threadsafety"
+              "title": "New tab"
             }
           }
         ]
@@ -168,12 +164,16 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "c712c16b9c501106",
+  "active": "4cae6b1a4a4c7ffd",
   "lastOpenFiles": [
-    "zazivqtz.xlr~",
-    "1crcbhqm.m40~",
+    "2025-05-05-sample-accuracy.md",
+    "2025-05-05.md",
+    "Untitled.canvas",
+    "Grain Spawning and Processing.md",
     "2025-05-03-grainhandeling.md",
     "2025-05-04-parameter-threadsafety.md",
+    "zazivqtz.xlr~",
+    "1crcbhqm.m40~",
     "assets/images/ThreadSafetyVisualization.png",
     "assets/images/VisualizationWithoutSync.png",
     "assets/images",
