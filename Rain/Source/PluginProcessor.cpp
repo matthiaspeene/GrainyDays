@@ -22,6 +22,7 @@ RainAudioProcessor::RainAudioProcessor()
                        )
 #endif
 {
+
 }
 
 RainAudioProcessor::~RainAudioProcessor()
@@ -93,8 +94,14 @@ void RainAudioProcessor::changeProgramName (int index, const juce::String& newNa
 //==============================================================================
 void RainAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    // 1) resolve atomic<float>* pointers only once, on the message thread
+    parameterBank.loadFromManager(parameterManager);
+
+    // 2) hand that bundle to the DSP core
+    engine.setParameterBank(&parameterBank);
+
+    // 3) finish normal DSP setup
+    engine.prepare(sampleRate, samplesPerBlock);
 }
 
 void RainAudioProcessor::releaseResources()

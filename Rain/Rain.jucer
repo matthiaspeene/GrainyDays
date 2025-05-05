@@ -4,13 +4,49 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="A6zpsG" name="Rain">
     <GROUP id="{6D33086C-A884-5700-8BF1-E6DDBEA81B5F}" name="Source">
-      <FILE id="fUurLP" name="PluginProcessor.cpp" compile="1" resource="0"
-            file="Source/PluginProcessor.cpp"/>
-      <FILE id="Z1aTin" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
-      <FILE id="h1hAXt" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="LlX6Fh" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <GROUP id="{FE5483DC-4B80-919E-1189-1F9288318C84}" name="Extras">
+        <FILE id="bageAQ" name="TwoValueSliderAttachment.h" compile="0" resource="0"
+              file="Source/TwoValueSliderAttachment.h"/>
+      </GROUP>
+      <GROUP id="{AE426295-0A77-F032-DDA3-3A3A29F5372C}" name="Parameters">
+        <FILE id="p8eb3z" name="ParameterInterfaces.h" compile="0" resource="0"
+              file="Source/ParameterInterfaces.h"/>
+        <FILE id="TSnJgd" name="ParameterBank.cpp" compile="1" resource="0"
+              file="Source/ParameterBank.cpp"/>
+        <FILE id="flJZ1U" name="ParameterBank.h" compile="0" resource="0" file="Source/ParameterBank.h"/>
+        <FILE id="RnLwYC" name="ParameterIDs.h" compile="0" resource="0" file="Source/ParameterIDs.h"/>
+        <FILE id="M4IQUa" name="ParameterManager.cpp" compile="1" resource="0"
+              file="Source/ParameterManager.cpp"/>
+        <FILE id="os2bnl" name="ParameterManager.h" compile="0" resource="0"
+              file="Source/ParameterManager.h"/>
+        <FILE id="Wb2rzi" name="ParameterCreator.cpp" compile="1" resource="0"
+              file="Source/ParameterCreator.cpp"/>
+        <FILE id="wLisHh" name="ParameterCreator.h" compile="0" resource="0"
+              file="Source/ParameterCreator.h"/>
+      </GROUP>
+      <GROUP id="{0EB0171A-01BB-59F3-EC4E-357A88E84312}" name="DSP">
+        <FILE id="JWL4tD" name="GrainEngine.cpp" compile="1" resource="0" file="Source/GrainEngine.cpp"/>
+        <FILE id="R3abGq" name="GrainEngine.h" compile="0" resource="0" file="Source/GrainEngine.h"/>
+        <FILE id="N7O8ok" name="GrainPool.h" compile="0" resource="0" file="Source/GrainPool.h"/>
+        <FILE id="GahWYu" name="GrainProcessor.cpp" compile="1" resource="0"
+              file="Source/GrainProcessor.cpp"/>
+        <FILE id="Kc9yf2" name="GrainProcessor.inl" compile="0" resource="0"
+              file="Source/GrainProcessor.inl"/>
+        <FILE id="HzTQs8" name="GrainProcessor.h" compile="0" resource="0"
+              file="Source/GrainProcessor.h"/>
+        <FILE id="bv5u8E" name="GrainSpawner.cpp" compile="1" resource="0"
+              file="Source/GrainSpawner.cpp"/>
+        <FILE id="g0WjZl" name="GrainSpawner.h" compile="0" resource="0" file="Source/GrainSpawner.h"/>
+      </GROUP>
+      <GROUP id="{1539A67F-C1D9-FD6A-6202-0177CD375E9B}" name="Plugin">
+        <FILE id="fUurLP" name="PluginProcessor.cpp" compile="1" resource="0"
+              file="Source/PluginProcessor.cpp"/>
+        <FILE id="Z1aTin" name="PluginProcessor.h" compile="0" resource="0"
+              file="Source/PluginProcessor.h"/>
+        <FILE id="h1hAXt" name="PluginEditor.cpp" compile="1" resource="0"
+              file="Source/PluginEditor.cpp"/>
+        <FILE id="LlX6Fh" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      </GROUP>
     </GROUP>
   </MAINGROUP>
   <MODULES>

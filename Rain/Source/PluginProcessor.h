@@ -1,14 +1,9 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include <JuceHeader.h>
+#include "GrainEngine.h"
+#include "ParameterManager.h"
+#include "ParameterBank.h"
 
 //==============================================================================
 /**
@@ -54,6 +49,12 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
-    //==============================================================================
+    // ------------------------------------------------------ parameters (UI)
+    ParameterManager parameterManager{ *this };   // owns the APVTS the host sees
+    ParameterBank    parameterBank;                // cached atomic<float>* bundle
+
+    // ------------------------------------------------------ real-time DSP
+    GrainEngine      engine;                       // the granular synth core
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessor)
 };
