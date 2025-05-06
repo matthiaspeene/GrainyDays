@@ -12,6 +12,7 @@ struct GrainPool
     std::array<int, kMaxGrains> delay{};
     std::array<int, kMaxGrains> length{};
 	std::array<int, kMaxGrains> position{};
+	std::array<int, kMaxGrains> voiceId{};
 
     std::bitset<kMaxGrains> active;
 

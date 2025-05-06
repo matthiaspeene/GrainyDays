@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="iZgf7S" name="Rain" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="M8T"
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="A6zpsG" name="Rain">
     <GROUP id="{6D33086C-A884-5700-8BF1-E6DDBEA81B5F}" name="Source">
       <GROUP id="{FE5483DC-4B80-919E-1189-1F9288318C84}" name="Extras">

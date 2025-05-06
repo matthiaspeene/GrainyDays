@@ -5,12 +5,18 @@
 // then read cheaply from the audio thread.
 struct ParameterBank
 {
+	// Global parameters
     std::atomic<float>* masterGain = nullptr;
     std::atomic<float>* grainDensity = nullptr;
 
+	// Grain parameters
     std::atomic<float>* grainPitch = nullptr;
     std::atomic<float>* grainVolume = nullptr;
+	std::atomic<float>* grainPan = nullptr;
+	std::atomic<float>* grainLength = nullptr;
+	std::atomic<float>* grainPosition = nullptr;
 
+	// Filter parameters
     std::atomic<float>* filterCutoff = nullptr;
     std::atomic<float>* filterResonance = nullptr;
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <juce_core/juce_core.h>   // for juce::Random
 
 // ───────────────────────────────────────────────────────────────────────────

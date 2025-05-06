@@ -10,6 +10,9 @@ void ParameterBank::loadFromManager(ParameterManager& mgr)
 
     grainPitch = mgr.getRawParameterValue(ParamID::grainPitch);
     grainVolume = mgr.getRawParameterValue(ParamID::grainVolume);
+	grainPan = mgr.getRawParameterValue(ParamID::grainPan);
+	grainLength = mgr.getRawParameterValue(ParamID::grainLength);
+	grainPosition = mgr.getRawParameterValue(ParamID::grainPosition);
 
     filterCutoff = mgr.getRawParameterValue(ParamID::filterCutoff);
     filterResonance = mgr.getRawParameterValue(ParamID::filterResonance);

@@ -47,6 +47,18 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
         ParameterID{ grainVolume, 1 }, "Volume",
         linRange(-48.f, 0.f, 0.1f), 0.0f, " dB"));
 
+	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ grainPan, 1 }, "Pan",
+		linRange(-1.f, 1.f, 0.01f), 0.0f, " %"));
+
+	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ grainLength, 1 }, "Length",
+		linRange(0.01f, 1.f, 0.01f), 0.1f, " s"));
+
+	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ grainPosition, 1 }, "Position",
+		linRange(0.f, 1.f, 0.01f), 0.0f, " %"));
+
     layout.add(std::move(grainGroup));      // ✅ correct: add the *group* itself
 
     // ─── Filter group ────────────────────────────────────────────────────

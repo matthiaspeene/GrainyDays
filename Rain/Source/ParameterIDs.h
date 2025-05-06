@@ -9,6 +9,9 @@ namespace ParamID
     // ───────── Grain group
     inline constexpr const char* grainPitch = "grainPitch";
     inline constexpr const char* grainVolume = "grainVolume";
+	inline constexpr const char* grainPan = "grainPan";
+	inline constexpr const char* grainLength = "grainLength";
+	inline constexpr const char* grainPosition = "grainPosition";
 
     // ───────── Filter group
     inline constexpr const char* filterCutoff = "filterCutoff";
