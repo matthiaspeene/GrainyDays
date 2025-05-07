@@ -132,15 +132,41 @@ juce::AudioProcessorEditor* RainAudioProcessor::createEditor()
     return new RainAudioProcessorEditor(*this);
 }
 
+// Save
 void RainAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
-    // TODO: Save parameters/state
+    juce::ValueTree root("RAIN_STATE");
+
+    // 1) exposed parameters
+    root.addChild(parameterManager.getAPVTS().copyState(), -1, nullptr);
+
+    // 2) internal engine parameters
+    root.addChild(parameterManager.serialiseInternals(), -1, nullptr);
+
+    // write to the binary block JUCE expects
+    juce::MemoryOutputStream mos(destData, false);
+    root.writeToStream(mos);
 }
 
+// Load
 void RainAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
-    // TODO: Load parameters/state
+    juce::ValueTree root = juce::ValueTree::readFromData(data, sizeInBytes);
+    if (!root.isValid())
+        return;         // guard against corrupt data
+
+    // 1) APVTS
+    if (auto params = root.getChildWithName("PARAMETERS"); params.isValid())
+    {
+        parameterManager.getAPVTS().replaceState(params);
+        // the Parameter objects are reused, so no map rebuild is needed
+    }
+
+    // 2) internal engine params
+    if (auto intern = root.getChildWithName("INTERNALS"); intern.isValid())
+        parameterManager.deserialiseInternals(intern);
 }
+
 
 #pragma endregion
 

@@ -49,6 +49,9 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+	// ------------------------------------------------------ Functions
+    void applyLimiter(juce::AudioBuffer<float>& buffer);
+
     // ------------------------------------------------------ parameters (UI)
     ParameterManager parameterManager{ *this };   // owns the APVTS the host sees
     ParameterBank    parameterBank;                // cached atomic<float>* bundle
@@ -56,7 +59,6 @@ private:
     // ------------------------------------------------------ real-time DSP
     GrainEngine      engine;                       // the granular synth core
 
-    void applyLimiter(juce::AudioBuffer<float>& buffer);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessor)
 };

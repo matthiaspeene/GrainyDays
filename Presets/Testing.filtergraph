@@ -62,16 +62,16 @@
     </LAYOUT>
   </FILTER>
   <FILTER uid="5" x="0.41375" y="0.530241935483871" useARA="0" uiLastX_Normal="213"
-          uiLastY_Normal="152" uiopen_Normal="0" uiLastX_Generic="1021"
-          uiLastY_Generic="445" uiopen_Generic="1" uiLastX_Programs="282"
+          uiLastY_Normal="152" uiopen_Normal="0" uiLastX_Generic="833"
+          uiLastY_Generic="371" uiopen_Generic="1" uiLastX_Programs="282"
           uiLastY_Programs="24" uiopen_Programs="0" uiLastX_Debug="915"
           uiLastY_Debug="151" uiopen_Debug="0">
     <PLUGIN name="Rain" format="VST3" category="Instrument|Synth" manufacturer="M8T"
             version="1.0.0" file="C:\Users\M8T\OneDrive - Hogeschool West-Vlaanderen\Documenten\GitHub\GrainyDay-Dev\Rain\Builds\VisualStudio2022\x64\Debug\VST3\Rain.vst3\Contents\x86_64-win\Rain.vst3"
-            uniqueId="f6aed91b" isInstrument="1" fileTime="196ac5594bd" infoUpdateTime="196ac585760"
+            uniqueId="f6aed91b" isInstrument="1" fileTime="196ac699410" infoUpdateTime="196ac6a29c0"
             numInputs="0" numOutputs="2" isShell="0" hasARAExtension="0"
             uid="e9557ef5"/>
-    <STATE>191.VMjLgXK....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9XCLt3hKt3hKt3hKt3hYRUUSTEETIckVwTjQisVTTgkdEYjKAQjYPQSPWgUdMcjKAQjct3hdA4hKt3hKt3hKtnTUv.UQAslXuk0UXoWUFE0YQcEV77RRC8Vav8lak4Fc9vyKVMEUy.Ea0cVZtMEcgQWY9..</STATE>
+    <STATE>847.VMjLgXz....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9TSMw3hTEQkTNgCLTQUQDUUQA4hKAgjKTETRUAUSUQTUEkDLT4hKP4RRtTETRUDUS4BQl4xaQYjKAMCTAw1ZFEldUwlXCU0QiUWVrkkKXcEVxU0UY4BQPIDQt3hKt3RNqbjSLAkKtTETRUDUS4BQl4xaQYjKAQTTAw1ZFEldUwlXRUULhUGMVgEcMYUVtf0UXIWUWkkKDAkPD4hKt3hK4rxJqjySt3RUPIUQTMkKDYlKuEkQtDzLPETaIcEVuQiQQsFMwH1aQcEYtf0UXIWUWkkKDAkPD4hKt3hK4rxJoQDTt3RUPIUQTMkKDYlKuEkQtDjdPETaIcEVuQiQSsFMwjkdmYjKwTjQgASUF4RPp4RPt3hKt3BaYwFM4LjKPUjZTEDLD4RPHAkVpEDTtnDU1kEdEYkVzETUXQWPlM1Y2Y0XqEDTtjDTt3hKt3hKt3hKt3hKtPUPIUETMEDTtHjZFkkKD4xPEIFahc1ZrEFTqYzXoclQtDSQFEFLUYjKAolKA4hKt3hKt3hKt3hKt.UQpQUPvPjKAgDTZoVPP4xSTYWV3UjUZQWPvDVdqYzXugCag4BVWgkbUcUVtPDTBQjKt3hKt3hKt3hKt3hKUAkTEQ0TtPjYt7VTF4RP5AUPskzUX8FMrUUc2Y0XyUkQtDSQFEFLUYjKAolKA4hKt3hKt3hKt3hKt.UQpQUPvPjKAgDTZoVPP4BSTAUXm0zQisVRxD0YqwVXtf0UXIWUWkkKDAkPD4hKt3hKt3hKt3hKtnlZSQUUpQkSEQzTSEDTtHDRWgEcQESXy0TUYsVTF4RPp4RPt3hKt3hKt3hKtXGVvjTahsFMFM1QIcEVuQiURQWTVk0LAAkKIAkKt3hKt3hKt3hKt3hKt3hKt3hKt3hKt3FUUMTUDQEdqw1XmE0UYQTQFM1YAAkKAgDUjYWQwHVdAAkKAwjKtLlKt3hKt3hKt3hYRUUSTEETIckVwTjQisVTTgkdEYDOujzPu0Fbu4VYtQmO77hUSQ0LPwVcmklaSQWXzUlO..</STATE>
     <LAYOUT>
       <INPUTS/>
       <OUTPUTS>

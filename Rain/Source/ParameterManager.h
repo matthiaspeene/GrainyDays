@@ -14,6 +14,9 @@ public:
     std::atomic<float>* getInternalFloat(const std::string& id);
     std::atomic<float>* getFloatMod(const juce::String& id);
 
+    juce::ValueTree   serialiseInternals()   const;
+    void              deserialiseInternals(const juce::ValueTree&);
+
     juce::RangedAudioParameter* getParameter(const juce::String& id);
     juce::AudioProcessorValueTreeState& getAPVTS() { return apvts; }
 
