@@ -13,14 +13,11 @@ public:
     }
 
     // Hot path – body is in .inl
-    inline void process(const GrainPool&, juce::AudioBuffer<float>&);
+    inline void process(GrainPool& pool, juce::AudioBuffer<float>& output) noexcept;
 
 private:
     double sampleRate = 44100.0;
     int    maxBlockSize = 512;
-
-    inline void processOneGrain(int idx, const GrainPool&,
-        juce::AudioBuffer<float>&);
 };
 
 // Pull inline bodies into every TU that includes this header.

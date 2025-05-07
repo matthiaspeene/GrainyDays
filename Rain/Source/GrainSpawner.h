@@ -30,7 +30,8 @@ private:
     void handleNoteOff(int midiNote);
 
     int  findFreeGrainIndex(const GrainPool& pool) const;
-    void spawnGrain(int index, GrainPool& pool, int delayOffset);
+    void spawnGrain(int idx, GrainPool& pool, int delay);
+
 
     /* State ----------------------------------------------------------------*/
     double        sampleRate = 44100.0;

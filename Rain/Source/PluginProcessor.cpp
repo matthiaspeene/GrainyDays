@@ -1,181 +1,150 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
 //==============================================================================
+#pragma region Constructor & Setup
+
 RainAudioProcessor::RainAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       )
+    : AudioProcessor(BusesProperties()
+#if !JucePlugin_IsMidiEffect
+#if !JucePlugin_IsSynth
+        .withInput("Input", juce::AudioChannelSet::stereo(), true)
+#endif
+        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+    )
 #endif
 {
-
 }
 
-RainAudioProcessor::~RainAudioProcessor()
-{
-}
+RainAudioProcessor::~RainAudioProcessor() = default;
 
-//==============================================================================
-const juce::String RainAudioProcessor::getName() const
-{
-    return JucePlugin_Name;
-}
-
-bool RainAudioProcessor::acceptsMidi() const
-{
-   #if JucePlugin_WantsMidiInput
-    return true;
-   #else
-    return false;
-   #endif
-}
-
-bool RainAudioProcessor::producesMidi() const
-{
-   #if JucePlugin_ProducesMidiOutput
-    return true;
-   #else
-    return false;
-   #endif
-}
-
-bool RainAudioProcessor::isMidiEffect() const
-{
-   #if JucePlugin_IsMidiEffect
-    return true;
-   #else
-    return false;
-   #endif
-}
-
-double RainAudioProcessor::getTailLengthSeconds() const
-{
-    return 0.0;
-}
-
-int RainAudioProcessor::getNumPrograms()
-{
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
-}
-
-int RainAudioProcessor::getCurrentProgram()
-{
-    return 0;
-}
-
-void RainAudioProcessor::setCurrentProgram (int index)
-{
-}
-
-const juce::String RainAudioProcessor::getProgramName (int index)
-{
-    return {};
-}
-
-void RainAudioProcessor::changeProgramName (int index, const juce::String& newName)
-{
-}
-
-//==============================================================================
-void RainAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void RainAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     parameterBank.loadFromManager(parameterManager);
     engine.setParameterBank(&parameterBank);
     engine.prepare(sampleRate, samplesPerBlock);
 }
 
-void RainAudioProcessor::releaseResources()
-{
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
-}
+void RainAudioProcessor::releaseResources() {}
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool RainAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool RainAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
+#if JucePlugin_IsMidiEffect
+    juce::ignoreUnused(layouts);
     return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    // Some plugin hosts, such as certain GarageBand versions, will only
-    // load plugins that support stereo bus layouts.
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+#else
+    auto main = layouts.getMainOutputChannelSet();
+    if (main != juce::AudioChannelSet::mono() &&
+        main != juce::AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
+#if !JucePlugin_IsSynth
+    if (main != layouts.getMainInputChannelSet())
         return false;
-   #endif
+#endif
 
     return true;
-  #endif
+#endif
 }
 #endif
 
-void RainAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
-{
-    juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
-
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
-
-	engine.process(buffer, midiMessages);
-}
+#pragma endregion
 
 //==============================================================================
+#pragma region Main Processing
+
+void RainAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
+{
+    juce::ScopedNoDenormals noDenormals;
+
+    // Clear unused output channels
+    const int numInput = getTotalNumInputChannels();
+    const int numOutput = getTotalNumOutputChannels();
+    for (int i = numInput; i < numOutput; ++i)
+        buffer.clear(i, 0, buffer.getNumSamples());
+
+    engine.process(buffer, midi);
+    applyLimiter(buffer);
+}
+
+#pragma endregion
+
+//==============================================================================
+#pragma region Limiter
+
+inline float softLimit(float x)
+{
+    if (x < -2.0f) return -2.0f;
+    if (x > 2.0f) return  2.0f;
+
+    float absX = std::abs(x);
+    if (absX <= 1.0f) return x;
+
+    float compressed = 1.0f + (absX - 1.0f) * 0.5f;  // 2:1 compression
+    return std::copysign(compressed, x);
+}
+
+void RainAudioProcessor::applyLimiter(juce::AudioBuffer<float>& buffer)
+{
+    const int numCh = buffer.getNumChannels();
+    const int numSamp = buffer.getNumSamples();
+
+    for (int ch = 0; ch < numCh; ++ch)
+    {
+        float* data = buffer.getWritePointer(ch);
+        for (int i = 0; i < numSamp; ++i)
+            data[i] = softLimit(data[i]);
+    }
+}
+
+#pragma endregion
+
+//==============================================================================
+#pragma region Plugin Metadata
+
+const juce::String RainAudioProcessor::getName() const { return JucePlugin_Name; }
+bool RainAudioProcessor::acceptsMidi() const { return JucePlugin_WantsMidiInput; }
+bool RainAudioProcessor::producesMidi() const { return JucePlugin_ProducesMidiOutput; }
+bool RainAudioProcessor::isMidiEffect() const { return JucePlugin_IsMidiEffect; }
+double RainAudioProcessor::getTailLengthSeconds() const { return 0.0; }
+
+int RainAudioProcessor::getNumPrograms() { return 1; }
+int RainAudioProcessor::getCurrentProgram() { return 0; }
+void RainAudioProcessor::setCurrentProgram(int) {}
+const juce::String RainAudioProcessor::getProgramName(int) { return {}; }
+void RainAudioProcessor::changeProgramName(int, const juce::String&) {}
+
+#pragma endregion
+
+//==============================================================================
+#pragma region State & Editor
+
 bool RainAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true;
 }
 
 juce::AudioProcessorEditor* RainAudioProcessor::createEditor()
 {
-    return new RainAudioProcessorEditor (*this);
+    return new RainAudioProcessorEditor(*this);
 }
+
+void RainAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
+{
+    // TODO: Save parameters/state
+}
+
+void RainAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
+{
+    // TODO: Load parameters/state
+}
+
+#pragma endregion
 
 //==============================================================================
-void RainAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
-{
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
-}
-
-void RainAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
-{
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-}
-
-//==============================================================================
-// This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new RainAudioProcessor();

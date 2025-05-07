@@ -13,12 +13,13 @@ struct ParameterBank
     std::atomic<float>* grainPitch = nullptr;
     std::atomic<float>* grainVolume = nullptr;
 	std::atomic<float>* grainPan = nullptr;
-	std::atomic<float>* grainLength = nullptr;
+	std::atomic<float>* grainLength = nullptr; // Lenght in seconds
 	std::atomic<float>* grainPosition = nullptr;
 
 	// Filter parameters
     std::atomic<float>* filterCutoff = nullptr;
     std::atomic<float>* filterResonance = nullptr;
+
 
     // ---------------------------------------------------------------------
     // One-shot linker (call in prepareToPlay or constructor of your engine)

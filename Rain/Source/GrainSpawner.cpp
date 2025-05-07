@@ -105,15 +105,18 @@ int GrainSpawner::findFreeGrainIndex(const GrainPool& pool) const
 
 void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset)
 {
-	auto& v = voices[pool.voiceId[index]];   // get the voice for this grain
-	pool.gain[index] = params->grainVolume->load(std::memory_order_relaxed);
-	pool.pitch[index] = params->grainPitch->load(std::memory_order_relaxed);
-	pool.delay[index] = delayOffset;
-	pool.length[index] = static_cast<int>(params->grainLength->load(std::memory_order_relaxed) * sampleRate);
-	pool.position[index] = static_cast<int>(params->grainPosition->load(std::memory_order_relaxed) * sampleRate);
-	pool.active.set(index);                 // mark this grain as active
+    pool.active.set(index);
+    pool.delay[index] = delayOffset;
 
-	DBG("Grain " << index << " spawned at " << delayOffset
-		<< " samples, length: " << pool.length[index]
-		<< ", position: " << pool.position[index]);
+    const float seconds = params->grainLength->load(std::memory_order_relaxed);
+    pool.frames[index] = static_cast<int>(seconds * sampleRate + 0.5f); // round to nearest
+
+	const float dbGain = params->grainVolume->load(std::memory_order_relaxed);
+	pool.gain[index] = juce::Decibels::decibelsToGain(dbGain); // convert to linear gain
+    pool.pitch[index] = params->grainPitch->load(std::memory_order_relaxed);
+
+	DBG("Spawned grain " << index << " at " << delayOffset
+		<< " samples, length " << pool.frames[index] << " frames");
 }
+
+
