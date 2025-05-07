@@ -2,6 +2,7 @@
 #include <juce_audio_basics/juce_audio_basics.h>
 #include "ParameterBank.h"
 #include "GrainPool.h"
+#include "LoadedSample.h"
 
 /*───────────────────────────────────────────────────────────────────────────*/
 class GrainSpawner
@@ -12,6 +13,8 @@ public:
     void setParameterBank(const ParameterBank* params) noexcept;
 
     void processMidi(const juce::MidiBuffer& midi, GrainPool& pool);
+
+    void setSample(const LoadedSample* source);
 
 private:
     /* Helper ---------------------------------------------------------------*/
@@ -39,5 +42,7 @@ private:
     int           currentSampleOffset = 0;
 
     VoiceGrainScheduler  voices[kNumMidiNotes]; // 4kb
+
     const ParameterBank* params = nullptr;
+    const LoadedSample* sample;
 };

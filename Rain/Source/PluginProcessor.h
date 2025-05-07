@@ -48,6 +48,9 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+	//==============================================================================
+	GrainEngine& getEngine() { return engine; }
+
 private:
 	// ------------------------------------------------------ Functions
     void applyLimiter(juce::AudioBuffer<float>& buffer);

@@ -31,3 +31,9 @@ void GrainEngine::process(juce::AudioBuffer<float>& output, const juce::MidiBuff
     processor.process(pool, output);
 }
 
+void GrainEngine::setLoadedSample(const LoadedSample& sample)
+{
+	processor.setSampleSource(sample); // Source is stored in the proccesor for quick acces
+    spawner.setSample(&processor.getSample());  
+}
+

@@ -6,7 +6,12 @@
               cppLanguageStandard="20">
   <MAINGROUP id="A6zpsG" name="Rain">
     <GROUP id="{6D33086C-A884-5700-8BF1-E6DDBEA81B5F}" name="Source">
+      <GROUP id="{D90834E8-7918-09ED-A63B-9EA8058A9A58}" name="UI">
+        <FILE id="dhu84D" name="WaveDisplay.cpp" compile="1" resource="0" file="Source/WaveDisplay.cpp"/>
+        <FILE id="Wb96qR" name="WaveDisplay.h" compile="0" resource="0" file="Source/WaveDisplay.h"/>
+      </GROUP>
       <GROUP id="{FE5483DC-4B80-919E-1189-1F9288318C84}" name="Extras">
+        <FILE id="JFBGkf" name="LoadedSample.h" compile="0" resource="0" file="Source/LoadedSample.h"/>
         <FILE id="bageAQ" name="TwoValueSliderAttachment.h" compile="0" resource="0"
               file="Source/TwoValueSliderAttachment.h"/>
       </GROUP>

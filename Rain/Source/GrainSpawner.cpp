@@ -46,6 +46,11 @@ void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
     advanceTime(maxBlockSize - currentSampleOffset, pool);
 }
 
+void GrainSpawner::setSample(const LoadedSample* source)
+{
+	sample = source; 
+}
+
 // ────────────────────────────────────────────────────────────────
 // Move time forward and drop grains for every active voice
 void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)

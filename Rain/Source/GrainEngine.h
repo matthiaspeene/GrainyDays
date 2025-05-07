@@ -4,6 +4,7 @@
 #include "GrainSpawner.h"
 #include "GrainProcessor.h"
 #include "ParameterBank.h"
+#include "LoadedSample.h"
 
 #include <juce_audio_basics/juce_audio_basics.h>
 
@@ -18,6 +19,7 @@ public:
     void reset();
     void process(juce::AudioBuffer<float>& output, const juce::MidiBuffer& midi);
 
+    void setLoadedSample(const LoadedSample& sample);
 
 private:
 

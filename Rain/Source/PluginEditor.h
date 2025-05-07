@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "WaveDisplay.h"
 
 //==============================================================================
 /**
@@ -28,6 +29,9 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     RainAudioProcessor& audioProcessor;
+
+	// Waveform display
+	std::unique_ptr<WaveDisplay> waveformDisplay;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessorEditor)
 };
