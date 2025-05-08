@@ -16,12 +16,20 @@ struct ParameterBank
     std::atomic<float>* grainPitch = nullptr;
     std::atomic<float>* grainVolume = nullptr;
 	std::atomic<float>* grainPan = nullptr;
-	std::atomic<float>* grainLength = nullptr; // Lenght in seconds
-	std::atomic<float>* grainPosition = nullptr;
+	std::atomic<float>* grainPosition = nullptr; // Position in %
 
-	// Filter parameters
+	// Env
+	std::atomic<float>* envAttack = nullptr; // in seconds
+	std::atomic<float>* envSustainLength = nullptr; // in seconds
+	std::atomic<float>* envRelease = nullptr; // in seconds
+	std::atomic<float>* envAttackCurve = nullptr; // Power
+	std::atomic<float>* envReleaseCurve = nullptr; // Power
+    
+    // Filter parameters
     std::atomic<float>* filterCutoff = nullptr;
     std::atomic<float>* filterResonance = nullptr;
+
+
 
 
     // ---------------------------------------------------------------------

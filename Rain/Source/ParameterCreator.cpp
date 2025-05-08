@@ -56,14 +56,37 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
 		linRange(-1.f, 1.f, 0.01f), 0.0f, " %"));
 
 	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
-		ParameterID{ grainLength, 1 }, "Length",
-		linRange(0.01f, 1.f, 0.01f), 0.1f, " s"));
-
-	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ grainPosition, 1 }, "Position",
-		linRange(0.f, 1.f, 0.01f), 0.0f, " %"));
+		linRange(0.f, 100.f, 0.01f), 0.0f, " %"));
 
-    layout.add(std::move(grainGroup));      // ✅ correct: add the *group* itself
+    layout.add(std::move(grainGroup));
+
+	// ─── Env group ─────────────────────────────────────────────────────
+	auto envGroup = std::make_unique<AudioProcessorParameterGroup>(
+		"envGroup", "Envelope", "|");
+
+	envGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ envAttack, 1 }, "Attack",
+		linRange(0.01f, 1.f, 0.01f), 0.01f, " s"));
+
+    envGroup->addChild(std::make_unique<AudioParameterFloat>(
+        ParameterID{ envSustainLength, 1 }, "Sustain Length",
+        linRange(0.01f, 1.f, 0.01f), 0.01f, " s"
+    ));
+
+	envGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ envRelease, 1 }, "Release",
+		linRange(0.01f, 1.f, 0.01f), 0.01f, " s"));
+
+	envGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ envAttackCurve, 1 }, "Attack Curve",
+		linRange(0.1f, 10.f, 0.01f), 1.0f));
+
+	envGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ envReleaseCurve, 1 }, "Release Curve",
+		linRange(0.1f, 10.f, 0.01f), 1.0f));
+
+	layout.add(std::move(envGroup));
 
     // ─── Filter group ────────────────────────────────────────────────────
     auto filterGroup = std::make_unique<AudioProcessorParameterGroup>(

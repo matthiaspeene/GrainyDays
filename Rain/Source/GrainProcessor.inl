@@ -31,7 +31,41 @@ void GrainProcessor::process(GrainPool& pool,
     jassert(srcBuf != nullptr);
 
     const int nSrcCh = srcBuf->getNumChannels();
-    const int nSrcFrames = srcBuf->getNumSamples();      // last valid index = nSrcFrames-1
+    const int nSrcFrames = srcBuf->getNumSamples();          // last valid index = nSrcFrames-1
+
+    /* --- helper: envelope value from “frames left” ----------------*/
+    auto envGain = [&](const GrainPool& p,
+        std::size_t      gi,
+        int              fLeft) -> float
+        {
+            const int totalN = p.grainLength[gi];
+            const int atkN = p.envAttackFrames[gi];
+            const int relN = p.envReleaseFrames[gi];
+
+            /* sanity guard ---------------------------------------------*/
+            if (atkN + relN >= totalN || totalN <= 0)
+                return 0.0f;
+
+            /* ATTACK ----------------------------------------------------*/
+            if (fLeft > totalN - atkN)
+            {
+                const float t = static_cast<float>(totalN - fLeft) / atkN;   // 0…1
+                const float k = p.envAttackCurve[gi];
+                return std::pow(t, k);
+            }
+
+            /* RELEASE ---------------------------------------------------*/
+            if (fLeft < relN)
+            {
+                const float t = static_cast<float>(relN - fLeft) / relN;     // 0…1
+                const float k = p.envReleaseCurve[gi];
+                return std::pow(1.0f - t, k);
+            }
+
+            /* HOLD ------------------------------------------------------*/
+            return 1.0f;
+        };
+
 
     /*--------------------------------------------------------------*/
     /* 2.  Scan the grain pool                                      */
@@ -41,7 +75,7 @@ void GrainProcessor::process(GrainPool& pool,
         if (!pool.active[i])
             continue;
 
-        /*---- delay countdown ------------------------------------*/
+        /* ---- delay countdown -----------------------------------*/
         int d = pool.delay[i];
         if (d >= nOutFrames)
         {
@@ -49,17 +83,14 @@ void GrainProcessor::process(GrainPool& pool,
             continue;
         }
 
-        /*---- frames we’re *allowed* to write this call ----------*/
+        /* ---- frames we’re allowed to write this block ----------*/
         const int startFrame = juce::jmax(0, d);
         const int framesWanted = juce::jmin(pool.frames[i],
             nOutFrames - startFrame);
 
-        /*----------------------------------------------------------
-          Bound by remaining source data *and* read step.
-          We need the readPtr + (framesHere-1)*step < nSrcFrames-1
-        ----------------------------------------------------------*/
-        double  readPtr = pool.samplePos[i];      // fractional
-        const double step = pool.step[i];      // already rate-corrected
+        /* ---- clamp to end of sample ----------------------------*/
+        double  readPtr = pool.samplePos[i];
+        const double step = pool.step[i];
 
         const int maxFromSrc = static_cast<int>(
             std::floor((nSrcFrames - 1 - readPtr) / step) + 1.0);
@@ -71,19 +102,19 @@ void GrainProcessor::process(GrainPool& pool,
             continue;
         }
 
-        /*---- pre-compute gain & pan -----------------------------*/
+        /* ---- pre-compute static gain & pan ---------------------*/
         const float g = pool.gain[i];
         const float pan = pool.pan[i];
 
         auto gainForCh = [g, pan](int ch, int totalOutCh) -> float
             {
-                if (totalOutCh == 1)  return g;
+                if (totalOutCh == 1)        return g;
                 return (ch == 0) ? g * (1.0f - pan) * 0.5f
                     : g * (1.0f + pan) * 0.5f;
             };
 
         /*----------------------------------------------------------
-          3.  Inner mix loop  (linear interpolation, per channel)
+          3.  Inner mix loop  (linear interp + envelope)
         ----------------------------------------------------------*/
         for (int ch = 0; ch < nOutCh; ++ch)
         {
@@ -93,24 +124,26 @@ void GrainProcessor::process(GrainPool& pool,
             const float* src = srcBuf->getReadPointer(srcCh);
             float* dst = output.getWritePointer(ch) + startFrame;
 
-            double rp = readPtr;                // channel-local copy
+            double rp = readPtr;                            // channel-local copy
+            int    fL = pool.frames[i];                     // frames left *before* sample
 
-            for (int s = 0; s < framesHere; ++s)
+            for (int s = 0; s < framesHere; ++s, --fL)
             {
+                /* envelope --------------------------------------*/
+                const float e = envGain(pool, i, fL);       // 1 multiply worth
+
+                /* sample fetch ----------------------------------*/
                 const int   idx = static_cast<int>(rp);
                 const float frac = static_cast<float>(rp - idx);
+                const float samp = src[idx] + frac * (src[idx + 1] - src[idx]);
 
-                const float v0 = src[idx];
-                const float v1 = src[idx + 1];           // safe: idx+1 < nSrcFrames
-                const float samp = v0 + frac * (v1 - v0);  // 2-tap lerp
-
-                dst[s] += gCh * samp;
+                dst[s] += gCh * e * samp;
                 rp += step;
             }
         }
 
-        /*---- book-keeping --------------------------------------*/
-        readPtr += step * framesHere;   // same maths as loop
+        /* ---- book-keeping -------------------------------------*/
+        readPtr += step * framesHere;
         pool.samplePos[i] = readPtr;
         pool.frames[i] -= framesHere;
         pool.delay[i] = 0;
@@ -119,5 +152,3 @@ void GrainProcessor::process(GrainPool& pool,
             pool.active.reset(i);
     }
 }
-
-

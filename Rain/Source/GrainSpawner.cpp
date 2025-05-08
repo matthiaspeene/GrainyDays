@@ -126,20 +126,25 @@ void GrainSpawner::spawnGrain(int index,
     /*--------------------------------------------------------*/
     /* 2. Parameter snapshot  (single atomic read each)        */
     /*--------------------------------------------------------*/
-    const float  lenSec = params->grainLength->load(std::memory_order_relaxed);
     const float  dbGain = params->grainVolume->load(std::memory_order_relaxed);
     const float  panVal = params->grainPan->load(std::memory_order_relaxed);
     const float  pitchSemi = params->grainPitch->load(std::memory_order_relaxed);
     const int    rootMidi = params->midiRootNote->load(std::memory_order_relaxed);
+	const float  posVal = params->grainPosition->load(std::memory_order_relaxed);
+	const float  envAttack = params->envAttack->load(std::memory_order_relaxed);
+	const float  envRelease = params->envRelease->load(std::memory_order_relaxed);
+	const float  envSustainLength = params->envSustainLength->load(std::memory_order_relaxed);
+	const float  envAttackCurve = params->envAttackCurve->load(std::memory_order_relaxed);
+	const float envReleaseCurve = params->envReleaseCurve->load(std::memory_order_relaxed);
 
-    /*--------------------------------------------------------*/
-    /* 3. Length, gain, pan                                    */
-    /*--------------------------------------------------------*/
-    pool.frames[index] = static_cast<int> (lenSec * hostRate + 0.5);   // round
+    /* 3. Length, gain, pan  ----------------------------------------*/
+	const float lenSec = envAttack + envSustainLength + envRelease;
+	const int totalHostFrames = static_cast<int>(lenSec * hostRate + 0.5);
+
+    pool.frames[index] = totalHostFrames;   // live countdown
+    pool.grainLength[index] = totalHostFrames;   // immutable copy
     pool.gain[index] = juce::Decibels::decibelsToGain(dbGain);
     pool.pan[index] = panVal;
-    /* optional: keep a copy for UI / modulation */
-    pool.pitch[index] = pitchSemi;
 
     /*--------------------------------------------------------*/
     /* 4. Step size  (rate-ratio × MIDI × fine-pitch)          */
@@ -155,7 +160,21 @@ void GrainSpawner::spawnGrain(int index,
         step *= std::pow(2.0, pitchSemi / 12.0);
 
     pool.step[index] = static_cast<float>(step);   // fine in float
-    pool.samplePos[index] = 0.0;                   // start at origin
+
+    /*----------------------------------------------------------*/
+    /* 5. Envelope */
+    /*--------------------------------------------------------*/
+	pool.envAttackFrames[index] = static_cast<int>(envAttack * hostRate + 0.5); // round
+	pool.envReleaseFrames[index] = static_cast<int>(envRelease * hostRate + 0.5); // round
+	pool.envAttackCurve[index] = envAttackCurve;
+	pool.envReleaseCurve[index] = envReleaseCurve;
+
+	/*----------------------------------------------------------*/
+	/* 6. Sample position */
+    /*--------------------------------------------------------*/
+    
+	const int nSrcFrames = sample->buffer->getNumSamples();          // last valid index = nSrcFrames-1
+	pool.samplePos[index] = nSrcFrames * posVal/100; // sample offset in source
 }
 
 
