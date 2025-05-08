@@ -8,6 +8,7 @@ void ParameterBank::loadFromManager(ParameterManager& mgr)
     masterGain = mgr.getRawParameterValue(ParamID::masterGain);
     grainDensity = mgr.getRawParameterValue(ParamID::grainDensity);
 
+	midiRootNote = mgr.getRawParameterValue(ParamID::midiRootNote);
     grainPitch = mgr.getRawParameterValue(ParamID::grainPitch);
     grainVolume = mgr.getRawParameterValue(ParamID::grainVolume);
 	grainPan = mgr.getRawParameterValue(ParamID::grainPan);

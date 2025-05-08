@@ -67,10 +67,11 @@ void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
         {
             const int delay = static_cast<int>(cursor);
 
+
             // Pick a free slot (drop if pool is full)
             const int index = findFreeGrainIndex(pool);
             if (index >= 0)
-                spawnGrain(index, pool, delay);   // sample-accurate start
+                spawnGrain(index, pool, delay, v.midiNote);   // sample-accurate start
             // else { /* overflow → graceful drop */ }
 
             cursor += v.interval;           // schedule the following grain
@@ -108,22 +109,53 @@ int GrainSpawner::findFreeGrainIndex(const GrainPool& pool) const
     return -1; // No free grain found
 }
 
-void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset)
+void GrainSpawner::spawnGrain(int index,
+    GrainPool& pool,
+    int delayOffset,
+    int midiNote)
 {
+    /*--------------------------------------------------------*/
+    /* 1. Book-keeping                                         */
+    /*--------------------------------------------------------*/
     pool.active.set(index);
     pool.delay[index] = delayOffset;
 
-    const float seconds = params->grainLength->load(std::memory_order_relaxed);
-    pool.frames[index] = static_cast<int>(seconds * sampleRate + 0.5f); // round to nearest
+    const double hostRate = sampleRate;          // clearer name
+    const double srcRate = sample->sampleRate;  // non-null - asserted elsewhere
 
-	const float dbGain = params->grainVolume->load(std::memory_order_relaxed);
-	pool.gain[index] = juce::Decibels::decibelsToGain(dbGain); // convert to linear gain
-    pool.pitch[index] = params->grainPitch->load(std::memory_order_relaxed);
-	pool.pan[index] = params->grainPan->load(std::memory_order_relaxed);
-	pool.samplePos[index] = 0;          // start at the beginning of the sample //TBA:: add sample offset
+    /*--------------------------------------------------------*/
+    /* 2. Parameter snapshot  (single atomic read each)        */
+    /*--------------------------------------------------------*/
+    const float  lenSec = params->grainLength->load(std::memory_order_relaxed);
+    const float  dbGain = params->grainVolume->load(std::memory_order_relaxed);
+    const float  panVal = params->grainPan->load(std::memory_order_relaxed);
+    const float  pitchSemi = params->grainPitch->load(std::memory_order_relaxed);
+    const int    rootMidi = params->midiRootNote->load(std::memory_order_relaxed);
 
-	DBG("Spawned grain " << index << " at " << delayOffset
-		<< " samples, length " << pool.frames[index] << " frames");
+    /*--------------------------------------------------------*/
+    /* 3. Length, gain, pan                                    */
+    /*--------------------------------------------------------*/
+    pool.frames[index] = static_cast<int> (lenSec * hostRate + 0.5);   // round
+    pool.gain[index] = juce::Decibels::decibelsToGain(dbGain);
+    pool.pan[index] = panVal;
+    /* optional: keep a copy for UI / modulation */
+    pool.pitch[index] = pitchSemi;
+
+    /*--------------------------------------------------------*/
+    /* 4. Step size  (rate-ratio × MIDI × fine-pitch)          */
+    /*--------------------------------------------------------*/
+    double step = srcRate / hostRate;             // neutralises samplerate mismatch
+
+    /* MIDI transposition relative to chosen root note */
+    if (rootMidi >= 0 && rootMidi < 128 && rootMidi != midiNote)
+        step *= std::pow(2.0, (midiNote - rootMidi) / 12.0);
+
+    /* Additional continuous pitch parameter (semitones) */
+    if (pitchSemi != 0.0f)
+        step *= std::pow(2.0, pitchSemi / 12.0);
+
+    pool.step[index] = static_cast<float>(step);   // fine in float
+    pool.samplePos[index] = 0.0;                   // start at origin
 }
 
 

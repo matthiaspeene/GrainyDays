@@ -24,84 +24,100 @@ void GrainProcessor::process(GrainPool& pool,
     const int nOutFrames = output.getNumSamples();
     const int nOutCh = output.getNumChannels();
 
-    /*---------------------------------------------------------------------
-        Resolve source buffer once – avoids repeated shared_ptr locking.
-      --------------------------------------------------------------------*/
+    /*--------------------------------------------------------------*/
+    /* 1.  Resolve source buffer once – no shared-ptr traffic        */
+    /*--------------------------------------------------------------*/
     const auto* srcBuf = sampleSource.buffer.get();
-    jassert(srcBuf != nullptr);                       // make sure we loaded OK
+    jassert(srcBuf != nullptr);
 
     const int nSrcCh = srcBuf->getNumChannels();
-    const int nSrcFrames = srcBuf->getNumSamples();
+    const int nSrcFrames = srcBuf->getNumSamples();      // last valid index = nSrcFrames-1
 
-    /*---------------------------------------------------------------------
-        Iterate the pool
-      --------------------------------------------------------------------*/
+    /*--------------------------------------------------------------*/
+    /* 2.  Scan the grain pool                                      */
+    /*--------------------------------------------------------------*/
     for (std::size_t i = 0; i < GrainPool::kMaxGrains; ++i)
     {
         if (!pool.active[i])
             continue;
 
-        /*---------- countdown until this grain actually starts ---------*/
+        /*---- delay countdown ------------------------------------*/
         int d = pool.delay[i];
-
-        if (d >= nOutFrames)                  // nothing happens this block
+        if (d >= nOutFrames)
         {
             pool.delay[i] = d - nOutFrames;
             continue;
         }
 
-        /*---------- how many frames can we mix in this callback? -------*/
+        /*---- frames we’re *allowed* to write this call ----------*/
         const int startFrame = juce::jmax(0, d);
         const int framesWanted = juce::jmin(pool.frames[i],
             nOutFrames - startFrame);
 
-        /* Make sure we do not run past the end of the sample.            */
-        const int srcPos = pool.samplePos[i];
-        const int framesAvail = nSrcFrames - srcPos;
+        /*----------------------------------------------------------
+          Bound by remaining source data *and* read step.
+          We need the readPtr + (framesHere-1)*step < nSrcFrames-1
+        ----------------------------------------------------------*/
+        double  readPtr = pool.samplePos[i];      // fractional
+        const double step = pool.step[i];      // already rate-corrected
 
-        const int framesHere = juce::jmin(framesWanted, framesAvail);
+        const int maxFromSrc = static_cast<int>(
+            std::floor((nSrcFrames - 1 - readPtr) / step) + 1.0);
+
+        const int framesHere = juce::jmin(framesWanted, maxFromSrc);
         if (framesHere <= 0)
         {
             pool.active.reset(i);
             continue;
         }
 
-        /*---------- pre-compute per-grain gain / pan -------------------*/
+        /*---- pre-compute gain & pan -----------------------------*/
         const float g = pool.gain[i];
-        const float pan = pool.pan[i];        // -1 … 0 … +1
+        const float pan = pool.pan[i];
 
         auto gainForCh = [g, pan](int ch, int totalOutCh) -> float
             {
-                if (totalOutCh == 1)            return g;
-
-                /* simple linear-pan: constant-power costs two sin/cos calls   *
-                 * so keep the math trivial for now.                          */
+                if (totalOutCh == 1)  return g;
                 return (ch == 0) ? g * (1.0f - pan) * 0.5f
                     : g * (1.0f + pan) * 0.5f;
             };
 
-        /*---------- mix -----------------------------------------------*/
+        /*----------------------------------------------------------
+          3.  Inner mix loop  (linear interpolation, per channel)
+        ----------------------------------------------------------*/
         for (int ch = 0; ch < nOutCh; ++ch)
         {
-            /* choose source channel – wrap if mono sample into stereo out */
-            const int srcCh = juce::jmin(ch, nSrcCh - 1);
-
-            const float* src = srcBuf->getReadPointer(srcCh) + srcPos;
-            float* dst = output.getWritePointer(ch) + startFrame;
-
+            const int   srcCh = juce::jmin(ch, nSrcCh - 1);
             const float gCh = gainForCh(ch, nOutCh);
 
+            const float* src = srcBuf->getReadPointer(srcCh);
+            float* dst = output.getWritePointer(ch) + startFrame;
+
+            double rp = readPtr;                // channel-local copy
+
             for (int s = 0; s < framesHere; ++s)
-                dst[s] += gCh * src[s];
+            {
+                const int   idx = static_cast<int>(rp);
+                const float frac = static_cast<float>(rp - idx);
+
+                const float v0 = src[idx];
+                const float v1 = src[idx + 1];           // safe: idx+1 < nSrcFrames
+                const float samp = v0 + frac * (v1 - v0);  // 2-tap lerp
+
+                dst[s] += gCh * samp;
+                rp += step;
+            }
         }
 
-        /*---------- book-keeping --------------------------------------*/
-        pool.samplePos[i] += framesHere;
+        /*---- book-keeping --------------------------------------*/
+        readPtr += step * framesHere;   // same maths as loop
+        pool.samplePos[i] = readPtr;
         pool.frames[i] -= framesHere;
         pool.delay[i] = 0;
 
-        if (pool.frames[i] <= 0 || pool.samplePos[i] >= nSrcFrames)
+        if (pool.frames[i] <= 0 || readPtr >= nSrcFrames - 1)
             pool.active.reset(i);
     }
 }
+
 

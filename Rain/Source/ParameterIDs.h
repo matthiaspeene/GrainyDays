@@ -6,6 +6,9 @@ namespace ParamID
     inline constexpr const char* masterGain = "masterGain";
     inline constexpr const char* grainDensity = "grainDensity";
 
+	// ───────── Voice group
+	inline constexpr const char* midiRootNote = "midiRootNote";
+
     // ───────── Grain group
     inline constexpr const char* grainPitch = "grainPitch";
     inline constexpr const char* grainVolume = "grainVolume";

@@ -35,6 +35,10 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
         ParameterID{ grainDensity, 1 }, "Grain Density",
         linRange(1.f, 200.f, 1.f, 0.5f), 50.f, " grains/s"));
 
+	// ─── Voice group ──────────────────────────────────────────────────────
+	layout.add(std::make_unique<AudioParameterFloat>(ParameterID{ midiRootNote, 1 },
+		"Root Note", linRange(0.f, 127.f, 1.f), 60.f, " MIDI note"));
+
     // ─── Grain group ─────────────────────────────────────────────────────
     auto grainGroup = std::make_unique<AudioProcessorParameterGroup>(
         "grainGroup", "Grain", "|");

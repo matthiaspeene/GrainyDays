@@ -33,7 +33,7 @@ private:
     void handleNoteOff(int midiNote);
 
     int  findFreeGrainIndex(const GrainPool& pool) const;
-    void spawnGrain(int idx, GrainPool& pool, int delay);
+    void spawnGrain(int idx, GrainPool& pool, int delay, int midiNote);
 
 
     /* State ----------------------------------------------------------------*/

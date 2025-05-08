@@ -12,6 +12,7 @@ struct GrainPool
     alignas(64) int   frames[kMaxGrains];   // frames left to render
 
 	alignas(64) int   samplePos[kMaxGrains];    // sample offset in source
+	alignas(64) float step[kMaxGrains];     // step size for pitch and sampleratio diffrences
 
     alignas(64) float gain[kMaxGrains];
     alignas(64) float pan[kMaxGrains];

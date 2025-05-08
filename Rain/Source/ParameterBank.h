@@ -9,6 +9,9 @@ struct ParameterBank
     std::atomic<float>* masterGain = nullptr;
     std::atomic<float>* grainDensity = nullptr;
 
+	// Voice Parameters
+	std::atomic<float>* midiRootNote = nullptr;
+
 	// Grain parameters
     std::atomic<float>* grainPitch = nullptr;
     std::atomic<float>* grainVolume = nullptr;
