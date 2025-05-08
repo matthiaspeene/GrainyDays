@@ -10,10 +10,12 @@ struct GrainPool
     std::bitset<kMaxGrains> active;   // 1 = slot busy
     alignas(64) int   delay[kMaxGrains];   // sample-accurate countdown
     alignas(64) int   frames[kMaxGrains];   // frames left to render
-    alignas(64) float gain[kMaxGrains];   // constant per grain
 
-	alignas(64) float pan[kMaxGrains];    // per-grain pan (UNUSED)
-	alignas(64) float pitch[kMaxGrains];  // per-grain pitch (UNUSED)
+	alignas(64) int   samplePos[kMaxGrains];    // sample offset in source
+
+    alignas(64) float gain[kMaxGrains];
+    alignas(64) float pan[kMaxGrains];
+	alignas(64) float pitch[kMaxGrains];
 
     void clear()
     {

@@ -27,6 +27,12 @@ void GrainEngine::reset()
 
 void GrainEngine::process(juce::AudioBuffer<float>& output, const juce::MidiBuffer& midi)
 {
+	if (processor.getSample().buffer == nullptr)
+	{
+		output.clear();
+		return; // No sample loaded
+	}
+
     spawner.processMidi(midi, pool);
     processor.process(pool, output);
 }

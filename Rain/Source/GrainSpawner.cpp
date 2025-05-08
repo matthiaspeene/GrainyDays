@@ -119,6 +119,8 @@ void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset)
 	const float dbGain = params->grainVolume->load(std::memory_order_relaxed);
 	pool.gain[index] = juce::Decibels::decibelsToGain(dbGain); // convert to linear gain
     pool.pitch[index] = params->grainPitch->load(std::memory_order_relaxed);
+	pool.pan[index] = params->grainPan->load(std::memory_order_relaxed);
+	pool.samplePos[index] = 0;          // start at the beginning of the sample //TBA:: add sample offset
 
 	DBG("Spawned grain " << index << " at " << delayOffset
 		<< " samples, length " << pool.frames[index] << " frames");
