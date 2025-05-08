@@ -66,7 +66,7 @@ void GrainProcessor::process(GrainPool& pool,
             return 1.0f;
         };
 
-
+	int activeGrains = 0;            // DBG
     /*--------------------------------------------------------------*/
     /* 2.  Scan the grain pool                                      */
     /*--------------------------------------------------------------*/
@@ -74,6 +74,8 @@ void GrainProcessor::process(GrainPool& pool,
     {
         if (!pool.active[i])
             continue;
+		
+		activeGrains++; // DBG
 
         /* ---- delay countdown -----------------------------------*/
         int d = pool.delay[i];
@@ -151,4 +153,6 @@ void GrainProcessor::process(GrainPool& pool,
         if (pool.frames[i] <= 0 || readPtr >= nSrcFrames - 1)
             pool.active.reset(i);
     }
+
+	DBG("GrainProcessor::process: " << activeGrains << " active grains");
 }

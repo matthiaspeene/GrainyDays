@@ -23,7 +23,6 @@ private:
         bool   active = false;
         int    midiNote = -1;
         double cursor = 0.0;   // sample offset to the next grain
-        double interval = 0.0;   // samples between grains for this note
     };
     static constexpr int kNumMidiNotes = 128;
 

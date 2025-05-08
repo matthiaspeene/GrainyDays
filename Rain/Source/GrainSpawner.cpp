@@ -11,7 +11,6 @@ void GrainSpawner::prepare(double sampleRate, int maxBlockSize)
 		v.active = false;                // all voices are off
 		v.midiNote = -1;                // no MIDI note assigned
 		v.cursor = 0.0;                 // no grains scheduled yet
-		v.interval = 0.0;               // no interval set
 	}
 }
 
@@ -57,6 +56,8 @@ void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
 {
     if (numSamples <= 0) return;
 
+	float samplesPerGrain = sampleRate / params->grainDensity->load(std::memory_order_relaxed); // TBA:: Perhaps create a mod for voice specific densitys
+
     for (auto& v : voices)
     {
         if (!v.active) continue;
@@ -67,14 +68,13 @@ void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
         {
             const int delay = static_cast<int>(cursor);
 
-
             // Pick a free slot (drop if pool is full)
             const int index = findFreeGrainIndex(pool);
             if (index >= 0)
                 spawnGrain(index, pool, delay, v.midiNote);   // sample-accurate start
             // else { /* overflow → graceful drop */ }
 
-            cursor += v.interval;           // schedule the following grain
+			cursor += samplesPerGrain;   // next grain in this voice
         }
 
         v.cursor = cursor - numSamples;     // spill-over into next block
@@ -88,7 +88,6 @@ void GrainSpawner::handleNoteOn(int note)
     auto& v = voices[note];
     v.active = true;
     v.midiNote = note;
-    v.interval = sampleRate / params->grainDensity->load(std::memory_order_relaxed);
     v.cursor = 0.0;                    // first grain hits immediately
 }
 
