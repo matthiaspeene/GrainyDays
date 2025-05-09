@@ -8,7 +8,7 @@ void GrainSpawner::prepare(double sampleRate, int maxBlockSize)
 	// 1)  Set up the grain scheduler // TBA:: Use DOD for this?
 	for (auto& v : voices)
 	{
-		v.active = false;                // all voices are off
+		v.active = false;               // all voices are off
 		v.midiNote = -1;                // no MIDI note assigned
 		v.cursor = 0.0;                 // no grains scheduled yet
 	}
@@ -117,10 +117,9 @@ void GrainSpawner::spawnGrain(int index,
     /* 1. Book-keeping                                         */
     /*--------------------------------------------------------*/
     pool.active.set(index);
-    pool.delay[index] = delayOffset;
 
-    const double hostRate = sampleRate;          // clearer name
-    const double srcRate = sample->sampleRate;  // non-null - asserted elsewhere
+    const double hostRate = sampleRate;
+    const double srcRate = sample->sampleRate;
 
     /*--------------------------------------------------------*/
     /* 2. Parameter snapshot  (single atomic read each)        */
@@ -135,6 +134,7 @@ void GrainSpawner::spawnGrain(int index,
 	const float  envSustainLength = params->envSustainLength->load(std::memory_order_relaxed);
 	const float  envAttackCurve = params->envAttackCurve->load(std::memory_order_relaxed);
 	const float envReleaseCurve = params->envReleaseCurve->load(std::memory_order_relaxed);
+	const float delayRandomRange = params->delayRandomRange->load(std::memory_order_relaxed);
 
     /* 3. Length, gain, pan  ----------------------------------------*/
 	const float lenSec = envAttack + envSustainLength + envRelease;
@@ -144,6 +144,7 @@ void GrainSpawner::spawnGrain(int index,
     pool.grainLength[index] = totalHostFrames;   // immutable copy
     pool.gain[index] = juce::Decibels::decibelsToGain(dbGain);
     pool.pan[index] = panVal;
+	pool.delay[index] = delayOffset + static_cast<int>((rng.nextFloat() * delayRandomRange)* hostRate + 0.5);   // sample-accurate start
 
     /*--------------------------------------------------------*/
     /* 4. Step size  (rate-ratio × MIDI × fine-pitch)          */

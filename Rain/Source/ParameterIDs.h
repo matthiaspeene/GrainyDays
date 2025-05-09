@@ -5,6 +5,7 @@ namespace ParamID
     // ───────── top-level
     inline constexpr const char* masterGain = "masterGain";
     inline constexpr const char* grainDensity = "grainDensity";
+	inline constexpr const char* delayRandomRange = "delayRandomRange"; // in seconds
 
 	// ───────── Voice group
 	inline constexpr const char* midiRootNote = "midiRootNote";

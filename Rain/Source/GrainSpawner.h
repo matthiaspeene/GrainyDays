@@ -34,6 +34,7 @@ private:
     int  findFreeGrainIndex(const GrainPool& pool) const;
     void spawnGrain(int idx, GrainPool& pool, int delay, int midiNote);
 
+	juce::Random rng; // If other parts need this too move shared instance to the engine
 
     /* State ----------------------------------------------------------------*/
     double        sampleRate = 44100.0;

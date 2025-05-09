@@ -8,6 +8,7 @@ struct ParameterBank
 	// Global parameters
     std::atomic<float>* masterGain = nullptr;
     std::atomic<float>* grainDensity = nullptr;
+	std::atomic<float>* delayRandomRange = nullptr; // in seconds
 
 	// Voice Parameters
 	std::atomic<float>* midiRootNote = nullptr;

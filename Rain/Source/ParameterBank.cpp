@@ -7,6 +7,7 @@ void ParameterBank::loadFromManager(ParameterManager& mgr)
     using namespace ParamID;
     masterGain = mgr.getRawParameterValue(ParamID::masterGain);
     grainDensity = mgr.getRawParameterValue(ParamID::grainDensity);
+	delayRandomRange = mgr.getRawParameterValue(ParamID::delayRandomRange);
 
 	midiRootNote = mgr.getRawParameterValue(ParamID::midiRootNote);
     grainPitch = mgr.getRawParameterValue(ParamID::grainPitch);
