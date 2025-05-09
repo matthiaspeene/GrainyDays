@@ -4,6 +4,7 @@
 #include "GrainEngine.h"
 #include "ParameterManager.h"
 #include "ParameterBank.h"
+#include "OSCGyroReceiver.h"
 
 //==============================================================================
 /**
@@ -62,6 +63,9 @@ private:
     // ------------------------------------------------------ real-time DSP
     GrainEngine      engine;                       // the granular synth core
 
+	// ------------------------------------------------------ OSC
+
+	OSCGyroReceiver  oscGyroReceiver{ 9000 };      // listens for OSC messages
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessor)
 };

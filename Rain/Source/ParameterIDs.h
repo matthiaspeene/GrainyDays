@@ -2,6 +2,9 @@
 // All parameter IDs in one namespace = typo-free code.
 namespace ParamID
 {
+
+	inline constexpr const char* gyroStrength = "gyroStrength";
+
     // ───────── top-level
     inline constexpr const char* masterGain = "masterGain";
     inline constexpr const char* grainDensity = "grainDensity";

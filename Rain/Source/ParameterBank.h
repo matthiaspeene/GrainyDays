@@ -5,6 +5,9 @@
 // then read cheaply from the audio thread.
 struct ParameterBank
 {
+	// Gyro Param
+	std::atomic<float>* gyroStrength = nullptr;
+
 	// Global parameters
     std::atomic<float>* masterGain = nullptr;
     std::atomic<float>* grainDensity = nullptr;

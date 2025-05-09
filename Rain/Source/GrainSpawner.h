@@ -12,7 +12,7 @@ public:
     void prepare(double sampleRate, int maxBlockSize);
     void setParameterBank(const ParameterBank* params) noexcept;
 
-    void processMidi(const juce::MidiBuffer& midi, GrainPool& pool);
+    void processMidi(const juce::MidiBuffer& midi, GrainPool& pool, float grainsPerSecond);
 
     void setSample(const LoadedSample* source);
 
@@ -27,7 +27,7 @@ private:
     static constexpr int kNumMidiNotes = 128;
 
     // Core helpers -----------------------------------------------------------
-    void advanceTime(int numSamples, GrainPool& pool);
+    void advanceTime(int numSamples, GrainPool& pool, float grainsPerSecond);
     void handleNoteOn(int midiNote);
     void handleNoteOff(int midiNote);
 

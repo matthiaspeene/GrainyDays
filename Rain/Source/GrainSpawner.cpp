@@ -22,7 +22,7 @@ void GrainSpawner::setParameterBank(const ParameterBank* params) noexcept
 // ────────────────────────────────────────────────────────────────
 // Public entry point – called once per audio block
 void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
-    GrainPool& pool)
+    GrainPool& pool, float grainsPerSecond)
 {
     currentSampleOffset = 0;                // start at the first frame
 
@@ -33,7 +33,7 @@ void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
         const int  samplePos = metadata.samplePosition;
 
         // 2-A · First, schedule grains up to this event
-        advanceTime(samplePos - currentSampleOffset, pool);
+        advanceTime(samplePos - currentSampleOffset, pool, grainsPerSecond);
         currentSampleOffset = samplePos;
 
         // 2-B · Then handle the MIDI itself
@@ -42,7 +42,7 @@ void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
     }
 
     // 2-C · Finish the tail of the block
-    advanceTime(maxBlockSize - currentSampleOffset, pool);
+    advanceTime(maxBlockSize - currentSampleOffset, pool, grainsPerSecond);
 }
 
 void GrainSpawner::setSample(const LoadedSample* source)
@@ -52,11 +52,14 @@ void GrainSpawner::setSample(const LoadedSample* source)
 
 // ────────────────────────────────────────────────────────────────
 // Move time forward and drop grains for every active voice
-void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
+void GrainSpawner::advanceTime(int numSamples, GrainPool& pool, float grainsPerSecond)
 {
     if (numSamples <= 0) return;
 
-	float samplesPerGrain = sampleRate / params->grainDensity->load(std::memory_order_relaxed); // TBA:: Perhaps create a mod for voice specific densitys
+    if (grainsPerSecond < 1) // don't procces new grains at low gyro
+        return;
+
+    float samplesPerGrain = sampleRate / grainsPerSecond;
 
     for (auto& v : voices)
     {

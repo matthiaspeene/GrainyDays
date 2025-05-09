@@ -66,7 +66,9 @@ void RainAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
     for (int i = numInput; i < numOutput; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    engine.process(buffer, midi);
+    float vel = oscGyroReceiver.getVelocity();
+
+    engine.process(buffer, midi, vel * parameterBank.gyroStrength->load(std::memory_order_relaxed));
     applyLimiter(buffer);
 }
 

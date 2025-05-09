@@ -5,8 +5,10 @@
 void ParameterBank::loadFromManager(ParameterManager& mgr)
 {
     using namespace ParamID;
+	gyroStrength = mgr.getRawParameterValue(ParamID::gyroStrength);
+
     masterGain = mgr.getRawParameterValue(ParamID::masterGain);
-    grainDensity = mgr.getRawParameterValue(ParamID::grainDensity);
+    //grainDensity = mgr.getRawParameterValue(ParamID::grainDensity);
 	delayRandomRange = mgr.getRawParameterValue(ParamID::delayRandomRange);
 
 	midiRootNote = mgr.getRawParameterValue(ParamID::midiRootNote);
