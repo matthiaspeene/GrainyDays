@@ -11,9 +11,13 @@ void ParameterBank::loadFromManager(ParameterManager& mgr)
 
 	midiRootNote = mgr.getRawParameterValue(ParamID::midiRootNote);
     grainPitch = mgr.getRawParameterValue(ParamID::grainPitch);
+	grainPitchRandomRange = mgr.getRawParameterValue(ParamID::grainPitchRandomRange);
     grainVolume = mgr.getRawParameterValue(ParamID::grainVolume);
+	grainVolumeRandomRange = mgr.getRawParameterValue(ParamID::grainVolumeRandomRange);
 	grainPan = mgr.getRawParameterValue(ParamID::grainPan);
+	grainPanRandomRange = mgr.getRawParameterValue(ParamID::grainPanRandomRange);
 	grainPosition = mgr.getRawParameterValue(ParamID::grainPosition);
+	grainPositionRandomRange = mgr.getRawParameterValue(ParamID::grainPositionRandomRange);
 
     filterCutoff = mgr.getRawParameterValue(ParamID::filterCutoff);
     filterResonance = mgr.getRawParameterValue(ParamID::filterResonance);

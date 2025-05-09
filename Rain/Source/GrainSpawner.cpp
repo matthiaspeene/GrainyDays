@@ -125,10 +125,14 @@ void GrainSpawner::spawnGrain(int index,
     /* 2. Parameter snapshot  (single atomic read each)        */
     /*--------------------------------------------------------*/
     const float  dbGain = params->grainVolume->load(std::memory_order_relaxed);
+	const float  gainRand = params->grainVolumeRandomRange->load(std::memory_order_relaxed);
     const float  panVal = params->grainPan->load(std::memory_order_relaxed);
+	const float  panRand = params->grainPanRandomRange->load(std::memory_order_relaxed);
     const float  pitchSemi = params->grainPitch->load(std::memory_order_relaxed);
+	const float  pitchRand = params->grainPitchRandomRange->load(std::memory_order_relaxed);
     const int    rootMidi = params->midiRootNote->load(std::memory_order_relaxed);
 	const float  posVal = params->grainPosition->load(std::memory_order_relaxed);
+	const float  posRand = params->grainPositionRandomRange->load(std::memory_order_relaxed);
 	const float  envAttack = params->envAttack->load(std::memory_order_relaxed);
 	const float  envRelease = params->envRelease->load(std::memory_order_relaxed);
 	const float  envSustainLength = params->envSustainLength->load(std::memory_order_relaxed);
@@ -140,14 +144,14 @@ void GrainSpawner::spawnGrain(int index,
 	const float lenSec = envAttack + envSustainLength + envRelease;
 	const int totalHostFrames = static_cast<int>(lenSec * hostRate + 0.5);
 
-    pool.frames[index] = totalHostFrames;   // live countdown
-    pool.grainLength[index] = totalHostFrames;   // immutable copy
-    pool.gain[index] = juce::Decibels::decibelsToGain(dbGain);
-    pool.pan[index] = panVal;
+    pool.frames[index] = totalHostFrames  ;   // live countdown
+    pool.grainLength[index] = totalHostFrames  ;   // immutable copy
+    pool.gain[index] = juce::Decibels::decibelsToGain(dbGain + rng.nextFloat() * gainRand);
+    pool.pan[index] = panVal + (rng.nextFloat() * panRand);
 	pool.delay[index] = delayOffset + static_cast<int>((rng.nextFloat() * delayRandomRange)* hostRate + 0.5);   // sample-accurate start
 
     /*--------------------------------------------------------*/
-    /* 4. Step size  (rate-ratio × MIDI × fine-pitch)          */
+    /* 4. Step size  (rate-ratio × MIDI × fine-pitch)         */
     /*--------------------------------------------------------*/
     double step = srcRate / hostRate;             // neutralises samplerate mismatch
 
@@ -155,9 +159,11 @@ void GrainSpawner::spawnGrain(int index,
     if (rootMidi >= 0 && rootMidi < 128 && rootMidi != midiNote)
         step *= std::pow(2.0, (midiNote - rootMidi) / 12.0);
 
+	auto pitch = pitchSemi + (rng.nextFloat() * pitchRand);   // random pitch offset
+
     /* Additional continuous pitch parameter (semitones) */
-    if (pitchSemi != 0.0f)
-        step *= std::pow(2.0, pitchSemi / 12.0);
+    if (pitch != 0.0f)
+        step *= std::pow(2.0, pitch / 12.0);
 
     pool.step[index] = static_cast<float>(step);   // fine in float
 
@@ -173,8 +179,10 @@ void GrainSpawner::spawnGrain(int index,
 	/* 6. Sample position */
     /*--------------------------------------------------------*/
     
+	auto pos = posVal + (rng.nextFloat() * posRand);   // random position offset
+
 	const int nSrcFrames = sample->buffer->getNumSamples();          // last valid index = nSrcFrames-1
-	pool.samplePos[index] = nSrcFrames * posVal/100; // sample offset in source
+	pool.samplePos[index] = nSrcFrames * pos/100; // sample offset in source
 }
 
 

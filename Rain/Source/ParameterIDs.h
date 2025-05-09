@@ -12,9 +12,13 @@ namespace ParamID
 
     // ───────── Grain group
     inline constexpr const char* grainPitch = "grainPitch";
+	inline constexpr const char* grainPitchRandomRange = "grainPitchRandomRange"; // in semitones
     inline constexpr const char* grainVolume = "grainVolume";
+	inline constexpr const char* grainVolumeRandomRange = "grainVolumeRandomRange"; // in dB
 	inline constexpr const char* grainPan = "grainPan";
+	inline constexpr const char* grainPanRandomRange = "grainPanRandomRange"; // in %
 	inline constexpr const char* grainPosition = "grainPosition";
+	inline constexpr const char* grainPositionRandomRange = "grainPositionRandomRange"; // in %
 
     // ───────── Filter group
     inline constexpr const char* filterCutoff = "filterCutoff";

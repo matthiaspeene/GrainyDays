@@ -14,10 +14,14 @@ struct ParameterBank
 	std::atomic<float>* midiRootNote = nullptr;
 
 	// Grain parameters
-    std::atomic<float>* grainPitch = nullptr;
+	std::atomic<float>* grainPitch = nullptr; // in semitones
+	std::atomic<float>* grainPitchRandomRange = nullptr; // in semitones
     std::atomic<float>* grainVolume = nullptr;
+	std::atomic<float>* grainVolumeRandomRange = nullptr; // in dB
 	std::atomic<float>* grainPan = nullptr;
+	std::atomic<float>* grainPanRandomRange = nullptr; // in %
 	std::atomic<float>* grainPosition = nullptr; // Position in %
+	std::atomic<float>* grainPositionRandomRange = nullptr; // in %
 
 	// Env
 	std::atomic<float>* envAttack = nullptr; // in seconds

@@ -51,17 +51,35 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
         ParameterID{ grainPitch, 1 }, "Pitch",
         linRange(-24.f, 24.f, 0.1f), 0.0f, " st"));
 
+	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ grainPitchRandomRange, 1 }, "Pitch Random Range",
+		linRange(0.f, 24.f, 0.1f), 0.0f, " st"));
+
     grainGroup->addChild(std::make_unique<AudioParameterFloat>(
         ParameterID{ grainVolume, 1 }, "Volume",
         linRange(-48.f, 0.f, 0.1f), 0.0f, " dB"));
+
+	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ grainVolumeRandomRange, 1 }, "Volume Random Range",
+		linRange(-48.f, 0.f, 0.1f), 0.0f, " dB"));
 
 	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ grainPan, 1 }, "Pan",
 		linRange(-1.f, 1.f, 0.01f), 0.0f, " %"));
 
 	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ grainPanRandomRange, 1 }, "Pan Random Range",
+		linRange(-1.f, 1.f, 0.01f), 0.0f, " %"));
+
+	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ grainPosition, 1 }, "Position",
 		linRange(0.f, 100.f, 0.01f), 0.0f, " %"));
+
+	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ grainPositionRandomRange, 1 }, "Position Random Range",
+		linRange(0.f, 100.f, 0.01f), 0.0f, " %"));
+
+
 
     layout.add(std::move(grainGroup));
 
