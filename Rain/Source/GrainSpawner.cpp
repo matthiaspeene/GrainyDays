@@ -1,4 +1,4 @@
-﻿// GrainSpawner.cpp – implementation -------------------------------------------
+// GrainSpawner.cpp – implementation -------------------------------------------
 #include "GrainSpawner.h"
 
 void GrainSpawner::prepare(double sampleRate, int maxBlockSize)
