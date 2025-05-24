@@ -4,6 +4,18 @@
 #include "GrainPool.h"
 #include "LoadedSample.h"
 
+/* Helpers ───────────────────────────────────────────────────────────────────────────*/
+struct ParameterSnapshot {
+    float dbGain, gainRand;
+    float panVal, panRand;
+    float pitchSemi, pitchRand;
+    float posVal, posRand;
+    float envAttack, envRelease, envSustainLength;
+    float envAttackCurve, envReleaseCurve;
+    float delayRandomRange;
+    int   rootMidi;
+};
+
 /*───────────────────────────────────────────────────────────────────────────*/
 class GrainSpawner
 {
@@ -33,6 +45,16 @@ private:
 
     int  findFreeGrainIndex(const GrainPool& pool) const;
     void spawnGrain(int idx, GrainPool& pool, int delay, int midiNote);
+    void initializeGainPan(GrainPool& pool, int index);
+    void initializeStepSize(GrainPool& pool, int index, int midiNote);
+    void initializeEnvelope(GrainPool& pool, int index, double hostRate);
+    void initializePosition(GrainPool& pool, int index);
+    void initializeDelay(GrainPool& pool, int index, int delayOffset, double hostRate);
+    ParameterSnapshot loadSampleSnapShot();
+
+	// UI helpers -------------------------------------------------------------
+	void copyGrainToUI(int index, GrainPool& pool);
+
 
 	juce::Random rng; // If other parts need this too move shared instance to the engine
 
@@ -45,4 +67,10 @@ private:
 
     const ParameterBank* params = nullptr;
     const LoadedSample* sample;
+
+    //snapshot
+	ParameterSnapshot snapShot;
+
+	bool spawnedGrains = false; // Flag to indicate if grains were spawned in this block    
+	std::bitset<GrainPool::kMaxGrains> spawnedGrainIndexes = { false };
 };

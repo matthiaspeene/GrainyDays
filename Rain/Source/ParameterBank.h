@@ -37,9 +37,6 @@ struct ParameterBank
     std::atomic<float>* filterCutoff = nullptr;
     std::atomic<float>* filterResonance = nullptr;
 
-
-
-
     // ---------------------------------------------------------------------
     // One-shot linker (call in prepareToPlay or constructor of your engine)
     void loadFromManager(class ParameterManager& mgr);

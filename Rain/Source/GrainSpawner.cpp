@@ -25,6 +25,9 @@ void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
     GrainPool& pool, float grainsPerSecond)
 {
     currentSampleOffset = 0;                // start at the first frame
+	spawnedGrains = false;                  // reset grain spawn flag
+
+	snapShot = loadSampleSnapShot(); // take a snapshot of the current parameters
 
     // Walk MIDI events in ascending sample order
     for (const auto metadata : midi)
@@ -111,81 +114,95 @@ int GrainSpawner::findFreeGrainIndex(const GrainPool& pool) const
     return -1; // No free grain found
 }
 
-void GrainSpawner::spawnGrain(int index,
-    GrainPool& pool,
-    int delayOffset,
-    int midiNote)
+void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset, int midiNote)
 {
-    /*--------------------------------------------------------*/
-    /* 1. Book-keeping                                         */
-    /*--------------------------------------------------------*/
     pool.active.set(index);
 
     const double hostRate = sampleRate;
-    const double srcRate = sample->sampleRate;
+    const double lenSec = snapShot.envAttack + snapShot.envSustainLength + snapShot.envRelease;
+    const int totalHostFrames = static_cast<int>(lenSec * hostRate + 0.5);
 
-    /*--------------------------------------------------------*/
-    /* 2. Parameter snapshot  (single atomic read each)        */
-    /*--------------------------------------------------------*/
-    const float  dbGain = params->grainVolume->load(std::memory_order_relaxed);
-	const float  gainRand = params->grainVolumeRandomRange->load(std::memory_order_relaxed);
-    const float  panVal = params->grainPan->load(std::memory_order_relaxed);
-	const float  panRand = params->grainPanRandomRange->load(std::memory_order_relaxed);
-    const float  pitchSemi = params->grainPitch->load(std::memory_order_relaxed);
-	const float  pitchRand = params->grainPitchRandomRange->load(std::memory_order_relaxed);
-    const int    rootMidi = params->midiRootNote->load(std::memory_order_relaxed);
-	const float  posVal = params->grainPosition->load(std::memory_order_relaxed);
-	const float  posRand = params->grainPositionRandomRange->load(std::memory_order_relaxed);
-	const float  envAttack = params->envAttack->load(std::memory_order_relaxed);
-	const float  envRelease = params->envRelease->load(std::memory_order_relaxed);
-	const float  envSustainLength = params->envSustainLength->load(std::memory_order_relaxed);
-	const float  envAttackCurve = params->envAttackCurve->load(std::memory_order_relaxed);
-	const float envReleaseCurve = params->envReleaseCurve->load(std::memory_order_relaxed);
-	const float delayRandomRange = params->delayRandomRange->load(std::memory_order_relaxed);
+    pool.frames[index] = totalHostFrames;
+    pool.grainLength[index] = totalHostFrames;
 
-    /* 3. Length, gain, pan  ----------------------------------------*/
-	const float lenSec = envAttack + envSustainLength + envRelease;
-	const int totalHostFrames = static_cast<int>(lenSec * hostRate + 0.5);
+    initializeGainPan(pool, index);
+    initializeStepSize(pool, index, midiNote);
+    initializeEnvelope(pool, index, hostRate);
+    initializePosition(pool, index);
+    initializeDelay(pool, index, delayOffset, hostRate);
+    
+	// So instead of marking the bitset and copying all parameters to the UI at the end like this:
+	spawnedGrains = true;
+	spawnedGrainIndexes.set(index); // Mark this grain as spawned
 
-    pool.frames[index] = totalHostFrames  ;   // live countdown
-    pool.grainLength[index] = totalHostFrames  ;   // immutable copy
-    pool.gain[index] = juce::Decibels::decibelsToGain(dbGain + rng.nextFloat() * gainRand);
-    pool.pan[index] = panVal + (rng.nextFloat() * panRand);
-	pool.delay[index] = delayOffset + static_cast<int>((rng.nextFloat() * delayRandomRange)* hostRate + 0.5);   // sample-accurate start
+    // We simply call:
+	copyGrainToUI(index, pool); // Copy grain parameters to UI
+}
 
-    /*--------------------------------------------------------*/
-    /* 4. Step size  (rate-ratio × MIDI × fine-pitch)         */
-    /*--------------------------------------------------------*/
-    double step = srcRate / hostRate;             // neutralises samplerate mismatch
+// Helper function implementations:
+void GrainSpawner::initializeGainPan(GrainPool& pool, int index)
+{
+    pool.gain[index] = juce::Decibels::decibelsToGain(snapShot.dbGain + rng.nextFloat() * snapShot.gainRand);
+    pool.pan[index] = snapShot.panVal + (rng.nextFloat() * snapShot.panRand);
+}
 
-    /* MIDI transposition relative to chosen root note */
-    if (rootMidi >= 0 && rootMidi < 128 && rootMidi != midiNote)
-        step *= std::pow(2.0, (midiNote - rootMidi) / 12.0);
+void GrainSpawner::initializeStepSize(GrainPool& pool, int index, int midiNote)
+{
+    double step = sample->sampleRate / sampleRate;
 
-	auto pitch = pitchSemi + (rng.nextFloat() * pitchRand);   // random pitch offset
+    if (snapShot.rootMidi >= 0 && snapShot.rootMidi < 128 && snapShot.rootMidi != midiNote)
+        step *= std::pow(2.0, (midiNote - snapShot.rootMidi) / 12.0);
 
-    /* Additional continuous pitch parameter (semitones) */
+    float pitch = snapShot.pitchSemi + (rng.nextFloat() * snapShot.pitchRand);
     if (pitch != 0.0f)
         step *= std::pow(2.0, pitch / 12.0);
 
-    pool.step[index] = static_cast<float>(step);   // fine in float
+    pool.step[index] = static_cast<float>(step);
+}
 
-    /*----------------------------------------------------------*/
-    /* 5. Envelope */
-    /*--------------------------------------------------------*/
-	pool.envAttackFrames[index] = static_cast<int>(envAttack * hostRate + 0.5); // round
-	pool.envReleaseFrames[index] = static_cast<int>(envRelease * hostRate + 0.5); // round
-	pool.envAttackCurve[index] = envAttackCurve;
-	pool.envReleaseCurve[index] = envReleaseCurve;
+void GrainSpawner::initializeEnvelope(GrainPool& pool, int index, double hostRate)
+{
+    pool.envAttackFrames[index] = static_cast<int>(snapShot.envAttack * hostRate + 0.5);
+    pool.envReleaseFrames[index] = static_cast<int>(snapShot.envRelease * hostRate + 0.5);
+    pool.envAttackCurve[index] = snapShot.envAttackCurve;
+    pool.envReleaseCurve[index] = snapShot.envReleaseCurve;
+}
 
-	/*----------------------------------------------------------*/
-	/* 6. Sample position */
-    /*--------------------------------------------------------*/
-    
-	auto pos = posVal + (rng.nextFloat() * posRand);   // random position offset
+void GrainSpawner::initializePosition(GrainPool& pool, int index)
+{
+    float pos = snapShot.posVal + (rng.nextFloat() * snapShot.posRand);
+    pool.samplePos[index] = static_cast<int>((sample->buffer->getNumSamples() * pos) / 100.0f);
+}
 
-	const int nSrcFrames = sample->buffer->getNumSamples();          // last valid index = nSrcFrames-1
-	pool.samplePos[index] = nSrcFrames * pos/100; // sample offset in source
+void GrainSpawner::initializeDelay(GrainPool& pool, int index, int delayOffset, double hostRate)
+{
+    pool.delay[index] = delayOffset + static_cast<int>((rng.nextFloat() * snapShot.delayRandomRange) * hostRate + 0.5);
 }
 
 
+ParameterSnapshot GrainSpawner::loadSampleSnapShot()
+{
+    return ParameterSnapshot
+    {
+        .dbGain = params->grainVolume->load(),
+        .gainRand = params->grainVolumeRandomRange->load(),
+        .panVal = params->grainPan->load(),
+        .panRand = params->grainPanRandomRange->load(),
+        .pitchSemi = params->grainPitch->load(),
+        .pitchRand = params->grainPitchRandomRange->load(),
+		.posVal = params->grainPosition->load(),
+		.posRand = params->grainPositionRandomRange->load(),
+		.envAttack = params->envAttack->load(),
+		.envRelease = params->envRelease->load(),
+		.envSustainLength = params->envSustainLength->load(),
+		.envAttackCurve = params->envAttackCurve->load(),
+		.envReleaseCurve = params->envReleaseCurve->load(),
+		.delayRandomRange = params->delayRandomRange->load(),
+        .rootMidi = static_cast<int>(params->midiRootNote->load())
+    };
+}
+
+void GrainSpawner::copyGrainToUI(int index, GrainPool& pool)
+{
+
+}
