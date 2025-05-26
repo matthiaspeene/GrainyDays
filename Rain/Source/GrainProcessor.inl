@@ -154,5 +154,5 @@ void GrainProcessor::process(GrainPool& pool,
             pool.active.reset(i);
     }
 
-	DBG("GrainProcessor::process: " << activeGrains << " active grains");
+	//DBG("GrainProcessor::process: " << activeGrains << " active grains");
 }

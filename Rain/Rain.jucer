@@ -7,10 +7,18 @@
   <MAINGROUP id="A6zpsG" name="Rain">
     <GROUP id="{6D33086C-A884-5700-8BF1-E6DDBEA81B5F}" name="Source">
       <GROUP id="{D90834E8-7918-09ED-A63B-9EA8058A9A58}" name="UI">
+        <FILE id="r5Fjg2" name="GrainVisualData.h" compile="0" resource="0"
+              file="Source/GrainVisualData.h"/>
+        <FILE id="LWQdUA" name="GrainVisualizer.cpp" compile="1" resource="0"
+              file="Source/GrainVisualizer.cpp"/>
+        <FILE id="sBH7im" name="GrainVisualizer.h" compile="0" resource="0"
+              file="Source/GrainVisualizer.h"/>
         <FILE id="dhu84D" name="WaveDisplay.cpp" compile="1" resource="0" file="Source/WaveDisplay.cpp"/>
         <FILE id="Wb96qR" name="WaveDisplay.h" compile="0" resource="0" file="Source/WaveDisplay.h"/>
       </GROUP>
       <GROUP id="{FE5483DC-4B80-919E-1189-1F9288318C84}" name="Extras">
+        <FILE id="Uwyt0x" name="GlobalVariables.h" compile="0" resource="0"
+              file="Source/GlobalVariables.h"/>
         <FILE id="JFBGkf" name="LoadedSample.h" compile="0" resource="0" file="Source/LoadedSample.h"/>
         <FILE id="IK95og" name="OSCGyroReceiver.cpp" compile="1" resource="0"
               file="Source/OSCGyroReceiver.cpp"/>

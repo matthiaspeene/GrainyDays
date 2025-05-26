@@ -6,9 +6,6 @@
 #include "ParameterBank.h"
 #include "OSCGyroReceiver.h"
 
-//==============================================================================
-/**
-*/
 class RainAudioProcessor  : public juce::AudioProcessor
 {
 public:

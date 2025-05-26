@@ -21,8 +21,10 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
                 << " samples at " << sample.sampleRate << " Hz");
 
 			audioProcessor.getEngine().setLoadedSample(sample);
+			gSampleSize = sample.buffer->getNumSamples();
         });
 
+	grainVisualizer = std::make_unique<GrainVisualizer>();
 
     setSize (400, 300);
 }
@@ -41,4 +43,7 @@ void RainAudioProcessorEditor::resized()
 {
     waveformDisplay->setBounds(getLocalBounds());
     addAndMakeVisible(*waveformDisplay);
+
+	grainVisualizer->setBounds(getLocalBounds()); 
+	addAndMakeVisible(*grainVisualizer);
 }

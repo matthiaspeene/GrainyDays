@@ -1,4 +1,4 @@
-﻿#include "OSCGyroReceiver.h"
+#include "OSCGyroReceiver.h"
 
 OSCGyroReceiver::OSCGyroReceiver(int listenPort)
 {
@@ -45,9 +45,11 @@ void OSCGyroReceiver::oscMessageReceived(const juce::OSCMessage& m)
 		DBG("Unknown OSC message: " << addr);
 	}
 
+    /* 
 	DBG("Received OSC message: " << addr
 		<< " | gyro: (" << gyroX.load() << ", " << gyroY.load() << ", " << gyroZ.load() << ")"
 		<< " | velocity: " << velocity.load()
 		<< " | rotation: (" << rotX.load() << ", " << rotY.load() << ", " << rotZ.load() << ")"
-    );
+
+    );*/
 }

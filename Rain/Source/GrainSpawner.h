@@ -55,7 +55,6 @@ private:
 	// UI helpers -------------------------------------------------------------
 	void copyGrainToUI(int index, GrainPool& pool);
 
-
 	juce::Random rng; // If other parts need this too move shared instance to the engine
 
     /* State ----------------------------------------------------------------*/
@@ -70,7 +69,4 @@ private:
 
     //snapshot
 	ParameterSnapshot snapShot;
-
-	bool spawnedGrains = false; // Flag to indicate if grains were spawned in this block    
-	std::bitset<GrainPool::kMaxGrains> spawnedGrainIndexes = { false };
 };

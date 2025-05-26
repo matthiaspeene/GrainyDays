@@ -1,5 +1,8 @@
 // GrainSpawner.cpp – implementation -------------------------------------------
 #include "GrainSpawner.h"
+#include "GrainVisualData.h"
+#include "PluginProcessor.h"
+#include "GlobalVariables.h"
 
 void GrainSpawner::prepare(double sampleRate, int maxBlockSize)
 {
@@ -25,8 +28,6 @@ void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
     GrainPool& pool, float grainsPerSecond)
 {
     currentSampleOffset = 0;                // start at the first frame
-	spawnedGrains = false;                  // reset grain spawn flag
-
 	snapShot = loadSampleSnapShot(); // take a snapshot of the current parameters
 
     // Walk MIDI events in ascending sample order
@@ -131,12 +132,7 @@ void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset, int m
     initializePosition(pool, index);
     initializeDelay(pool, index, delayOffset, hostRate);
     
-	// So instead of marking the bitset and copying all parameters to the UI at the end like this:
-	spawnedGrains = true;
-	spawnedGrainIndexes.set(index); // Mark this grain as spawned
-
-    // We simply call:
-	copyGrainToUI(index, pool); // Copy grain parameters to UI
+	copyGrainToUI(index, pool);
 }
 
 // Helper function implementations:
@@ -204,5 +200,15 @@ ParameterSnapshot GrainSpawner::loadSampleSnapShot()
 
 void GrainSpawner::copyGrainToUI(int index, GrainPool& pool)
 {
-
+	gGrainVisualData.samplePos[index] = pool.samplePos[index];
+    gGrainVisualData.startTime[index] = gTotalSamplesRendered.load(std::memory_order_relaxed) + static_cast<uint64_t>(pool.delay[index]);
+    DBG("StartTime: " << gGrainVisualData.startTime[index]);
+    gGrainVisualData.length[index] = pool.frames[index];
+	gGrainVisualData.step[index] = pool.step[index];
+	gGrainVisualData.envAttackTime[index] = pool.envAttackFrames[index];
+	gGrainVisualData.envReleaseTime[index] = pool.envReleaseFrames[index];
+	gGrainVisualData.envAttackCurve[index] = pool.envAttackCurve[index];
+	gGrainVisualData.envReleaseCurve[index] = pool.envReleaseCurve[index];
+	gGrainVisualData.maxGain[index] = pool.gain[index];
+	gGrainVisualData.active[index].store(true, std::memory_order_relaxed); // Activate grain
 }
