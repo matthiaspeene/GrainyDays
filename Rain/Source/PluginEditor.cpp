@@ -26,7 +26,7 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
 
 	grainVisualizer = std::make_unique<GrainVisualizer>();
 
-    setSize (400, 300);
+    setSize (570, 300);
 }
 
 RainAudioProcessorEditor::~RainAudioProcessorEditor()

@@ -5,10 +5,13 @@
 void ParameterBank::loadFromManager(ParameterManager& mgr)
 {
     using namespace ParamID;
+
+	playMode = mgr.getRawParameterValue(ParamID::playMode);
+
 	gyroStrength = mgr.getRawParameterValue(ParamID::gyroStrength);
 
     masterGain = mgr.getRawParameterValue(ParamID::masterGain);
-    //grainDensity = mgr.getRawParameterValue(ParamID::grainDensity);
+    grainDensity = mgr.getRawParameterValue(ParamID::grainDensity);
 	delayRandomRange = mgr.getRawParameterValue(ParamID::delayRandomRange);
 
 	midiRootNote = mgr.getRawParameterValue(ParamID::midiRootNote);
@@ -29,4 +32,16 @@ void ParameterBank::loadFromManager(ParameterManager& mgr)
 	envRelease = mgr.getRawParameterValue(ParamID::envRelease);
 	envAttackCurve = mgr.getRawParameterValue(ParamID::envAttackCurve);
 	envReleaseCurve = mgr.getRawParameterValue(ParamID::envReleaseCurve);
+
+	velocityModGrainDensity = mgr.getRawParameterValue(ParamID::velocityModGrainDensity);
+	velocityModGrainPitch = mgr.getRawParameterValue(ParamID::velocityModGrainPitch);
+	velocityModGrainVolume = mgr.getRawParameterValue(ParamID::velocityModGrainVolume);
+	velocityModGrainPan = mgr.getRawParameterValue(ParamID::velocityModGrainPan);
+	velocityModGrainPosition = mgr.getRawParameterValue(ParamID::velocityModGrainPosition);
+
+	rotZModGrainDensity = mgr.getRawParameterValue(ParamID::rotZModGrainDensity);
+	rotZModGrainPitch = mgr.getRawParameterValue(ParamID::rotZModGrainPitch);
+	rotZModGrainVolume = mgr.getRawParameterValue(ParamID::rotZModGrainVolume);
+	rotZModGrainPan = mgr.getRawParameterValue(ParamID::rotZModGrainPan);
+	rotZModGrainPosition = mgr.getRawParameterValue(ParamID::rotZModGrainPosition);
 }

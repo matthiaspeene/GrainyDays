@@ -6,10 +6,10 @@
 
 /* Helpers ───────────────────────────────────────────────────────────────────────────*/
 struct ParameterSnapshot {
-    float dbGain, gainRand;
-    float panVal, panRand;
-    float pitchSemi, pitchRand;
-    float posVal, posRand;
+    float dbGain, gainRand, gainMod;
+    float panVal, panRand, panMod;
+    float pitchSemi, pitchRand, pitchMod;
+    float posVal, posRand, posMod;
     float envAttack, envRelease, envSustainLength;
     float envAttackCurve, envReleaseCurve;
     float delayRandomRange;
@@ -24,7 +24,7 @@ public:
     void prepare(double sampleRate, int maxBlockSize);
     void setParameterBank(const ParameterBank* params) noexcept;
 
-    void processMidi(const juce::MidiBuffer& midi, GrainPool& pool, float grainsPerSecond);
+    void processMidi(const juce::MidiBuffer& midi, GrainPool& pool);
 
     void setSample(const LoadedSample* source);
 
@@ -39,7 +39,9 @@ private:
     static constexpr int kNumMidiNotes = 128;
 
     // Core helpers -----------------------------------------------------------
-    void advanceTime(int numSamples, GrainPool& pool, float grainsPerSecond);
+
+    void updateRootGate(bool playRootNow);
+    void advanceTime(int numSamples, GrainPool& pool);
     void handleNoteOn(int midiNote);
     void handleNoteOff(int midiNote);
 
@@ -51,6 +53,8 @@ private:
     void initializePosition(GrainPool& pool, int index);
     void initializeDelay(GrainPool& pool, int index, int delayOffset, double hostRate);
     ParameterSnapshot loadSampleSnapShot();
+
+    bool playingRootNote = false;
 
 	// UI helpers -------------------------------------------------------------
 	void copyGrainToUI(int index, GrainPool& pool);

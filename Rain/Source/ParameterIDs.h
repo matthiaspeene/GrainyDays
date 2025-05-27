@@ -10,6 +10,8 @@ namespace ParamID
     inline constexpr const char* grainDensity = "grainDensity";
 	inline constexpr const char* delayRandomRange = "delayRandomRange"; // in seconds
 
+	inline constexpr const char* playMode = "playMode";
+
 	// ───────── Voice group
 	inline constexpr const char* midiRootNote = "midiRootNote";
 
@@ -34,7 +36,22 @@ namespace ParamID
 	inline constexpr const char* envAttackCurve = "envAttackCurve";
 	inline constexpr const char* envReleaseCurve = "envReleaseCurve";
 
+	// ───────── Modulation group
+	inline constexpr const char* velocityModGrainDensity = "velocityModGrainDensity"; // in grains per second
+	inline constexpr const char* velocityModGrainPitch = "velocityModGrainPitch"; // in semitones
+	inline constexpr const char* velocityModGrainVolume = "velocityModGrainVolume"; // in dB
+	inline constexpr const char* velocityModGrainPan = "velocityModGrainPan"; // in %
+	inline constexpr const char* velocityModGrainPosition = "velocityModGrainPosition"; // in %
+
+	inline constexpr const char* rotZModGrainDensity = "rotZModGrainDensity"; // in grains per second
+	inline constexpr const char* rotZModGrainPitch = "rotZModGrainPitch"; // in semitones
+	inline constexpr const char* rotZModGrainVolume = "rotZModGrainVolume"; // in dB
+	inline constexpr const char* rotZModGrainPan = "rotZModGrainPan"; // in %
+	inline constexpr const char* rotZModGrainPosition = "rotZModGrainPosition"; // in %
+
     // ───────── non-exposed (internal / thread-safe)
     inline constexpr const char* currentGrainIndex = "currentGrainIndex";
     inline constexpr const char* randomSeed = "randomSeed";
+
+
 }

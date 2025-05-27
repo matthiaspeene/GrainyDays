@@ -35,13 +35,19 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
         ParameterID{ masterGain, 1 }, "Master Gain",
         linRange(-60.f, 0.f, 0.1f), 0.f, " dB"));
 
-    //layout.add(std::make_unique<AudioParameterFloat>(
-        //ParameterID{ grainDensity, 1 }, "Grain Density",
-        //linRange(1.f, 200.f, 1.f, 0.5f), 50.f, " grains/s"));
+    layout.add(std::make_unique<AudioParameterFloat>(
+        ParameterID{ grainDensity, 1 }, "Minimum Density",
+        linRange(1.f, 200.f, 1.f, 0.5f), 50.f, " grains/s"));
 
 	layout.add(std::make_unique<AudioParameterFloat>(
 		ParameterID{ delayRandomRange, 1 }, "Delay Random Range",
 		linRange(0.f, 1.f, 0.01f), 0.0f, " s"));
+
+	layout.add(std::make_unique<AudioParameterChoice>(
+		ParameterID{ playMode, 1 }, "Play Mode",
+		StringArray{ "Midi", "Gyro", "Rotation" }, 0));
+
+	// ─── Modulation parameters ────────────────────────────────────────────
 
 	// ─── Voice group ──────────────────────────────────────────────────────
 	layout.add(std::make_unique<AudioParameterFloat>(ParameterID{ midiRootNote, 1 },
@@ -113,6 +119,52 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
 		linRange(0.1f, 10.f, 0.01f), 1.0f));
 
 	layout.add(std::move(envGroup));
+
+	auto modGroup = std::make_unique<AudioProcessorParameterGroup>(
+		"modGroup", "Modulation", "|");
+	// ─── Modulation group ────────────────────────────────────────────────
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ velocityModGrainDensity, 1 }, "Velocity Mod Density",
+		linRange(-200.f, 200.f), 0.f, " grains/s"));
+
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ velocityModGrainPitch, 1 }, "Velocity Mod Pitch",
+		linRange(-24.f, 24.f, 0.1f), 0.0f, " st"));
+
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ velocityModGrainVolume, 1 }, "Velocity Mod Volume",
+		linRange(-48.f, 64.f, 0.1f), 0.0f, " dB"));
+
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ velocityModGrainPan, 1 }, "Velocity Mod Pan",
+		linRange(-1.f, 1.f, 0.01f), 0.0f, " %"));
+
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ velocityModGrainPosition, 1 }, "Velocity Mod Position",
+		linRange(-100.f, 100.f, 0.01f), 0.0f, " %"));
+
+	// Rotation
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ rotZModGrainDensity, 1 }, "RotZ Mod Density",
+		linRange(-200.f, 200.f), 0.f, " grains/s"));
+
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ rotZModGrainPitch, 1 }, "RotZ Mod Pitch",
+		linRange(-24.f, 24.f, 0.1f), 0.0f, " st"));
+
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ rotZModGrainVolume, 1 }, "RotZ Mod Volume",
+		linRange(-48.f, 64.f, 0.1f), 0.0f, " dB"));
+
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ rotZModGrainPan, 1 }, "RotZ Mod Pan",
+		linRange(-1.f, 1.f, 0.01f), 0.0f, " %"));
+
+	modGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ rotZModGrainPosition, 1 }, "RotZ Mod Position",
+		linRange(-100.f, 100.f, 0.01f), 0.0f, " %"));
+
+	layout.add(std::move(modGroup));
 
     // ─── Filter group ────────────────────────────────────────────────────
     auto filterGroup = std::make_unique<AudioProcessorParameterGroup>(

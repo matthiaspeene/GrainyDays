@@ -17,7 +17,7 @@ public:
 
     void prepare(double sampleRate, int maxBlockSize);
     void reset();
-    void process(juce::AudioBuffer<float>& output, const juce::MidiBuffer& midi, float grainsPerSecond);
+    void process(juce::AudioBuffer<float>& output, const juce::MidiBuffer& midi);
 
     void setLoadedSample(const LoadedSample& sample);
 

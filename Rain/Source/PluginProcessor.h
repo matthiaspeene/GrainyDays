@@ -52,6 +52,7 @@ public:
 private:
 	// ------------------------------------------------------ Functions
     void applyLimiter(juce::AudioBuffer<float>& buffer);
+    void updateMods();
 
     // ------------------------------------------------------ parameters (UI)
     ParameterManager parameterManager{ *this };   // owns the APVTS the host sees

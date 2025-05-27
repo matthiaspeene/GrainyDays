@@ -22,31 +22,86 @@ void GrainSpawner::setParameterBank(const ParameterBank* params) noexcept
     this->params = params;
 }
 
-// ────────────────────────────────────────────────────────────────
-// Public entry point – called once per audio block
-void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
-    GrainPool& pool, float grainsPerSecond)
+// Mode enum
+enum class PlayMode
 {
-    currentSampleOffset = 0;                // start at the first frame
-	snapShot = loadSampleSnapShot(); // take a snapshot of the current parameters
+    Midi = 0,     // MIDI note mode
+    Gyro = 1,     // Gyroscope mode
+    Rotation = 2  // Rotation mode
+};
 
-    // Walk MIDI events in ascending sample order
-    for (const auto metadata : midi)
+inline bool shouldPlayRoot(const ParameterBank& p, PlayMode mode) noexcept
+{
+    switch (mode)
     {
-        const auto msg = metadata.getMessage();
-        const int  samplePos = metadata.samplePosition;
+    case PlayMode::Gyro:
+    {
+        return (p.velocity > 0.f);
+    }
+    case PlayMode::Rotation:
+    {
+		DBG("GrainSpawner: Checking rotation play mode with rotZ = " << p.rotZ);
+        return (p.rotZ > 0.f);
+    }
+    default:                 
+        return false;          // MIDI mode
+    }
+}
 
-        // 2-A · First, schedule grains up to this event
-        advanceTime(samplePos - currentSampleOffset, pool, grainsPerSecond);
-        currentSampleOffset = samplePos;
+// ────────────────────────────────────────────────────────────────
+// Entry point – called once per audio block
+void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
+    GrainPool& pool)
+{
+    const PlayMode mode = static_cast<PlayMode>(params->playMode->load(std::memory_order_relaxed));
+    const bool     root = (mode != PlayMode::Midi);
+    const bool     gate = shouldPlayRoot(*params, mode);
 
-        // 2-B · Then handle the MIDI itself
-        if (msg.isNoteOn())      handleNoteOn(msg.getNoteNumber());
-        else if (msg.isNoteOff()) handleNoteOff(msg.getNoteNumber());
+    updateRootGate(gate);
+
+    currentSampleOffset = 0;
+	snapShot = loadSampleSnapShot(); // Take a snapshot of the current parameters for fast thread safe use
+
+    // Walk MIDI events in ascending order
+    for (const auto meta : midi)
+    {
+        const int pos = meta.samplePosition;
+        advanceTime(pos - currentSampleOffset, pool);
+        currentSampleOffset = pos;
+
+        const auto msg = meta.getMessage();
+        if (root)
+        {
+            if (msg.isNoteOff()) handleNoteOff(msg.getNoteNumber());
+        }
+        else
+        {
+            if (msg.isNoteOn())      handleNoteOn(msg.getNoteNumber());
+            else if (msg.isNoteOff()) handleNoteOff(msg.getNoteNumber());
+        }
     }
 
-    // 2-C · Finish the tail of the block
-    advanceTime(maxBlockSize - currentSampleOffset, pool, grainsPerSecond);
+    // Finish the tail of the block
+    advanceTime(maxBlockSize - currentSampleOffset, pool);
+}
+
+void GrainSpawner::updateRootGate(bool playRootNow)
+{
+    if (playRootNow == playingRootNote) return;           // nothing changed
+
+	playingRootNote = playRootNow;                        // update state
+
+    const int root = params->midiRootNote->load(std::memory_order_relaxed);
+    if (playRootNow)
+    {
+		DBG("GrainSpawner: Starting root note " << root);
+        handleNoteOn(root);
+    }
+    else
+    {
+		DBG("GrainSpawner: Stopping root note " << root);
+        handleNoteOff(root);
+    }
 }
 
 void GrainSpawner::setSample(const LoadedSample* source)
@@ -56,14 +111,11 @@ void GrainSpawner::setSample(const LoadedSample* source)
 
 // ────────────────────────────────────────────────────────────────
 // Move time forward and drop grains for every active voice
-void GrainSpawner::advanceTime(int numSamples, GrainPool& pool, float grainsPerSecond)
+void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
 {
     if (numSamples <= 0) return;
 
-    if (grainsPerSecond < 1) // don't procces new grains at low gyro
-        return;
-
-    float samplesPerGrain = sampleRate / grainsPerSecond;
+	const float grainsPerSec = sampleRate / (params->grainDensity->load(std::memory_order_relaxed));
 
     for (auto& v : voices)
     {
@@ -81,7 +133,7 @@ void GrainSpawner::advanceTime(int numSamples, GrainPool& pool, float grainsPerS
                 spawnGrain(index, pool, delay, v.midiNote);   // sample-accurate start
             // else { /* overflow → graceful drop */ }
 
-			cursor += samplesPerGrain;   // next grain in this voice
+			cursor += grainsPerSec;   // next grain in this voice
         }
 
         v.cursor = cursor - numSamples;     // spill-over into next block
@@ -138,8 +190,8 @@ void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset, int m
 // Helper function implementations:
 void GrainSpawner::initializeGainPan(GrainPool& pool, int index)
 {
-    pool.gain[index] = juce::Decibels::decibelsToGain(snapShot.dbGain + rng.nextFloat() * snapShot.gainRand);
-    pool.pan[index] = snapShot.panVal + (rng.nextFloat() * snapShot.panRand);
+    pool.gain[index] = juce::Decibels::decibelsToGain(snapShot.dbGain + rng.nextFloat() * snapShot.gainRand + snapShot.gainMod);
+    pool.pan[index] = snapShot.panVal + (rng.nextFloat() * snapShot.panRand) + snapShot.panMod;
 }
 
 void GrainSpawner::initializeStepSize(GrainPool& pool, int index, int midiNote)
@@ -149,7 +201,7 @@ void GrainSpawner::initializeStepSize(GrainPool& pool, int index, int midiNote)
     if (snapShot.rootMidi >= 0 && snapShot.rootMidi < 128 && snapShot.rootMidi != midiNote)
         step *= std::pow(2.0, (midiNote - snapShot.rootMidi) / 12.0);
 
-    float pitch = snapShot.pitchSemi + (rng.nextFloat() * snapShot.pitchRand);
+    float pitch = snapShot.pitchSemi + (rng.nextFloat() * snapShot.pitchRand) + snapShot.pitchMod;
     if (pitch != 0.0f)
         step *= std::pow(2.0, pitch / 12.0);
 
@@ -166,7 +218,7 @@ void GrainSpawner::initializeEnvelope(GrainPool& pool, int index, double hostRat
 
 void GrainSpawner::initializePosition(GrainPool& pool, int index)
 {
-    float pos = snapShot.posVal + (rng.nextFloat() * snapShot.posRand);
+    float pos = snapShot.posVal + (rng.nextFloat() * snapShot.posRand) + snapShot.posMod;
     pool.samplePos[index] = static_cast<int>((sample->buffer->getNumSamples() * pos) / 100.0f);
 }
 
@@ -182,12 +234,16 @@ ParameterSnapshot GrainSpawner::loadSampleSnapShot()
     {
         .dbGain = params->grainVolume->load(),
         .gainRand = params->grainVolumeRandomRange->load(),
+		.gainMod = params->grainVolumeMod,
         .panVal = params->grainPan->load(),
         .panRand = params->grainPanRandomRange->load(),
+		.panMod = params->grainPanMod,
         .pitchSemi = params->grainPitch->load(),
         .pitchRand = params->grainPitchRandomRange->load(),
+		.pitchMod = params->grainPitchMod,
 		.posVal = params->grainPosition->load(),
 		.posRand = params->grainPositionRandomRange->load(),
+		.posMod = params->grainPositionMod,
 		.envAttack = params->envAttack->load(),
 		.envRelease = params->envRelease->load(),
 		.envSustainLength = params->envSustainLength->load(),
@@ -202,7 +258,6 @@ void GrainSpawner::copyGrainToUI(int index, GrainPool& pool)
 {
 	gGrainVisualData.samplePos[index] = pool.samplePos[index];
     gGrainVisualData.startTime[index] = gTotalSamplesRendered.load(std::memory_order_relaxed) + static_cast<uint64_t>(pool.delay[index]);
-    DBG("StartTime: " << gGrainVisualData.startTime[index]);
     gGrainVisualData.length[index] = pool.frames[index];
 	gGrainVisualData.step[index] = pool.step[index];
 	gGrainVisualData.envAttackTime[index] = pool.envAttackFrames[index];

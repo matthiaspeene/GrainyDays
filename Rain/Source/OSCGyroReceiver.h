@@ -18,22 +18,14 @@ public:
     OSCGyroReceiver(int listenPort = 9000);
     ~OSCGyroReceiver() override;
 
-    float getGyroX() const noexcept { return gyroX.load(std::memory_order_relaxed); }
-    float getGyroY() const noexcept { return gyroY.load(std::memory_order_relaxed); }
-    float getGyroZ() const noexcept { return gyroZ.load(std::memory_order_relaxed); }
-    float getVelocity() const noexcept { return velocity.load(std::memory_order_relaxed); }
-	float getRotX() const noexcept { return rotX.load(std::memory_order_relaxed); }
-	float getRotY() const noexcept { return rotY.load(std::memory_order_relaxed); }
-	float getRotZ() const noexcept { return rotZ.load(std::memory_order_relaxed); }
+    void setParameterBank(class ParameterBank* bank)
+    {
+		parameterBank = bank;
+    };
 
 private:
-    std::atomic<float> gyroX{ 0.0f };
-    std::atomic<float> gyroY{ 0.0f };
-    std::atomic<float> gyroZ{ 0.0f };
-    std::atomic<float> velocity{ 0.0f };
-	std::atomic<float> rotX{ 0.0f };
-	std::atomic<float> rotY{ 0.0f };
-	std::atomic<float> rotZ{ 0.0f };
+
+	ParameterBank* parameterBank = nullptr;
 
     void oscMessageReceived(const juce::OSCMessage& message) override;
 };
