@@ -38,7 +38,7 @@ void GrainProcessor::process(GrainPool& pool,
         std::size_t      gi,
         int              fLeft) -> float
         {
-            const int totalN = p.grainLength[gi];
+            const int totalN = p.length[gi];
             const int atkN = p.envAttackFrames[gi];
             const int relN = p.envReleaseFrames[gi];
 
@@ -137,7 +137,7 @@ void GrainProcessor::process(GrainPool& pool,
                 /* sample fetch ----------------------------------*/
                 const int   idx = static_cast<int>(rp);
                 const float frac = static_cast<float>(rp - idx);
-                const float samp = src[idx] + frac * (src[idx + 1] - src[idx]);
+				const float samp = src[idx] + frac * (src[idx + 1] - src[idx]); // point of out of bounds
 
                 dst[s] += gCh * e * samp;
                 rp += step;

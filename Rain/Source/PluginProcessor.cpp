@@ -74,7 +74,7 @@ void RainAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
     applyLimiter(buffer);
 
 	// Update the global sample counter
-    gTotalSamplesRendered.fetch_add(buffer.getNumSamples()/buffer.getNumChannels(), std::memory_order_relaxed);
+    gTotalSamplesRendered.fetch_add(buffer.getNumSamples(), std::memory_order_relaxed);
 }
 
 #pragma endregion

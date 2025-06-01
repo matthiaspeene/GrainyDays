@@ -40,7 +40,7 @@ inline bool shouldPlayRoot(const ParameterBank& p, PlayMode mode) noexcept
     }
     case PlayMode::Rotation:
     {
-		DBG("GrainSpawner: Checking rotation play mode with rotZ = " << p.rotZ);
+		//DBG("GrainSpawner: Checking rotation play mode with rotZ = " << p.rotZ);
         return (p.rotZ > 0.f);
     }
     default:                 
@@ -175,8 +175,13 @@ void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset, int m
     const double lenSec = snapShot.envAttack + snapShot.envSustainLength + snapShot.envRelease;
     const int totalHostFrames = static_cast<int>(lenSec * hostRate + 0.5);
 
+	DBG("GrainSpawner: Spawning grain at index " << index
+		<< " with delay " << delayOffset
+		<< ", total frames: " << totalHostFrames
+		<< ", MIDI note: " << midiNote);
+
     pool.frames[index] = totalHostFrames;
-    pool.grainLength[index] = totalHostFrames;
+    pool.length[index] = totalHostFrames;
 
     initializeGainPan(pool, index);
     initializeStepSize(pool, index, midiNote);
@@ -219,7 +224,10 @@ void GrainSpawner::initializeEnvelope(GrainPool& pool, int index, double hostRat
 void GrainSpawner::initializePosition(GrainPool& pool, int index)
 {
     float pos = snapShot.posVal + (rng.nextFloat() * snapShot.posRand) + snapShot.posMod;
-    pool.samplePos[index] = static_cast<int>((sample->buffer->getNumSamples() * pos) / 100.0f);
+
+	if (pos < 0.0f) pos = 0.0f; // Clamp to 0%
+	if (pos > 100.0f) pos = 100.0f; // Clamp to 100%
+    pool.samplePos[index] = static_cast<int>(sample->buffer->getNumSamples() * (pos/100));
 }
 
 void GrainSpawner::initializeDelay(GrainPool& pool, int index, int delayOffset, double hostRate)
@@ -256,9 +264,14 @@ ParameterSnapshot GrainSpawner::loadSampleSnapShot()
 
 void GrainSpawner::copyGrainToUI(int index, GrainPool& pool)
 {
+	if (gGrainVisualData.active[index].load(std::memory_order_relaxed))
+	{
+		DBG("GrainSpawner: Overwriting existing grain at index " << index);
+	}
+
 	gGrainVisualData.samplePos[index] = pool.samplePos[index];
     gGrainVisualData.startTime[index] = gTotalSamplesRendered.load(std::memory_order_relaxed) + static_cast<uint64_t>(pool.delay[index]);
-    gGrainVisualData.length[index] = pool.frames[index];
+    gGrainVisualData.length[index] = pool.length[index];
 	gGrainVisualData.step[index] = pool.step[index];
 	gGrainVisualData.envAttackTime[index] = pool.envAttackFrames[index];
 	gGrainVisualData.envReleaseTime[index] = pool.envReleaseFrames[index];

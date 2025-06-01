@@ -48,6 +48,7 @@ public:
 
 	//==============================================================================
 	GrainEngine& getEngine() { return engine; }
+	ParameterManager& getParameterManager() { return parameterManager; }
 
 private:
 	// ------------------------------------------------------ Functions

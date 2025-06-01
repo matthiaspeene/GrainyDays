@@ -26,32 +26,35 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
 {
     AudioProcessorValueTreeState::ParameterLayout layout;
 
+	/* Disabled
 	layout.add(std::make_unique<AudioParameterFloat>(
 		ParameterID{ gyroStrength, 1 }, "Gyro Strength",
 		linRange(0.f, 200.f, 0.01f), 0.5f, " *"));
 
-    // ─── top-level params ────────────────────────────────────────────────
     layout.add(std::make_unique<AudioParameterFloat>(
         ParameterID{ masterGain, 1 }, "Master Gain",
         linRange(-60.f, 0.f, 0.1f), 0.f, " dB"));
+	*/
 
-    layout.add(std::make_unique<AudioParameterFloat>(
-        ParameterID{ grainDensity, 1 }, "Minimum Density",
-        linRange(1.f, 200.f, 1.f, 0.5f), 50.f, " grains/s"));
+
+	layout.add(std::make_unique<AudioParameterFloat>(
+		ParameterID{ grainDensity, 1 }, "Minimum Density",
+		linRange(1.f, 6000.f, 1.f, 0.5f), 50.f, " grains/s"));
 
 	layout.add(std::make_unique<AudioParameterFloat>(
 		ParameterID{ delayRandomRange, 1 }, "Delay Random Range",
 		linRange(0.f, 1.f, 0.01f), 0.0f, " s"));
 
+
+	// Drop down menu
 	layout.add(std::make_unique<AudioParameterChoice>(
 		ParameterID{ playMode, 1 }, "Play Mode",
 		StringArray{ "Midi", "Gyro", "Rotation" }, 0));
 
-	// ─── Modulation parameters ────────────────────────────────────────────
-
-	// ─── Voice group ──────────────────────────────────────────────────────
+	// Number box, no slider
 	layout.add(std::make_unique<AudioParameterFloat>(ParameterID{ midiRootNote, 1 },
 		"Root Note", linRange(0.f, 127.f, 1.f), 60.f, " MIDI note"));
+
 
     // ─── Grain group ─────────────────────────────────────────────────────
     auto grainGroup = std::make_unique<AudioProcessorParameterGroup>(
@@ -166,6 +169,7 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
 
 	layout.add(std::move(modGroup));
 
+	/* Disabled
     // ─── Filter group ────────────────────────────────────────────────────
     auto filterGroup = std::make_unique<AudioProcessorParameterGroup>(
         "filterGroup", "Filter", "|");
@@ -179,6 +183,7 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
         linRange(0.1f, 10.f, 0.01f, 0.5f), 1.0f));
 
     layout.add(std::move(filterGroup));
+	*/
 
     return layout;                            // ← ready to pass to APVTS
 }

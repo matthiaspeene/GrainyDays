@@ -11,10 +11,10 @@ struct ParameterBank
 	std::atomic<float>* playMode = nullptr; // 0 = Midi, 1 = Gyro, 2 = Rotation
 
 	// Gyro Param
-	std::atomic<float>* gyroStrength = nullptr;
+	//std::atomic<float>* gyroStrength = nullptr;
 
 	// Global parameters
-    std::atomic<float>* masterGain = nullptr;
+    //std::atomic<float>* masterGain = nullptr;
     std::atomic<float>* grainDensity = nullptr;
 	std::atomic<float>* delayRandomRange = nullptr; // in seconds
 
@@ -39,8 +39,8 @@ struct ParameterBank
 	std::atomic<float>* envReleaseCurve = nullptr; // Power
     
     // Filter parameters
-    std::atomic<float>* filterCutoff = nullptr;
-    std::atomic<float>* filterResonance = nullptr;
+    //std::atomic<float>* filterCutoff = nullptr;
+    //std::atomic<float>* filterResonance = nullptr;
 
 	std::atomic<float>* velocityModGrainDensity = nullptr; // in grains per second
 	std::atomic<float>* velocityModGrainPitch = nullptr; // in semitones

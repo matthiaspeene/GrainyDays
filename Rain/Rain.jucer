@@ -13,6 +13,8 @@
               file="Source/GrainVisualizer.cpp"/>
         <FILE id="sBH7im" name="GrainVisualizer.h" compile="0" resource="0"
               file="Source/GrainVisualizer.h"/>
+        <FILE id="izNo1i" name="ParameterSlider.h" compile="0" resource="0"
+              file="Source/ParameterSlider.h"/>
         <FILE id="dhu84D" name="WaveDisplay.cpp" compile="1" resource="0" file="Source/WaveDisplay.cpp"/>
         <FILE id="Wb96qR" name="WaveDisplay.h" compile="0" resource="0" file="Source/WaveDisplay.h"/>
       </GROUP>
