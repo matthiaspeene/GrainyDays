@@ -3,7 +3,7 @@
 namespace ParamID
 {
 
-	inline constexpr const char* gyroStrength = "gyroStrength";
+	//inline constexpr const char* gyroStrength = "gyroStrength";
 
     // ───────── top-level
     inline constexpr const char* masterGain = "masterGain";

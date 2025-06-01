@@ -223,7 +223,7 @@ void GrainSpawner::initializeEnvelope(GrainPool& pool, int index, double hostRat
 
 void GrainSpawner::initializePosition(GrainPool& pool, int index)
 {
-    float pos = snapShot.posVal + (rng.nextFloat() * snapShot.posRand) + snapShot.posMod;
+    float pos = snapShot.posVal + (rng.nextFloat() * (snapShot.posRand - snapShot.posVal)) + snapShot.posMod;
 
 	if (pos < 0.0f) pos = 0.0f; // Clamp to 0%
 	if (pos > 100.0f) pos = 100.0f; // Clamp to 100%

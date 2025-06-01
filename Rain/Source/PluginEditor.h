@@ -13,6 +13,7 @@
 #include "WaveDisplay.h"
 #include "GrainVisualizer.h"
 #include "ParameterSlider.h"
+#include "ParameterRangeSlider.h"
 #include "ParameterIDs.h"
 
 
@@ -35,9 +36,15 @@ private:
 	std::unique_ptr<WaveDisplay> waveformDisplay;
 	std::unique_ptr<GrainVisualizer> grainVisualizer;
 
-	// Parameter sliders
-	ParameterSlider startPosSlider{ apvts, ParamID::grainPosition, juce::Slider::LinearBar, false};
-	ParameterSlider startPosRandomSlider{ apvts, ParamID::grainPositionRandomRange, juce::Slider::LinearBar, false };
-    
+	//juce::GroupComponent positionGroup{ "positionGroup", "Grain Position" };
+	ParameterRangeSlider startPosSlider{ apvts, ParamID::grainPosition, ParamID::grainPositionRandomRange };
+	juce::Label startPosLabel{ "startPosLabel", "Position" };
+	ParameterSlider startPosVelocityModSlider{ apvts, ParamID::velocityModGrainPosition, juce::Slider::LinearBar, false};
+	juce::Label startPosVelocityModLabel{ "startPosVelocityModLabel", "Velocity Mod" };
+	ParameterSlider startPosRotationModSlider{ apvts, ParamID::rotZModGrainPosition, juce::Slider::LinearBar, false };
+	juce::Label startPosRotationModLabel{ "startPosRotationModLabel", "Rotation Mod" };
+
+
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessorEditor)
 };
