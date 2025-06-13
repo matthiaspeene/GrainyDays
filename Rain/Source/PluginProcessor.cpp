@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "GlobalVariables.h"
 
 //==============================================================================
 #pragma region Constructor & Setup
@@ -68,6 +69,9 @@ void RainAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
 
     engine.process(buffer, midi);
     applyLimiter(buffer);
+
+	// Update the global sample counter
+    gTotalSamplesRendered.fetch_add(buffer.getNumSamples(), std::memory_order_relaxed);
 }
 
 #pragma endregion

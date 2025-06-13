@@ -33,7 +33,7 @@ void GrainEngine::process(juce::AudioBuffer<float>& output, const juce::MidiBuff
 		return; // No sample loaded
 	}
 
-    spawner.processMidi(midi, pool);
+	spawner.processMidi(midi, pool);
     processor.process(pool, output);
 }
 

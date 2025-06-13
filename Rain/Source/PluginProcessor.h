@@ -5,9 +5,6 @@
 #include "ParameterManager.h"
 #include "ParameterBank.h"
 
-//==============================================================================
-/**
-*/
 class RainAudioProcessor  : public juce::AudioProcessor
 {
 public:
@@ -50,6 +47,7 @@ public:
 
 	//==============================================================================
 	GrainEngine& getEngine() { return engine; }
+	ParameterManager& getParameterManager() { return parameterManager; }
 
 private:
 	// ------------------------------------------------------ Functions
@@ -61,7 +59,6 @@ private:
 
     // ------------------------------------------------------ real-time DSP
     GrainEngine      engine;                       // the granular synth core
-
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessor)
 };

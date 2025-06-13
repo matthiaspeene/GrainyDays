@@ -11,10 +11,12 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "WaveDisplay.h"
+#include "GrainVisualizer.h"
+#include "ParameterSlider.h"
+#include "ParameterIDs.h"
 
-//==============================================================================
-/**
-*/
+
+
 class RainAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
@@ -26,12 +28,16 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     RainAudioProcessor& audioProcessor;
+    juce::AudioProcessorValueTreeState& apvts;
 
-	// Waveform display
+	// Components
 	std::unique_ptr<WaveDisplay> waveformDisplay;
+	std::unique_ptr<GrainVisualizer> grainVisualizer;
 
+	// Parameter sliders
+	ParameterSlider startPosSlider{ apvts, ParamID::grainPosition, juce::Slider::LinearBar, false};
+	ParameterSlider startPosRandomSlider{ apvts, ParamID::grainPositionRandomRange, juce::Slider::LinearBar, false };
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessorEditor)
 };

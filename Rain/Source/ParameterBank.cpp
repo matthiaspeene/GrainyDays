@@ -5,7 +5,12 @@
 void ParameterBank::loadFromManager(ParameterManager& mgr)
 {
     using namespace ParamID;
-    masterGain = mgr.getRawParameterValue(ParamID::masterGain);
+
+	playMode = mgr.getRawParameterValue(ParamID::playMode);
+
+	//gyroStrength = mgr.getRawParameterValue(ParamID::gyroStrength);
+
+    //masterGain = mgr.getRawParameterValue(ParamID::masterGain);
     grainDensity = mgr.getRawParameterValue(ParamID::grainDensity);
 	delayRandomRange = mgr.getRawParameterValue(ParamID::delayRandomRange);
 
@@ -19,8 +24,8 @@ void ParameterBank::loadFromManager(ParameterManager& mgr)
 	grainPosition = mgr.getRawParameterValue(ParamID::grainPosition);
 	grainPositionRandomRange = mgr.getRawParameterValue(ParamID::grainPositionRandomRange);
 
-    filterCutoff = mgr.getRawParameterValue(ParamID::filterCutoff);
-    filterResonance = mgr.getRawParameterValue(ParamID::filterResonance);
+    //filterCutoff = mgr.getRawParameterValue(ParamID::filterCutoff);
+    //filterResonance = mgr.getRawParameterValue(ParamID::filterResonance);
 
 	envAttack = mgr.getRawParameterValue(ParamID::envAttack);
 	envSustainLength = mgr.getRawParameterValue(ParamID::envSustainLength);

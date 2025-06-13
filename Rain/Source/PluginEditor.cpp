@@ -9,10 +9,9 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-
 //==============================================================================
 RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+    : AudioProcessorEditor (&p), audioProcessor (p), apvts(p.getParameterManager().getAPVTS())
 {
 	waveformDisplay = std::make_unique<WaveDisplay>();
     waveformDisplay->setOnAudioLoaded([this](const LoadedSample& sample)
@@ -21,10 +20,12 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
                 << " samples at " << sample.sampleRate << " Hz");
 
 			audioProcessor.getEngine().setLoadedSample(sample);
+			gSampleSize = sample.buffer->getNumSamples();
         });
 
+	grainVisualizer = std::make_unique<GrainVisualizer>();
 
-    setSize (400, 300);
+    setSize (570, 300);
 }
 
 RainAudioProcessorEditor::~RainAudioProcessorEditor()
@@ -39,6 +40,17 @@ void RainAudioProcessorEditor::paint (juce::Graphics& g)
 
 void RainAudioProcessorEditor::resized()
 {
-    waveformDisplay->setBounds(getLocalBounds());
-    addAndMakeVisible(*waveformDisplay);
+	auto bounds = getLocalBounds();
+	// top of the screen for waveform display
+	auto waveDisplayBounds = bounds.removeFromTop(bounds.getHeight() / 2.5);
+	waveformDisplay->setBounds(waveDisplayBounds);
+	grainVisualizer->setBounds(waveDisplayBounds);
+	addAndMakeVisible(*waveformDisplay);
+	addAndMakeVisible(*grainVisualizer);
+	startPosSlider.setBounds(bounds.removeFromTop(15));
+	startPosRandomSlider.setBounds(bounds.removeFromTop(15));
+	addAndMakeVisible(startPosSlider);
+	addAndMakeVisible(startPosRandomSlider);
+
+	bounds.removeFromTop(10);
 }

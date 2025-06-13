@@ -4,6 +4,18 @@
 #include "GrainPool.h"
 #include "LoadedSample.h"
 
+/* Helpers ───────────────────────────────────────────────────────────────────────────*/
+struct ParameterSnapshot {
+	float dbGain, gainRand, gainMod = 0.f; // Mods are not used at the moment, but reserved for future use
+    float panVal, panRand, panMod = 0.f;
+    float pitchSemi, pitchRand, pitchMod = 0.f;
+    float posVal, posRand, posMod = 0.f;
+    float envAttack, envRelease, envSustainLength;
+    float envAttackCurve, envReleaseCurve;
+    float delayRandomRange;
+    int   rootMidi;
+};
+
 /*───────────────────────────────────────────────────────────────────────────*/
 class GrainSpawner
 {
@@ -27,12 +39,25 @@ private:
     static constexpr int kNumMidiNotes = 128;
 
     // Core helpers -----------------------------------------------------------
+
+    void updateRootGate(bool playRootNow);
     void advanceTime(int numSamples, GrainPool& pool);
     void handleNoteOn(int midiNote);
     void handleNoteOff(int midiNote);
 
     int  findFreeGrainIndex(const GrainPool& pool) const;
     void spawnGrain(int idx, GrainPool& pool, int delay, int midiNote);
+    void initializeGainPan(GrainPool& pool, int index);
+    void initializeStepSize(GrainPool& pool, int index, int midiNote);
+    void initializeEnvelope(GrainPool& pool, int index, double hostRate);
+    void initializePosition(GrainPool& pool, int index);
+    void initializeDelay(GrainPool& pool, int index, int delayOffset, double hostRate);
+    ParameterSnapshot loadSampleSnapShot();
+
+    bool playingRootNote = false;
+
+	// UI helpers -------------------------------------------------------------
+	void copyGrainToUI(int index, GrainPool& pool);
 
 	juce::Random rng; // If other parts need this too move shared instance to the engine
 
@@ -45,4 +70,7 @@ private:
 
     const ParameterBank* params = nullptr;
     const LoadedSample* sample;
+
+    //snapshot
+	ParameterSnapshot snapShot;
 };
