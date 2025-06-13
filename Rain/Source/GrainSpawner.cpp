@@ -42,6 +42,8 @@ inline bool shouldPlayRoot(const ParameterBank& p, PlayMode mode) noexcept
 void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
     GrainPool& pool)
 {
+	TRACE_DSP();
+
     const PlayMode mode = static_cast<PlayMode>(params->playMode->load(std::memory_order_relaxed));
     const bool     root = (mode != PlayMode::Midi);
     const bool     gate = shouldPlayRoot(*params, mode);
@@ -83,12 +85,12 @@ void GrainSpawner::updateRootGate(bool playRootNow)
     const int root = params->midiRootNote->load(std::memory_order_relaxed);
     if (playRootNow)
     {
-		DBG("GrainSpawner: Starting root note " << root);
+		//DBG("GrainSpawner: Starting root note " << root);
         handleNoteOn(root);
     }
     else
     {
-		DBG("GrainSpawner: Stopping root note " << root);
+		//DBG("GrainSpawner: Stopping root note " << root);
         handleNoteOff(root);
     }
 }
@@ -158,16 +160,12 @@ int GrainSpawner::findFreeGrainIndex(const GrainPool& pool) const
 
 void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset, int midiNote)
 {
+    TRACE_DSP();
     pool.active.set(index);
 
     const double hostRate = sampleRate;
     const double lenSec = snapShot.envAttack + snapShot.envSustainLength + snapShot.envRelease;
     const int totalHostFrames = static_cast<int>(lenSec * hostRate + 0.5);
-
-	DBG("GrainSpawner: Spawning grain at index " << index
-		<< " with delay " << delayOffset
-		<< ", total frames: " << totalHostFrames
-		<< ", MIDI note: " << midiNote);
 
     pool.frames[index] = totalHostFrames;
     pool.length[index] = totalHostFrames;
@@ -249,11 +247,6 @@ ParameterSnapshot GrainSpawner::loadSampleSnapShot()
 
 void GrainSpawner::copyGrainToUI(int index, GrainPool& pool)
 {
-	if (gGrainVisualData.active[index].load(std::memory_order_relaxed))
-	{
-		DBG("GrainSpawner: Overwriting existing grain at index " << index);
-	}
-
 	gGrainVisualData.samplePos[index] = pool.samplePos[index];
     gGrainVisualData.startTime[index] = gTotalSamplesRendered.load(std::memory_order_relaxed) + static_cast<uint64_t>(pool.delay[index]);
     gGrainVisualData.length[index] = pool.length[index];

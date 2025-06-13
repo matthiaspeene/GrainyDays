@@ -19,6 +19,7 @@ struct FastLCG
 void GrainProcessor::process(GrainPool& pool,
     juce::AudioBuffer<float>& output) noexcept
 {
+	TRACE_DSP();
     output.clear();
 
     const int nOutFrames = output.getNumSamples();
@@ -74,7 +75,9 @@ void GrainProcessor::process(GrainPool& pool,
     {
         if (!pool.active[i])
             continue;
-		
+
+        TRACE_EVENT_INSTANT("dsp", "grainProccesStart");
+
 		activeGrains++; // DBG
 
         /* ---- delay countdown -----------------------------------*/

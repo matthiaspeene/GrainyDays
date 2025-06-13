@@ -8,6 +8,8 @@ GrainVisualizer::GrainVisualizer()
 
 void GrainVisualizer::paint(juce::Graphics& g)
 {
+    TRACE_COMPONENT();
+
 	// Clear the background
 	g.fillAll(juce::Colour::fromFloatRGBA(0,0,0,0));
 

@@ -3,9 +3,13 @@
 <JUCERPROJECT id="iZgf7S" name="Rain" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="M8T"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
-              cppLanguageStandard="20">
+              cppLanguageStandard="20" headerPath="C:\Users\M8T\OneDrive - Hogeschool West-Vlaanderen\Documenten\GitHub\JUCE\modules\Perfetto_SDK\sdk">
   <MAINGROUP id="A6zpsG" name="Rain">
     <GROUP id="{6D33086C-A884-5700-8BF1-E6DDBEA81B5F}" name="Source">
+      <GROUP id="{D8B76675-8270-7F4D-8653-80BEC1AED6A8}" name="sdk">
+        <FILE id="hWPkJV" name="perfetto.cc" compile="1" resource="0" file="../../JUCE/modules/Perfetto_SDK/sdk/perfetto.cc"/>
+        <FILE id="weDar1" name="perfetto.h" compile="0" resource="0" file="../../JUCE/modules/Perfetto_SDK/sdk/perfetto.h"/>
+      </GROUP>
       <GROUP id="{D90834E8-7918-09ED-A63B-9EA8058A9A58}" name="UI">
         <FILE id="r5Fjg2" name="GrainVisualData.h" compile="0" resource="0"
               file="Source/GrainVisualData.h"/>
@@ -83,12 +87,14 @@
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="melatonin_perfetto" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Rain"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Rain" extraCompilerFlags="/bigobj&#10;/Zc:__cplusplus&#10;/permissive-&#10;/Zc:externC-"
+                       defines="NOMINMAX=1 &#10;WIN32_LEAN_AND_MEAN=1&#10;PERFETTO=1"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="Rain"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -107,6 +113,7 @@
         <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
+        <MODULEPATH id="melatonin_perfetto" path="../../JUCE/usermodules/melatonin_perfetto"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>

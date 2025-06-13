@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <melatonin_perfetto/melatonin_perfetto.h> // for performance tracing
 #include "GrainEngine.h"
 #include "ParameterManager.h"
 #include "ParameterBank.h"
@@ -59,6 +60,10 @@ private:
 
     // ------------------------------------------------------ real-time DSP
     GrainEngine      engine;                       // the granular synth core
+
+#if PERFETTO
+    MelatoninPerfetto tracingSession;
+#endif
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessor)
 };

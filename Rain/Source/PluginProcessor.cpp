@@ -59,6 +59,8 @@ bool RainAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 
 void RainAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
+    TRACE_DSP();
+
     juce::ScopedNoDenormals noDenormals;
 
     // Clear unused output channels
