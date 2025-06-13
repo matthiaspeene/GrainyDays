@@ -25,24 +25,13 @@ void GrainSpawner::setParameterBank(const ParameterBank* params) noexcept
 // Mode enum
 enum class PlayMode
 {
-    Midi = 0,     // MIDI note mode
-    Gyro = 1,     // Gyroscope mode
-    Rotation = 2  // Rotation mode
+    Midi = 0
 };
 
 inline bool shouldPlayRoot(const ParameterBank& p, PlayMode mode) noexcept
 {
-    switch (mode)
+	switch (mode) // Reimpliment if a mode like scrubbing is added.
     {
-    case PlayMode::Gyro:
-    {
-        return (p.velocity > 0.f);
-    }
-    case PlayMode::Rotation:
-    {
-		//DBG("GrainSpawner: Checking rotation play mode with rotZ = " << p.rotZ);
-        return (p.rotZ > 0.f);
-    }
     default:                 
         return false;          // MIDI mode
     }
@@ -242,16 +231,12 @@ ParameterSnapshot GrainSpawner::loadSampleSnapShot()
     {
         .dbGain = params->grainVolume->load(),
         .gainRand = params->grainVolumeRandomRange->load(),
-		.gainMod = params->grainVolumeMod,
         .panVal = params->grainPan->load(),
         .panRand = params->grainPanRandomRange->load(),
-		.panMod = params->grainPanMod,
         .pitchSemi = params->grainPitch->load(),
         .pitchRand = params->grainPitchRandomRange->load(),
-		.pitchMod = params->grainPitchMod,
 		.posVal = params->grainPosition->load(),
 		.posRand = params->grainPositionRandomRange->load(),
-		.posMod = params->grainPositionMod,
 		.envAttack = params->envAttack->load(),
 		.envRelease = params->envRelease->load(),
 		.envSustainLength = params->envSustainLength->load(),

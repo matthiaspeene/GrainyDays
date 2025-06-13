@@ -1,4 +1,4 @@
-﻿#include "GrainVisualizer.h"
+#include "GrainVisualizer.h"
 
 GrainVisualizer::GrainVisualizer()
 {

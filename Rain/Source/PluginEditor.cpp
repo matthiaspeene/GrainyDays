@@ -53,8 +53,4 @@ void RainAudioProcessorEditor::resized()
 	addAndMakeVisible(startPosRandomSlider);
 
 	bounds.removeFromTop(10);
-
-
-
-
 }

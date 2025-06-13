@@ -42,29 +42,6 @@ struct ParameterBank
     //std::atomic<float>* filterCutoff = nullptr;
     //std::atomic<float>* filterResonance = nullptr;
 
-	std::atomic<float>* velocityModGrainDensity = nullptr; // in grains per second
-	std::atomic<float>* velocityModGrainPitch = nullptr; // in semitones
-	std::atomic<float>* velocityModGrainVolume = nullptr; // in dB
-	std::atomic<float>* velocityModGrainPan = nullptr; // in %
-	std::atomic<float>* velocityModGrainPosition = nullptr; // in %
-
-	std::atomic<float>* rotZModGrainDensity = nullptr; // in grains per second
-	std::atomic<float>* rotZModGrainPitch = nullptr; // in semitones
-	std::atomic<float>* rotZModGrainVolume = nullptr; // in dB
-	std::atomic<float>* rotZModGrainPan = nullptr; // in %
-	std::atomic<float>* rotZModGrainPosition = nullptr; // in %
-
-	// Modulation parameters
-	float velocity; // 0-1
-	float rotZ; // 0-1
-
-	// Mods
-	float grainDensityMod = 0.0f; // in grains per second
-	float grainPitchMod = 0.0f; // in Semitones
-	float grainVolumeMod = 0.0f; // in dB
-	float grainPanMod = 0.0f; // in %
-	float grainPositionMod = 0.0f; // in %
-
     // ---------------------------------------------------------------------
     // One-shot linker (call in prepareToPlay or constructor of your engine)
     void loadFromManager(class ParameterManager& mgr);

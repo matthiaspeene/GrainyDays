@@ -4,7 +4,6 @@
 #include "GrainEngine.h"
 #include "ParameterManager.h"
 #include "ParameterBank.h"
-#include "OSCGyroReceiver.h"
 
 class RainAudioProcessor  : public juce::AudioProcessor
 {
@@ -53,7 +52,6 @@ public:
 private:
 	// ------------------------------------------------------ Functions
     void applyLimiter(juce::AudioBuffer<float>& buffer);
-    void updateMods();
 
     // ------------------------------------------------------ parameters (UI)
     ParameterManager parameterManager{ *this };   // owns the APVTS the host sees
@@ -61,10 +59,6 @@ private:
 
     // ------------------------------------------------------ real-time DSP
     GrainEngine      engine;                       // the granular synth core
-
-	// ------------------------------------------------------ OSC
-
-	OSCGyroReceiver  oscGyroReceiver{ 9000 };      // listens for OSC messages
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessor)
 };

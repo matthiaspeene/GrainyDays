@@ -26,7 +26,6 @@ void RainAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     parameterBank.loadFromManager(parameterManager);
     engine.setParameterBank(&parameterBank);
     engine.prepare(sampleRate, samplesPerBlock);
-	oscGyroReceiver.setParameterBank(&parameterBank);
 }
 
 void RainAudioProcessor::releaseResources() {}
@@ -62,8 +61,6 @@ void RainAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
 {
     juce::ScopedNoDenormals noDenormals;
 
-    updateMods();
-
     // Clear unused output channels
     const int numInput = getTotalNumInputChannels();
     const int numOutput = getTotalNumOutputChannels();
@@ -78,37 +75,6 @@ void RainAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
 }
 
 #pragma endregion
-
-void RainAudioProcessor::updateMods()
-{
-    const float velocityModGrainDensity = parameterBank.velocityModGrainDensity->load(std::memory_order_relaxed);
-    const float velocityModGrainPitch = parameterBank.velocityModGrainPitch->load(std::memory_order_relaxed);
-    const float velocityModGrainVolume = parameterBank.velocityModGrainVolume->load(std::memory_order_relaxed);
-    const float velocityModGrainPan = parameterBank.velocityModGrainPan->load(std::memory_order_relaxed);
-    const float velocityModGrainPosition = parameterBank.velocityModGrainPosition->load(std::memory_order_relaxed);
-
-    const float velocity = parameterBank.velocity;
-
-    parameterBank.grainDensityMod = velocity * velocityModGrainDensity;
-    parameterBank.grainPitchMod = velocity * velocityModGrainPitch;
-    parameterBank.grainVolumeMod = velocity * velocityModGrainVolume;
-    parameterBank.grainPanMod = velocity * velocityModGrainPan;
-    parameterBank.grainPositionMod = velocity * velocityModGrainPosition;
-
-    const float rotZModGrainDensity = parameterBank.rotZModGrainDensity->load(std::memory_order_relaxed);
-    const float rotZModGrainPitch = parameterBank.rotZModGrainPitch->load(std::memory_order_relaxed);
-    const float rotZModGrainVolume = parameterBank.rotZModGrainVolume->load(std::memory_order_relaxed);
-    const float rotZModGrainPan = parameterBank.rotZModGrainPan->load(std::memory_order_relaxed);
-    const float rotZModGrainPosition = parameterBank.rotZModGrainPosition->load(std::memory_order_relaxed);
-
-    const float rotZ = parameterBank.rotZ;
-
-    parameterBank.grainDensityMod += rotZ * rotZModGrainDensity;
-    parameterBank.grainPitchMod += rotZ * rotZModGrainPitch;
-    parameterBank.grainVolumeMod += rotZ * rotZModGrainVolume;
-    parameterBank.grainPanMod += rotZ * rotZModGrainPan;
-    parameterBank.grainPositionMod += rotZ * rotZModGrainPosition;
-}
 
 //==============================================================================
 #pragma region Limiter
