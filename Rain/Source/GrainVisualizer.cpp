@@ -10,9 +10,6 @@ void GrainVisualizer::paint(juce::Graphics& g)
 {
     TRACE_COMPONENT();
 
-	// Clear the background
-	g.fillAll(juce::Colour::fromFloatRGBA(0,0,0,0));
-
 	const uint64_t totalSamplesRendered = gTotalSamplesRendered.load(std::memory_order_relaxed);
 
     for (size_t i = 0; i < GrainVisualData::kMaxGrains; ++i)

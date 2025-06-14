@@ -24,8 +24,19 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
         });
 
 	grainVisualizer = std::make_unique<GrainVisualizer>();
+	grainSpawnProperties = std::make_unique<GrainSpawnProperties>();
+	voiceProperties = std::make_unique<VoiceProperties>();
+	grainParams = std::make_unique<GrainParams>();
+	grainMods = std::make_unique<GrainMods>();
 
-    setSize (570, 300);
+	addAndMakeVisible(*waveformDisplay);
+	addAndMakeVisible(*grainVisualizer);
+	addAndMakeVisible(*grainSpawnProperties);
+	addAndMakeVisible(*voiceProperties);
+	addAndMakeVisible(*grainParams);
+	addAndMakeVisible(*grainMods);
+
+    setSize (900, 656);
 }
 
 RainAudioProcessorEditor::~RainAudioProcessorEditor()
@@ -35,22 +46,34 @@ RainAudioProcessorEditor::~RainAudioProcessorEditor()
 //==============================================================================
 void RainAudioProcessorEditor::paint (juce::Graphics& g)
 {
-
+	g.fillAll(juce::Colour(0xFF787878));
 }
 
 void RainAudioProcessorEditor::resized()
 {
 	auto bounds = getLocalBounds();
-	// top of the screen for waveform display
-	auto waveDisplayBounds = bounds.removeFromTop(bounds.getHeight() / 2.5);
+	bounds.reduce(12, 12);
+	auto workspaceHeight = bounds.getHeight()-24;
+	auto grainVisualizerHeight = workspaceHeight / 2.0f;
+	auto waveDisplayBounds = bounds.removeFromTop(grainVisualizerHeight);
 	waveformDisplay->setBounds(waveDisplayBounds);
 	grainVisualizer->setBounds(waveDisplayBounds);
-	addAndMakeVisible(*waveformDisplay);
-	addAndMakeVisible(*grainVisualizer);
-	startPosSlider.setBounds(bounds.removeFromTop(15));
-	startPosRandomSlider.setBounds(bounds.removeFromTop(15));
-	addAndMakeVisible(startPosSlider);
-	addAndMakeVisible(startPosRandomSlider);
 
-	bounds.removeFromTop(10);
+	bounds.removeFromTop(12);
+	auto workWidth = bounds.getWidth() - 12;
+	// Left colum
+	auto collumWidth = workWidth / 2.0f;
+	auto leftColumn = bounds.removeFromLeft(collumWidth);
+
+	grainSpawnProperties->setBounds(leftColumn.removeFromTop(leftColumn.getHeight()/1.75-12));
+	leftColumn.removeFromTop(12); // Add some space between spawn properties and voice properties
+	grainParams->setBounds(leftColumn.removeFromLeft(leftColumn.getWidth()/1.5-12));
+	leftColumn.removeFromLeft(12); // Add some space between grain params and grain mods
+	grainMods->setBounds(leftColumn);
+
+	// Right column
+	auto rightColumn = bounds.removeFromRight(collumWidth);
+	voiceProperties->setBounds(rightColumn.removeFromTop(rightColumn.getHeight() / 1.75 - 12));
+
+	// Bottom right reserved for future expansions
 }

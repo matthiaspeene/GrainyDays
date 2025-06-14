@@ -11,6 +11,20 @@
         <FILE id="weDar1" name="perfetto.h" compile="0" resource="0" file="../../JUCE/modules/Perfetto_SDK/sdk/perfetto.h"/>
       </GROUP>
       <GROUP id="{D90834E8-7918-09ED-A63B-9EA8058A9A58}" name="UI">
+        <GROUP id="{FC78CC46-A9DA-87D6-2A53-2C507173493B}" name="Collections">
+          <FILE id="FcrjuZ" name="GrainMods.cpp" compile="1" resource="0" file="Source/GrainMods.cpp"/>
+          <FILE id="jzLdZc" name="GrainMods.h" compile="0" resource="0" file="Source/GrainMods.h"/>
+          <FILE id="EUIqLu" name="GrainParams.cpp" compile="1" resource="0" file="Source/GrainParams.cpp"/>
+          <FILE id="qDxtVp" name="GrainParams.h" compile="0" resource="0" file="Source/GrainParams.h"/>
+          <FILE id="h87UYB" name="GrainSpawnProperties.cpp" compile="1" resource="0"
+                file="Source/GrainSpawnProperties.cpp"/>
+          <FILE id="kcEiDh" name="GrainSpawnProperties.h" compile="0" resource="0"
+                file="Source/GrainSpawnProperties.h"/>
+          <FILE id="if8dcQ" name="VoiceProperties.cpp" compile="1" resource="0"
+                file="Source/VoiceProperties.cpp"/>
+          <FILE id="FYF1lM" name="VoiceProperties.h" compile="0" resource="0"
+                file="Source/VoiceProperties.h"/>
+        </GROUP>
         <FILE id="r5Fjg2" name="GrainVisualData.h" compile="0" resource="0"
               file="Source/GrainVisualData.h"/>
         <FILE id="LWQdUA" name="GrainVisualizer.cpp" compile="1" resource="0"
@@ -94,7 +108,7 @@
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="Rain" extraCompilerFlags="/bigobj&#10;/Zc:__cplusplus&#10;/permissive-&#10;/Zc:externC-"
-                       defines="NOMINMAX=1 &#10;WIN32_LEAN_AND_MEAN=1&#10;PERFETTO=1"/>
+                       defines="NOMINMAX=1 &#10;WIN32_LEAN_AND_MEAN=1&#10;PERFETTO=0"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="Rain"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

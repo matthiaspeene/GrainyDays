@@ -4,7 +4,11 @@ WaveDisplay::WaveDisplay() {}
 
 void WaveDisplay::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::darkgrey);
+	// draw a rounded rectangle background
+	g.setColour(juce::Colours::white);
+	g.fillRoundedRectangle(getLocalBounds().toFloat(), 20.0f);
+	g.setColour(juce::Colours::black);
+	g.drawRoundedRectangle(getLocalBounds().toFloat(), 20.0f, 2.0f);
 
     if (currentSample.buffer && currentSample.buffer->getNumSamples() > 0)
     {
@@ -12,7 +16,7 @@ void WaveDisplay::paint(juce::Graphics& g)
     }
     else
     {
-        g.setColour(juce::Colours::white);
+        g.setColour(juce::Colours::black);
         g.setFont(20.0f);
         g.drawFittedText("Drag audio file here", getLocalBounds(), juce::Justification::centred, 1);
     }
@@ -59,11 +63,11 @@ void WaveDisplay::loadFile(const juce::File& file)
 void WaveDisplay::drawWaveform(juce::Graphics& g, const juce::AudioBuffer<float>& buffer)
 {
     const int width = getWidth();
-    const int height = getHeight();
+    const int height = getHeight() - 24;
     const int numSamples = buffer.getNumSamples();
     const float* samples = buffer.getReadPointer(0); // Mono or just first channel
 
-    g.setColour(juce::Colours::limegreen);
+    g.setColour(juce::Colours::black);
     juce::Path waveform;
     waveform.startNewSubPath(0, height / 2);
 
@@ -71,7 +75,7 @@ void WaveDisplay::drawWaveform(juce::Graphics& g, const juce::AudioBuffer<float>
     {
         int sampleIndex = juce::jmap(x, 0, width, 0, numSamples);
         float sample = samples[sampleIndex];
-        float y = juce::jmap(sample, -1.0f, 1.0f, (float)height, 0.0f);
+        float y = juce::jmap(sample, -1.0f, 1.0f, (float)height, 24.0f);
         waveform.lineTo((float)x, y);
     }
 

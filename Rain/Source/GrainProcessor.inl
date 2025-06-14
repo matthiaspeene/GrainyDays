@@ -76,7 +76,9 @@ void GrainProcessor::process(GrainPool& pool,
         if (!pool.active[i])
             continue;
 
+#if PERFETTO_ENABLED
         TRACE_EVENT_INSTANT("dsp", "grainProccesStart");
+#endif
 
 		activeGrains++; // DBG
 

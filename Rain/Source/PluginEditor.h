@@ -14,6 +14,10 @@
 #include "GrainVisualizer.h"
 #include "ParameterSlider.h"
 #include "ParameterIDs.h"
+#include "GrainMods.h"
+#include "GrainSpawnProperties.h"
+#include "VoiceProperties.h"
+#include "GrainParams.h"
 
 
 
@@ -34,10 +38,10 @@ private:
 	// Components
 	std::unique_ptr<WaveDisplay> waveformDisplay;
 	std::unique_ptr<GrainVisualizer> grainVisualizer;
-
-	// Parameter sliders
-	ParameterSlider startPosSlider{ apvts, ParamID::grainPosition, juce::Slider::LinearBar, false};
-	ParameterSlider startPosRandomSlider{ apvts, ParamID::grainPositionRandomRange, juce::Slider::LinearBar, false };
+	std::unique_ptr<GrainSpawnProperties> grainSpawnProperties;
+	std::unique_ptr<VoiceProperties> voiceProperties;
+	std::unique_ptr<GrainParams> grainParams;
+	std::unique_ptr<GrainMods> grainMods;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RainAudioProcessorEditor)
 };
