@@ -3,6 +3,7 @@
 #include "GrainVisualData.h"
 #include "PluginProcessor.h"
 #include "GlobalVariables.h"
+#include "ParameterIDs.h"
 
 void GrainSpawner::prepare(double sampleRate, int maxBlockSize)
 {
@@ -44,7 +45,7 @@ void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
 {
 	TRACE_DSP();
 
-    const PlayMode mode = static_cast<PlayMode>(params->playMode->load(std::memory_order_relaxed));
+    const PlayMode mode = static_cast<PlayMode>(params->get(ParamID::ID::playMode));
     const bool     root = (mode != PlayMode::Midi);
     const bool     gate = shouldPlayRoot(*params, mode);
 
@@ -82,7 +83,7 @@ void GrainSpawner::updateRootGate(bool playRootNow)
 
 	playingRootNote = playRootNow;                        // update state
 
-    const int root = params->midiRootNote->load(std::memory_order_relaxed);
+    const int root = params->get(ParamID::ID::midiRootNote);
     if (playRootNow)
     {
 		//DBG("GrainSpawner: Starting root note " << root);
@@ -106,7 +107,7 @@ void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
 {
     if (numSamples <= 0) return;
 
-	const float grainsPerSec = sampleRate / (params->grainDensity->load(std::memory_order_relaxed));
+	const float grainsPerSec = sampleRate / (params->get(ParamID::ID::grainRate));
 
     for (auto& v : voices)
     {
@@ -227,21 +228,21 @@ ParameterSnapshot GrainSpawner::loadSampleSnapShot()
 {
     return ParameterSnapshot
     {
-        .dbGain = params->grainVolume->load(),
-        .gainRand = params->grainVolumeRandomRange->load(),
-        .panVal = params->grainPan->load(),
-        .panRand = params->grainPanRandomRange->load(),
-        .pitchSemi = params->grainPitch->load(),
-        .pitchRand = params->grainPitchRandomRange->load(),
-		.posVal = params->grainPosition->load(),
-		.posRand = params->grainPositionRandomRange->load(),
-		.envAttack = params->envAttack->load(),
-		.envRelease = params->envRelease->load(),
-		.envSustainLength = params->envSustainLength->load(),
-		.envAttackCurve = params->envAttackCurve->load(),
-		.envReleaseCurve = params->envReleaseCurve->load(),
-		.delayRandomRange = params->delayRandomRange->load(),
-        .rootMidi = static_cast<int>(params->midiRootNote->load())
+        .dbGain = params->get(ParamID::ID::grainVolume),
+        .gainRand = params->get(ParamID::ID::grainVolumeRandomRange),
+        .panVal = params->get(ParamID::ID::grainPan),
+        .panRand = params->get(ParamID::ID::grainPanRandomRange),
+        .pitchSemi = params->get(ParamID::ID::grainPitch),
+        .pitchRand = params->get(ParamID::ID::grainPitchRandomRange),
+		.posVal = params->get(ParamID::ID::grainPosition),
+		.posRand = params->get(ParamID::ID::grainPositionRandomRange),
+		.envAttack = params->get(ParamID::ID::envAttack),
+		.envRelease = params->get(ParamID::ID::envRelease),
+		.envSustainLength = params->get(ParamID::ID::envSustainLength),
+		.envAttackCurve = params->get(ParamID::ID::envAttackCurve),
+		.envReleaseCurve = params->get(ParamID::ID::envReleaseCurve),
+		.delayRandomRange = params->get(ParamID::ID::delayRandomRange),
+        .rootMidi = static_cast<int>(params->get(ParamID::ID::midiRootNote))
     };
 }
 

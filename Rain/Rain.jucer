@@ -60,6 +60,10 @@
               file="Source/ParameterCreator.h"/>
       </GROUP>
       <GROUP id="{0EB0171A-01BB-59F3-EC4E-357A88E84312}" name="DSP">
+        <FILE id="wFBdAm" name="ModulationManager.cpp" compile="1" resource="0"
+              file="Source/ModulationManager.cpp"/>
+        <FILE id="mExZIQ" name="ModulationManager.h" compile="0" resource="0"
+              file="Source/ModulationManager.h"/>
         <FILE id="JWL4tD" name="GrainEngine.cpp" compile="1" resource="0" file="Source/GrainEngine.cpp"/>
         <FILE id="R3abGq" name="GrainEngine.h" compile="0" resource="0" file="Source/GrainEngine.h"/>
         <FILE id="N7O8ok" name="GrainPool.h" compile="0" resource="0" file="Source/GrainPool.h"/>

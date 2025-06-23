@@ -1,57 +1,64 @@
-﻿#pragma once
-// All parameter IDs in one namespace = typo-free code.
+﻿// ─── ParameterIDs.h ──────────────────────────────────────────────────────────────
+#pragma once
+#include <array>
+#include <cstddef>
+
 namespace ParamID
 {
+    enum class ID : std::size_t
+    {
+        playMode,
+        grainRate,
+        delayRandomRange,
+        midiRootNote,
+        grainPitch,
+        grainPitchRandomRange,
+        grainVolume,
+        grainVolumeRandomRange,
+        grainPan,
+        grainPanRandomRange,
+        grainPosition,
+        grainPositionRandomRange,
+        envAttack,
+        envSustainLength,
+        envRelease,
+        envAttackCurve,
+        envReleaseCurve,
+        Count        // ← compile-time size
+    };
 
-	inline constexpr const char* gyroStrength = "gyroStrength";
+    inline constexpr std::array<const char*, static_cast<std::size_t>(ID::Count)> Names = {
+        "playMode",
+        "grainRate",
+        "delayRandomRange",
+        "midiRootNote",
+        "grainPitch",
+        "grainPitchRandomRange",
+        "grainVolume",
+        "grainVolumeRandomRange",
+        "grainPan",
+        "grainPanRandomRange",
+        "grainPosition",
+        "grainPositionRandomRange",
+        "envAttack",
+        "envSustainLength",
+        "envRelease",
+        "envAttackCurve",
+        "envReleaseCurve"
+    };
 
-    // ───────── top-level
-    inline constexpr const char* masterGain = "masterGain";
-    inline constexpr const char* grainDensity = "grainDensity";
-	inline constexpr const char* delayRandomRange = "delayRandomRange"; // in seconds
+    static_assert(Names.size() == static_cast<std::size_t>(ID::Count),
+        "Names table out of sync with enum");
 
-	inline constexpr const char* playMode = "playMode";
+    /// Array-index helper
+    [[nodiscard]] constexpr std::size_t idx(ID id) noexcept
+    {
+        return static_cast<std::size_t> (id);
+    }
 
-	// ───────── Voice group
-	inline constexpr const char* midiRootNote = "midiRootNote";
-
-    // ───────── Grain group
-    inline constexpr const char* grainPitch = "grainPitch";
-	inline constexpr const char* grainPitchRandomRange = "grainPitchRandomRange"; // in semitones
-    inline constexpr const char* grainVolume = "grainVolume";
-	inline constexpr const char* grainVolumeRandomRange = "grainVolumeRandomRange"; // in dB
-	inline constexpr const char* grainPan = "grainPan";
-	inline constexpr const char* grainPanRandomRange = "grainPanRandomRange"; // in %
-	inline constexpr const char* grainPosition = "grainPosition";
-	inline constexpr const char* grainPositionRandomRange = "grainPositionRandomRange"; // in %
-
-    // ───────── Filter group
-    inline constexpr const char* filterCutoff = "filterCutoff";
-    inline constexpr const char* filterResonance = "filterResonance";
-
-	// ───────── Env group
-	inline constexpr const char* envAttack = "envAttack";
-	inline constexpr const char* envSustainLength = "envSustainLength";
-	inline constexpr const char* envRelease = "envRelease";
-	inline constexpr const char* envAttackCurve = "envAttackCurve";
-	inline constexpr const char* envReleaseCurve = "envReleaseCurve";
-
-	// ───────── Modulation group
-	inline constexpr const char* velocityModGrainDensity = "velocityModGrainDensity"; // in grains per second
-	inline constexpr const char* velocityModGrainPitch = "velocityModGrainPitch"; // in semitones
-	inline constexpr const char* velocityModGrainVolume = "velocityModGrainVolume"; // in dB
-	inline constexpr const char* velocityModGrainPan = "velocityModGrainPan"; // in %
-	inline constexpr const char* velocityModGrainPosition = "velocityModGrainPosition"; // in %
-
-	inline constexpr const char* rotZModGrainDensity = "rotZModGrainDensity"; // in grains per second
-	inline constexpr const char* rotZModGrainPitch = "rotZModGrainPitch"; // in semitones
-	inline constexpr const char* rotZModGrainVolume = "rotZModGrainVolume"; // in dB
-	inline constexpr const char* rotZModGrainPan = "rotZModGrainPan"; // in %
-	inline constexpr const char* rotZModGrainPosition = "rotZModGrainPosition"; // in %
-
-    // ───────── non-exposed (internal / thread-safe)
-    inline constexpr const char* currentGrainIndex = "currentGrainIndex";
-    inline constexpr const char* randomSeed = "randomSeed";
-
-
+    /// C-string name for JUCE’s ParameterID
+    [[nodiscard]] constexpr const char* toChars(ID id) noexcept
+    {
+        return Names[idx(id)];
+    }
 }
