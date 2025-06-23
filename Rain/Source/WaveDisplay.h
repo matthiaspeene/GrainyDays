@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 #include "LoadedSample.h"
+#include "ParameterSlider.h"
 
 class WaveDisplay : public juce::Component,
     public juce::FileDragAndDropTarget

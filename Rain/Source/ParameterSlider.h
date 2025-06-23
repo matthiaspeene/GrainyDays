@@ -10,8 +10,8 @@ public:
     ParameterSlider(juce::AudioProcessorValueTreeState& s,
         const juce::String& paramID,
         juce::Slider::SliderStyle style = juce::Slider::RotaryHorizontalVerticalDrag,
-        bool showTextBox = true)
-        : apvts(s), id(paramID)
+        bool showTextBox = true, juce::String name = "")
+		: apvts(s), id(paramID), name(name)
     {
         // 1. Grab the parameter once, keep the pointer.
         if (auto* p = dynamic_cast<juce::AudioParameterFloat*> (apvts.getParameter(id)))
@@ -43,13 +43,27 @@ public:
         }
     }
 
-    void resized() override { slider.setBounds(getLocalBounds()); }
+    void resized() override {
+
+		auto bounds = getLocalBounds();
+		bounds.removeFromTop(20); // Leave space for the title
+        slider.setBounds(bounds);
+    }
+
+    void paint(juce::Graphics& g) override {
+        juce::Component::paint(g);
+        // Add centered title above
+        g.setFont(juce::Font(16.0f));
+        g.setColour(juce::Colours::black);
+		g.drawText(name, getLocalBounds().removeFromTop(20), juce::Justification::centred);
+    }
 
     juce::Slider& getSlider() noexcept { return slider; }
 
 private:
     juce::AudioProcessorValueTreeState& apvts;
     juce::String                         id;
+	juce::String 					 name;
     juce::AudioParameterFloat* param{ nullptr };
     juce::Slider                         slider;
     std::unique_ptr<Attachment>          attachment;

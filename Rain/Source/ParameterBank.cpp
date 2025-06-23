@@ -1,4 +1,4 @@
-﻿// ─── ParameterBank.cpp ───────────────────────────────────────────────────────────
+// ─── ParameterBank.cpp ───────────────────────────────────────────────────────────
 #include "ParameterBank.h"
 #include "ParameterManager.h"
 

@@ -26,7 +26,7 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
 	grainVisualizer = std::make_unique<GrainVisualizer>();
 	grainSpawnProperties = std::make_unique<GrainSpawnProperties>();
 	voiceProperties = std::make_unique<VoiceProperties>();
-	grainParams = std::make_unique<GrainParams>();
+	grainParams = std::make_unique<GrainParams>(apvts);
 	grainMods = std::make_unique<GrainMods>();
 
 	addAndMakeVisible(*waveformDisplay);
