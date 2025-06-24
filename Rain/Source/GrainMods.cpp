@@ -25,4 +25,5 @@ void GrainMods::paint(juce::Graphics& g)
 
 void GrainMods::resized()
 {
+
 }

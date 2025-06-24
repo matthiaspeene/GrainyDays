@@ -1,6 +1,14 @@
 #include "WaveDisplay.h"
+#include "ParameterIDs.h"
 
-WaveDisplay::WaveDisplay() {}
+using namespace ParamID;
+
+WaveDisplay::WaveDisplay(juce::AudioProcessorValueTreeState& apvts) 
+	: startPosSlider(apvts, toChars(ID::grainPositionMin), toChars(ID::grainPositionMax))
+{
+	addAndMakeVisible(startPosSlider);
+    startPosSlider.setVisible(false);
+}
 
 void WaveDisplay::paint(juce::Graphics& g)
 {
@@ -22,6 +30,12 @@ void WaveDisplay::paint(juce::Graphics& g)
     }
 }
 
+void WaveDisplay::resized()
+{
+	auto bounds = getLocalBounds();
+	startPosSlider.setBounds(bounds.removeFromBottom(60)); // Place the slider at the bottom
+}
+
 bool WaveDisplay::isInterestedInFileDrag(const juce::StringArray& files)
 {
     return files.size() == 1 && files[0].endsWithIgnoreCase(".wav");
@@ -29,6 +43,8 @@ bool WaveDisplay::isInterestedInFileDrag(const juce::StringArray& files)
 
 void WaveDisplay::filesDropped(const juce::StringArray& files, int, int)
 {
+    startPosSlider.setVisible(false);
+
     if (files.size() == 1)
         loadFile(juce::File(files[0]));
 }
@@ -53,6 +69,7 @@ void WaveDisplay::loadFile(const juce::File& file)
         currentSample.buffer = newBuffer;
         currentSample.sampleRate = reader->sampleRate;
 
+        startPosSlider.setVisible(true);
         repaint();
 
         if (onAudioLoaded)

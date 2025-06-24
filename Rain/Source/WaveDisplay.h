@@ -10,11 +10,11 @@ class WaveDisplay : public juce::Component,
 public:
     using AudioLoadedCallback = std::function<void(const LoadedSample&)>;
 
-    WaveDisplay();
+    WaveDisplay(juce::AudioProcessorValueTreeState& apvts);
     ~WaveDisplay() override = default;
 
     void paint(juce::Graphics&) override;
-    void resized() override {}
+    void resized() override;
 
     // Drag and drop
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
@@ -28,4 +28,8 @@ private:
 
     LoadedSample currentSample;
     AudioLoadedCallback onAudioLoaded;
+
+	ParameterSlider startPosSlider;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WaveDisplay)
 };

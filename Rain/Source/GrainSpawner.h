@@ -6,11 +6,12 @@
 
 /* Helpers ───────────────────────────────────────────────────────────────────────────*/
 struct ParameterSnapshot {
-	float dbGain, gainRand, gainMod = 0.f; // Mods are not used at the moment, but reserved for future use
-    float panVal, panRand, panMod = 0.f;
-    float pitchSemi, pitchRand, pitchMod = 0.f;
-    float posVal, posRand, posMod = 0.f;
-    float envAttack, envRelease, envSustainLength;
+    // Mods are not used at the moment, but reserved for future use
+	float gainMin, gainMax, gainMod = 0.f;          // in dB
+	float panMin, panMax, panMod = 0.f;             // -1 to 1
+	float pitchMin, pitchMax, pitchMod = 0.f;       // in semitones
+    float posMin, posMax, posMod = 0.f;
+	float envAttack, envRelease, envSustainLength; // in seconds
     float envAttackCurve, envReleaseCurve;
     float delayRandomRange;
     int   rootMidi;

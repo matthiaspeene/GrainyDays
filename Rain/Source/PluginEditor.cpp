@@ -13,7 +13,7 @@
 RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), apvts(p.getParameterManager().getAPVTS())
 {
-	waveformDisplay = std::make_unique<WaveDisplay>();
+	waveformDisplay = std::make_unique<WaveDisplay>(apvts);
     waveformDisplay->setOnAudioLoaded([this](const LoadedSample& sample)
         {
             DBG("Loaded audio with " << sample.buffer->getNumSamples()
@@ -24,7 +24,7 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
         });
 
 	grainVisualizer = std::make_unique<GrainVisualizer>();
-	grainSpawnProperties = std::make_unique<GrainSpawnProperties>();
+	grainSpawnProperties = std::make_unique<GrainSpawnProperties>(apvts);
 	voiceProperties = std::make_unique<VoiceProperties>();
 	grainParams = std::make_unique<GrainParams>(apvts);
 	grainMods = std::make_unique<GrainMods>();

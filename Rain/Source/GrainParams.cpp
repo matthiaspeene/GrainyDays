@@ -7,15 +7,33 @@ using namespace ParamID;
 
 //==============================================================================
 GrainParams::GrainParams(juce::AudioProcessorValueTreeState& apvts)
-	: grainPitchSlider(apvts, toChars(ID::grainPitch), juce::Slider::RotaryHorizontalVerticalDrag, true, "Pitch"),
+	: grainPitchSlider(apvts, toChars(ID::grainPitchMin), toChars(ID::grainPitchMax), juce::Slider::TwoValueHorizontal, true, "Pitch"),
 	//grainFineSlider(apvts, toChars(ID::grainFine), juce::Slider::RotaryHorizontalVerticalDrag, true, "Fine"),
-	grainGainSlider(apvts, toChars(ID::grainVolume), juce::Slider::RotaryHorizontalVerticalDrag, true, "Gain"),
-	grainPanSlider(apvts, toChars(ID::grainPan), juce::Slider::RotaryHorizontalVerticalDrag, true, "Pan")
+	grainGainSlider(apvts, toChars(ID::grainVolumeMin), toChars(ID::grainVolumeMax), juce::Slider::TwoValueHorizontal, true, "Gain"),
+	grainPanSlider(apvts, toChars(ID::grainPanMin), toChars(ID::grainPanMax), juce::Slider::TwoValueHorizontal, true, "Pan")
+	//grainPitchRandomSlider(apvts, toChars(ID::grainPitchRandom), juce::Slider::RotaryHorizontalVerticalDrag, true, "Pitch Random"),
+	//grainFineRandomSlider(apvts, toChars(ID::grainFineRandom), juce::Slider::RotaryHorizontalVerticalDrag, true, "Fine Random"),
+	//grainGainRandomSlider(apvts, toChars(ID::grainVolumeRandom), juce::Slider::RotaryHorizontalVerticalDrag, true, "Gain Random"),
+	//grainPanRandomSlider(apvts, toChars(ID::grainPanRandom), juce::Slider::RotaryHorizontalVerticalDrag, true, "Pan Random")
 {
 	addAndMakeVisible(grainPitchSlider);
 	//addAndMakeVisible(grainFineSlider);
 	addAndMakeVisible(grainGainSlider);
 	addAndMakeVisible(grainPanSlider);
+
+	//addAndMakeVisible(grainPitchRandomSlider);
+	//addAndMakeVisible(grainFineRandomSlider);
+	//addAndMakeVisible(grainGainRandomSlider);
+	//addAndMakeVisible(grainPanRandomSlider);
+	// Set the random sliders to invisible and not on top
+	//grainPitchRandomSlider.setVisible(false);
+	//grainPitchRandomSlider.setAlwaysOnTop(false);
+	//grainGainRandomSlider.setVisible(false);
+	//grainGainRandomSlider.setAlwaysOnTop(false);
+	//grainPanRandomSlider.setVisible(false);
+	//grainPanRandomSlider.setAlwaysOnTop(false);
+	//grainFineRandomSlider.setVisible(false);
+	//grainFineRandomSlider.setAlwaysOnTop(false);
 }
 
 GrainParams::~GrainParams()
@@ -47,10 +65,45 @@ void GrainParams::resized()
 	auto bounds = getLocalBounds();
 	bounds.reduce(12, 6);
 
-	static const int sliderHeight = bounds.getHeight() - 20; // Leave some space for the top line
-	static const int sliderWidth = bounds.getWidth() / 4; // Four sliders, each taking 1/4 of the width
+	static const int sliderHeight = (bounds.getHeight() - 20)/3; // Leave some space for the top line
+	static const int sliderWidth = bounds.getWidth()-12; // Four sliders, each taking 1/4 of the width
 	grainPitchSlider.setBounds(12, 26, sliderWidth, sliderHeight);
+	//grainPitchRandomSlider.setBounds(12, 26, sliderWidth, sliderHeight);
 	//grainFineSlider.setBounds(grainPitchSlider.getRight(), 26, sliderWidth, sliderHeight);
-	grainGainSlider.setBounds(grainPitchSlider.getRight(), 26, sliderWidth, sliderHeight);
-	grainPanSlider.setBounds(grainGainSlider.getRight(), 26, sliderWidth, sliderHeight);
+	//grainFineRandomSlider.setBounds(grainPitchRandomSlider.getRight(), 26, sliderWidth, sliderHeight);
+	grainGainSlider.setBounds(12, grainPitchSlider.getBottom(), sliderWidth, sliderHeight);
+	//grainGainRandomSlider.setBounds(grainPitchRandomSlider.getRight(), 26, sliderWidth, sliderHeight);
+	grainPanSlider.setBounds(12, grainGainSlider.getBottom(), sliderWidth, sliderHeight);
+	//grainPanRandomSlider.setBounds(grainGainRandomSlider.getRight(), 26, sliderWidth, sliderHeight);
+}
+
+bool GrainParams::keyPressed(const juce::KeyPress& k)
+{
+	if (k.getKeyCode() == juce::KeyPress::tabKey)
+	{
+		// Toggle Slider visibility
+		grainPitchSlider.setVisible(!grainPitchSlider.isVisible());
+		//grainPitchRandomSlider.setVisible(!grainPitchRandomSlider.isVisible());
+		//grainFineSlider.setVisible(!grainFineSlider.isVisible());
+		//grainFineRandomSlider.setVisible(!grainFineRandomSlider.isVisible());
+		grainGainSlider.setVisible(!grainGainSlider.isVisible());
+		//grainGainRandomSlider.setVisible(!grainGainRandomSlider.isVisible());
+		grainPanSlider.setVisible(!grainPanSlider.isVisible());
+		//grainPanRandomSlider.setVisible(!grainPanRandomSlider.isVisible());
+
+		// Togle the slider on top so it can get dragged
+		grainPitchSlider.setAlwaysOnTop(!grainPitchSlider.isAlwaysOnTop());
+		//grainPitchRandomSlider.setAlwaysOnTop(!grainPitchRandomSlider.isAlwaysOnTop());
+		//grainFineSlider.setAlwaysOnTop(!grainFineSlider.isAlwaysOnTop());
+		//grainFineRandomSlider.setAlwaysOnTop(!grainFineRandomSlider.isAlwaysOnTop());
+		grainGainSlider.setAlwaysOnTop(!grainGainSlider.isAlwaysOnTop());
+		//grainGainRandomSlider.setAlwaysOnTop(!grainGainRandomSlider.isAlwaysOnTop());
+		grainPanSlider.setAlwaysOnTop(!grainPanSlider.isAlwaysOnTop());
+		//grainPanRandomSlider.setAlwaysOnTop(!grainPanRandomSlider.isAlwaysOnTop());
+
+		repaint(); // Redraw the component to reflect the changes
+
+		return true;
+	}
+	return false;
 }

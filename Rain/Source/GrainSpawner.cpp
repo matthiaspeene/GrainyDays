@@ -183,8 +183,8 @@ void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset, int m
 // Helper function implementations:
 void GrainSpawner::initializeGainPan(GrainPool& pool, int index)
 {
-    pool.gain[index] = juce::Decibels::decibelsToGain(snapShot.dbGain + rng.nextFloat() * snapShot.gainRand + snapShot.gainMod);
-    pool.pan[index] = snapShot.panVal + (rng.nextFloat() * snapShot.panRand) + snapShot.panMod;
+    pool.gain[index] = juce::Decibels::decibelsToGain(snapShot.gainMin + rng.nextFloat() * (snapShot.gainMax - snapShot.gainMin) + snapShot.gainMod);
+    pool.pan[index] = snapShot.panMin + rng.nextFloat() * (snapShot.panMax - snapShot.panMin) + snapShot.panMod;
 }
 
 void GrainSpawner::initializeStepSize(GrainPool& pool, int index, int midiNote)
@@ -194,7 +194,7 @@ void GrainSpawner::initializeStepSize(GrainPool& pool, int index, int midiNote)
     if (snapShot.rootMidi >= 0 && snapShot.rootMidi < 128 && snapShot.rootMidi != midiNote)
         step *= std::pow(2.0, (midiNote - snapShot.rootMidi) / 12.0);
 
-    float pitch = snapShot.pitchSemi + (rng.nextFloat() * snapShot.pitchRand) + snapShot.pitchMod;
+    float pitch = snapShot.pitchMin + rng.nextFloat() * (snapShot.pitchMax - snapShot.pitchMin) + snapShot.pitchMod;
     if (pitch != 0.0f)
         step *= std::pow(2.0, pitch / 12.0);
 
@@ -211,7 +211,7 @@ void GrainSpawner::initializeEnvelope(GrainPool& pool, int index, double hostRat
 
 void GrainSpawner::initializePosition(GrainPool& pool, int index)
 {
-    float pos = snapShot.posVal + (rng.nextFloat() * snapShot.posRand) + snapShot.posMod;
+    float pos = snapShot.posMin + rng.nextFloat() * (snapShot.posMax - snapShot.posMin) + snapShot.posMod;
 
 	if (pos < 0.0f) pos = 0.0f; // Clamp to 0%
 	if (pos > 100.0f) pos = 100.0f; // Clamp to 100%
@@ -228,17 +228,17 @@ ParameterSnapshot GrainSpawner::loadSampleSnapShot()
 {
     return ParameterSnapshot
     {
-        .dbGain = params->get(ParamID::ID::grainVolume),
-        .gainRand = params->get(ParamID::ID::grainVolumeRandomRange),
-        .panVal = params->get(ParamID::ID::grainPan),
-        .panRand = params->get(ParamID::ID::grainPanRandomRange),
-        .pitchSemi = params->get(ParamID::ID::grainPitch),
-        .pitchRand = params->get(ParamID::ID::grainPitchRandomRange),
-		.posVal = params->get(ParamID::ID::grainPosition),
-		.posRand = params->get(ParamID::ID::grainPositionRandomRange),
-		.envAttack = params->get(ParamID::ID::envAttack),
-		.envRelease = params->get(ParamID::ID::envRelease),
-		.envSustainLength = params->get(ParamID::ID::envSustainLength),
+        .gainMin = params->get(ParamID::ID::grainVolumeMin),
+        .gainMax = params->get(ParamID::ID::grainVolumeMax),
+        .panMin = params->get(ParamID::ID::grainPanMin),
+        .panMax = params->get(ParamID::ID::grainPanMax),
+        .pitchMin = params->get(ParamID::ID::grainPitchMin),
+        .pitchMax = params->get(ParamID::ID::grainPitchMax),
+		.posMin = params->get(ParamID::ID::grainPositionMin),
+		.posMax = params->get(ParamID::ID::grainPositionMax),
+		.envAttack = params->get(ParamID::ID::envAttack)/1000,
+		.envRelease = params->get(ParamID::ID::envRelease)/1000,
+		.envSustainLength = params->get(ParamID::ID::envSustainLength)/1000,
 		.envAttackCurve = params->get(ParamID::ID::envAttackCurve),
 		.envReleaseCurve = params->get(ParamID::ID::envReleaseCurve),
 		.delayRandomRange = params->get(ParamID::ID::delayRandomRange),
