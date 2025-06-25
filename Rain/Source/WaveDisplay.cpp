@@ -54,23 +54,19 @@ void WaveDisplay::setOnAudioLoaded(AudioLoadedCallback callback)
 
 void WaveDisplay::loadFile(const juce::File& file)
 {
-    juce::AudioFormatManager fm;  fm.registerBasicFormats();
-    if (auto* reader = fm.createReaderFor(file))
-    {
-		if (reader->lengthInSamples <= 0)
-		{
-			juce::Logger::writeToLog("WaveDisplay: File is empty or invalid.");
-			return;
-		}
+    juce::AudioFormatManager fm;  
+    fm.registerBasicFormats();
 
+    std::unique_ptr<juce::AudioFormatReader> reader(fm.createReaderFor(file));
+    if (reader)
+    {
         auto newBuf = std::make_shared<juce::AudioBuffer<float>>((int)reader->numChannels,
             (int)reader->lengthInSamples);
-
         reader->read(newBuf.get(), 0, (int)reader->lengthInSamples, 0, true, true);
 
         sampleBuffer.store(newBuf, std::memory_order_release);
 
-        currentSample.buffer = newBuf;        //  <<< missing line
+        currentSample.buffer = newBuf;
         currentSample.sampleRate = reader->sampleRate;
 
         juce::MessageManager::callAsync([this] { repaint(); });
