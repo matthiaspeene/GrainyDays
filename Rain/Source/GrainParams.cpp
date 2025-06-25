@@ -76,34 +76,3 @@ void GrainParams::resized()
 	grainPanSlider.setBounds(12, grainGainSlider.getBottom(), sliderWidth, sliderHeight);
 	//grainPanRandomSlider.setBounds(grainGainRandomSlider.getRight(), 26, sliderWidth, sliderHeight);
 }
-
-bool GrainParams::keyPressed(const juce::KeyPress& k)
-{
-	if (k.getKeyCode() == juce::KeyPress::tabKey)
-	{
-		// Toggle Slider visibility
-		grainPitchSlider.setVisible(!grainPitchSlider.isVisible());
-		//grainPitchRandomSlider.setVisible(!grainPitchRandomSlider.isVisible());
-		//grainFineSlider.setVisible(!grainFineSlider.isVisible());
-		//grainFineRandomSlider.setVisible(!grainFineRandomSlider.isVisible());
-		grainGainSlider.setVisible(!grainGainSlider.isVisible());
-		//grainGainRandomSlider.setVisible(!grainGainRandomSlider.isVisible());
-		grainPanSlider.setVisible(!grainPanSlider.isVisible());
-		//grainPanRandomSlider.setVisible(!grainPanRandomSlider.isVisible());
-
-		// Togle the slider on top so it can get dragged
-		grainPitchSlider.setAlwaysOnTop(!grainPitchSlider.isAlwaysOnTop());
-		//grainPitchRandomSlider.setAlwaysOnTop(!grainPitchRandomSlider.isAlwaysOnTop());
-		//grainFineSlider.setAlwaysOnTop(!grainFineSlider.isAlwaysOnTop());
-		//grainFineRandomSlider.setAlwaysOnTop(!grainFineRandomSlider.isAlwaysOnTop());
-		grainGainSlider.setAlwaysOnTop(!grainGainSlider.isAlwaysOnTop());
-		//grainGainRandomSlider.setAlwaysOnTop(!grainGainRandomSlider.isAlwaysOnTop());
-		grainPanSlider.setAlwaysOnTop(!grainPanSlider.isAlwaysOnTop());
-		//grainPanRandomSlider.setAlwaysOnTop(!grainPanRandomSlider.isAlwaysOnTop());
-
-		repaint(); // Redraw the component to reflect the changes
-
-		return true;
-	}
-	return false;
-}

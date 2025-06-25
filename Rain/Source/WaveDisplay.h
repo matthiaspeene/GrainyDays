@@ -23,6 +23,16 @@ public:
     void setOnAudioLoaded(AudioLoadedCallback callback);
 
 private:
+
+    // 1) Use an atomic to swap the whole pointer instantly & safely.
+    std::atomic<std::shared_ptr<juce::AudioBuffer<float>>> sampleBuffer{ nullptr };
+
+    // 2) Helper to grab a snapshot that will stay valid for the whole paint() call.
+    [[nodiscard]] std::shared_ptr<const juce::AudioBuffer<float>> getCurrentBuffer() const noexcept
+    {
+        return sampleBuffer.load(std::memory_order_acquire);
+    }
+
     void loadFile(const juce::File& file);
     void drawWaveform(juce::Graphics& g, const juce::AudioBuffer<float>& buffer);
 

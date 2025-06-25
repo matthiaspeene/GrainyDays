@@ -4,7 +4,7 @@
 using namespace ParamID;
 
 WaveDisplay::WaveDisplay(juce::AudioProcessorValueTreeState& apvts) 
-	: startPosSlider(apvts, toChars(ID::grainPositionMin), toChars(ID::grainPositionMax))
+    : startPosSlider(apvts, toChars(ID::grainPositionMin), toChars(ID::grainPositionMax))
 {
 	addAndMakeVisible(startPosSlider);
     startPosSlider.setVisible(false);
@@ -17,17 +17,13 @@ void WaveDisplay::paint(juce::Graphics& g)
 	g.fillRoundedRectangle(getLocalBounds().toFloat(), 20.0f);
 	g.setColour(juce::Colours::black);
 	g.drawRoundedRectangle(getLocalBounds().toFloat(), 20.0f, 2.0f);
+	g.setFont(20.0f);
 
-    if (currentSample.buffer && currentSample.buffer->getNumSamples() > 0)
-    {
-        drawWaveform(g, *currentSample.buffer);
-    }
+    if (auto buf = getCurrentBuffer(); buf && buf->getNumSamples() > 0)
+        drawWaveform(g, *buf);
     else
-    {
-        g.setColour(juce::Colours::black);
-        g.setFont(20.0f);
-        g.drawFittedText("Drag audio file here", getLocalBounds(), juce::Justification::centred, 1);
-    }
+        g.drawFittedText("Drag audio file here", getLocalBounds(),
+            juce::Justification::centred, 1);
 }
 
 void WaveDisplay::resized()
@@ -45,8 +41,10 @@ void WaveDisplay::filesDropped(const juce::StringArray& files, int, int)
 {
     startPosSlider.setVisible(false);
 
-    if (files.size() == 1)
+    if (files.size() == 1 && juce::File(files[0]).existsAsFile())
         loadFile(juce::File(files[0]));
+	else
+        repaint();
 }
 
 void WaveDisplay::setOnAudioLoaded(AudioLoadedCallback callback)
@@ -56,45 +54,48 @@ void WaveDisplay::setOnAudioLoaded(AudioLoadedCallback callback)
 
 void WaveDisplay::loadFile(const juce::File& file)
 {
-    juce::AudioFormatManager formatManager;
-    formatManager.registerBasicFormats();
-
-    std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(file));
-    if (reader)
+    juce::AudioFormatManager fm;  fm.registerBasicFormats();
+    if (auto* reader = fm.createReaderFor(file))
     {
-        auto newBuffer = std::make_shared<juce::AudioBuffer<float>>(static_cast<int>(reader->numChannels),
-            static_cast<int>(reader->lengthInSamples));
-        reader->read(newBuffer.get(), 0, (int)reader->lengthInSamples, 0, true, true);
+		if (reader->lengthInSamples <= 0)
+		{
+			juce::Logger::writeToLog("WaveDisplay: File is empty or invalid.");
+			return;
+		}
 
-        currentSample.buffer = newBuffer;
+        auto newBuf = std::make_shared<juce::AudioBuffer<float>>((int)reader->numChannels,
+            (int)reader->lengthInSamples);
+
+        reader->read(newBuf.get(), 0, (int)reader->lengthInSamples, 0, true, true);
+
+        sampleBuffer.store(newBuf, std::memory_order_release);
+
+        currentSample.buffer = newBuf;        //  <<< missing line
         currentSample.sampleRate = reader->sampleRate;
 
-        startPosSlider.setVisible(true);
-        repaint();
+        juce::MessageManager::callAsync([this] { repaint(); });
 
-        if (onAudioLoaded)
-            onAudioLoaded(currentSample);
+        if (onAudioLoaded) onAudioLoaded(currentSample);
+        startPosSlider.setVisible(true);
     }
 }
 
-void WaveDisplay::drawWaveform(juce::Graphics& g, const juce::AudioBuffer<float>& buffer)
+void WaveDisplay::drawWaveform(juce::Graphics& g,
+    const juce::AudioBuffer<float>& buffer)
 {
-    const int width = getWidth();
-    const int height = getHeight() - 24;
-    const int numSamples = buffer.getNumSamples();
-    const float* samples = buffer.getReadPointer(0); // Mono or just first channel
+    const int w = getWidth(), h = getHeight() - 24;
+    const int n = buffer.getNumSamples();
+    const float* samples = buffer.getReadPointer(0);
 
-    g.setColour(juce::Colours::black);
-    juce::Path waveform;
-    waveform.startNewSubPath(0, height / 2);
+    juce::Path path;  path.startNewSubPath(0, h * 0.5f);
 
-    for (int x = 0; x < width; ++x)
+    for (int x = 0; x < w; ++x)
     {
-        int sampleIndex = juce::jmap(x, 0, width, 0, numSamples);
-        float sample = samples[sampleIndex];
-        float y = juce::jmap(sample, -1.0f, 1.0f, (float)height, 24.0f);
-        waveform.lineTo((float)x, y);
+        int si = juce::jlimit(0, n - 1, juce::jmap(x, 0, w, 0, n));  // bounds-safe
+        float y = juce::jmap(samples[si], -1.0f, 1.0f, (float)h, 24.0f);
+        path.lineTo((float)x, y);
     }
 
-    g.strokePath(waveform, juce::PathStrokeType(1.5f));
+    g.setColour(juce::Colours::black);
+    g.strokePath(path, juce::PathStrokeType(1.5f));
 }

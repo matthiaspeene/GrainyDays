@@ -14,8 +14,6 @@ public:
 
 private:
 
-	bool keyPressed(const juce::KeyPress& k) override;
-
     ParameterSlider grainPitchSlider;
 	//ParameterSlider grainFineSlider;
 	ParameterSlider grainGainSlider;

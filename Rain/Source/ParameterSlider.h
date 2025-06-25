@@ -31,7 +31,7 @@ public:
         const juce::String& lowParamID,
         const juce::String& highParamID,
         juce::Slider::SliderStyle           style = juce::Slider::TwoValueHorizontal,
-        bool                                showTextBox = true,
+        bool                                showTextBox = false,
         juce::String                        nameIn = {}) :
         apvts(s), name(nameIn), showTextBox(showTextBox)
     {

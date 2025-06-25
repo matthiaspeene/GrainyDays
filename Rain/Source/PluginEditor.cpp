@@ -14,20 +14,27 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), apvts(p.getParameterManager().getAPVTS())
 {
 	waveformDisplay = std::make_unique<WaveDisplay>(apvts);
-    waveformDisplay->setOnAudioLoaded([this](const LoadedSample& sample)
-        {
-            DBG("Loaded audio with " << sample.buffer->getNumSamples()
-                << " samples at " << sample.sampleRate << " Hz");
+	waveformDisplay->setOnAudioLoaded([this](const LoadedSample& sample)
+		{
+			if (sample.buffer && sample.buffer->getNumSamples() > 0)
+			{
+				DBG("Loaded audio with " << sample.buffer->getNumSamples()
+					<< " samples at " << sample.sampleRate << " Hz");
 
-			audioProcessor.getEngine().setLoadedSample(sample);
-			gSampleSize = sample.buffer->getNumSamples();
-        });
+				audioProcessor.getEngine().setLoadedSample(sample);
+				gSampleSize = sample.buffer->getNumSamples();
+			}
+			else
+			{
+				DBG("LoadedSample came back empty!");
+			}
+		});
 
 	grainVisualizer = std::make_unique<GrainVisualizer>();
 	grainSpawnProperties = std::make_unique<GrainSpawnProperties>(apvts);
 	voiceProperties = std::make_unique<VoiceProperties>();
 	grainParams = std::make_unique<GrainParams>(apvts);
-	grainMods = std::make_unique<GrainMods>();
+	grainMods = std::make_unique<GrainMods>(apvts);
 
 	addAndMakeVisible(*waveformDisplay);
 	addAndMakeVisible(*grainVisualizer);
@@ -65,10 +72,18 @@ void RainAudioProcessorEditor::resized()
 	auto collumWidth = workWidth / 2.0f;
 	auto leftColumn = bounds.removeFromLeft(collumWidth);
 
+	// Top left
 	grainSpawnProperties->setBounds(leftColumn.removeFromTop(leftColumn.getHeight()/1.75-12));
 	leftColumn.removeFromTop(12); // Add some space between spawn properties and voice properties
+
+	// Bottom Left
 	grainParams->setBounds(leftColumn.removeFromLeft(leftColumn.getWidth()/1.5-12));
 	leftColumn.removeFromLeft(12); // Add some space between grain params and grain mods
+
+	// Extrude the right column a bit to the right.
+	leftColumn.removeFromRight(-36);
+
+	// Bottom Right
 	grainMods->setBounds(leftColumn);
 
 	// Right column
