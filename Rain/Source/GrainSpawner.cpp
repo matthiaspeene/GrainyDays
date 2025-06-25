@@ -236,11 +236,11 @@ ParameterSnapshot GrainSpawner::loadSampleSnapShot()
         .pitchMax = params->get(ParamID::ID::grainPitchMax),
 		.posMin = params->get(ParamID::ID::grainPositionMin),
 		.posMax = params->get(ParamID::ID::grainPositionMax),
-		.envAttack = params->get(ParamID::ID::envAttack)/1000,
-		.envRelease = params->get(ParamID::ID::envRelease)/1000,
-		.envSustainLength = params->get(ParamID::ID::envSustainLength)/1000,
-		.envAttackCurve = params->get(ParamID::ID::envAttackCurve),
-		.envReleaseCurve = params->get(ParamID::ID::envReleaseCurve),
+		.envAttack = params->get(ParamID::ID::grainEnvAttack)/1000,
+		.envRelease = params->get(ParamID::ID::grainEnvRelease)/1000,
+		.envSustainLength = params->get(ParamID::ID::grainEnvSustainLength)/1000,
+		.envAttackCurve = params->get(ParamID::ID::grainEnvAttackCurve),
+		.envReleaseCurve = params->get(ParamID::ID::grainEnvReleaseCurve),
 		.delayRandomRange = params->get(ParamID::ID::delayRandomRange),
         .rootMidi = static_cast<int>(params->get(ParamID::ID::midiRootNote))
     };

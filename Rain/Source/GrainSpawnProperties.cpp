@@ -6,11 +6,11 @@ using namespace ParamID;
 
 //==============================================================================
 GrainSpawnProperties::GrainSpawnProperties(juce::AudioProcessorValueTreeState& apvts)
-	: attackSlider(apvts, toChars(ID::envAttack), juce::Slider::RotaryHorizontalVerticalDrag, true, "Attack"),
-	sustainSlider(apvts, toChars(ID::envSustainLength), juce::Slider::RotaryHorizontalVerticalDrag, true, "Sustain"),
-	releaseSlider(apvts, toChars(ID::envRelease), juce::Slider::RotaryHorizontalVerticalDrag, true, "Release"),
-	attackCurveSlider(apvts, toChars(ID::envAttackCurve), juce::Slider::LinearVertical, true, "P"),
-	releaseCurveSlider(apvts, toChars(ID::envReleaseCurve), juce::Slider::LinearVertical, true, "P")
+	: attackSlider(apvts, toChars(ID::grainEnvAttack), juce::Slider::RotaryHorizontalVerticalDrag, true, "Attack"),
+	sustainSlider(apvts, toChars(ID::grainEnvSustainLength), juce::Slider::RotaryHorizontalVerticalDrag, true, "Sustain"),
+	releaseSlider(apvts, toChars(ID::grainEnvRelease), juce::Slider::RotaryHorizontalVerticalDrag, true, "Release"),
+	attackCurveSlider(apvts, toChars(ID::grainEnvAttackCurve), juce::Slider::LinearVertical, true, "P"),
+	releaseCurveSlider(apvts, toChars(ID::grainEnvReleaseCurve), juce::Slider::LinearVertical, true, "P")
 {
 	addAndMakeVisible(attackSlider);
 	addAndMakeVisible(sustainSlider);

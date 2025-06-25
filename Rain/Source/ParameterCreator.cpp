@@ -39,11 +39,11 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
 
 	layout.add(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainRate), 1}, "Grain Rate", // Would use ID::grainDensity which would be an int to string perhaps? If that's the case perhaps it would be more optimised to just use ID::grainDensity directly. If I want to use the string what dous it look like again?
-		linRange(1.f, 6000.f, 1.f, 0.5f), 50.f, " hz"));
+		linRange(1.f, 6000.f, 0.1f, 1.f), 50.f, " hz"));
 
 	layout.add(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::delayRandomRange), 1}, "Delay Random Range", // This is not correct. Can we add a helper class in ParameterIDs.h to convert ID to string?
-		linRange(0.f, 1.f, 0.01f), 0.0f, " s"));
+		linRange(0.f, 1.f, 0.01f, 0.5f), 0.0f, " s"));
 
 
 	// Drop down menu
@@ -62,27 +62,27 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
 
     grainGroup->addChild(std::make_unique<AudioParameterFloat>(
         ParameterID{ toChars(ID::grainPitchMin), 1 }, "Grain Pitch Min",
-        linRange(-24.f, 24.f, 0.1f), 0.0f, " st"));
+        linRange(-24.f, 24.f, 0.01f), 0.0f, " st"));
 
 	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainPitchMax), 1 }, "Grain Pitch Max",
-		linRange(-24.f, 24.f, 0.1f), 0.0f, " st"));
+		linRange(-24.f, 24.f, 0.01f), 0.0f, " st"));
 
     grainGroup->addChild(std::make_unique<AudioParameterFloat>(
         ParameterID{ toChars(ID::grainVolumeMin), 1 }, "Grain Volume Min",
-        linRange(-48.f, 16.f, 0.1f), 0.0f, " dB"));
+        linRange(-48.f, 16.f, 0.01f), 0.0f, " dB"));
 
 	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainVolumeMax), 1 }, "Grain Volume Max",
-		linRange(-48.f, 16.f, 0.1f), 0.0f, " dB"));
+		linRange(-48.f, 16.f, 0.01f), 0.0f, " dB"));
 
 	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainPanMin), 1 }, "Grain Pan Min",
-		linRange(-1.f, 1.f, 0.01f), 0.0f, ""));
+		linRange(-1.f, 1.f, 0.1f), 0.0f, ""));
 
 	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainPanMax), 1 }, "Grain Pan Max",
-		linRange(-1.f, 1.f, 0.01f), 0.0f, ""));
+		linRange(-1.f, 1.f, 0.1f), 0.0f, ""));
 
 	grainGroup->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainPositionMin), 1 }, "Position Min",
@@ -101,25 +101,25 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
 		"envGroup", "Envelope", "|");
 
 	envGroup->addChild(std::make_unique<AudioParameterFloat>(
-		ParameterID{ toChars(ID::envAttack), 1 }, "Attack",
-		linRange(0.1f, 1000.f, 1.f), 45.f, " ms"));
+		ParameterID{ toChars(ID::grainEnvAttack), 1 }, "Attack",
+		linRange(0.1f, 1000.f, 0.1f, 0.5f), 45.0f, " ms"));
 
     envGroup->addChild(std::make_unique<AudioParameterFloat>(
-        ParameterID{ toChars(ID::envSustainLength), 1 }, "Sustain Length",
-        linRange(0.1f, 1000.f, 1.f), 0.1f, " ms"
+        ParameterID{ toChars(ID::grainEnvSustainLength), 1 }, "Sustain Length",
+        linRange(0.1f, 1000.f, 0.1f, 0.5f), 0.1f, " ms"
     ));
 
 	envGroup->addChild(std::make_unique<AudioParameterFloat>(
-		ParameterID{ toChars(ID::envRelease), 1 }, "Release",
-		linRange(0.1f, 1000.f, 1.f), 45.f, " ms"));
+		ParameterID{ toChars(ID::grainEnvRelease), 1 }, "Release",
+		linRange(0.1f, 1000.f, 0.1f, 0.5f), 45.0f, " ms"));
 
 	envGroup->addChild(std::make_unique<AudioParameterFloat>(
-		ParameterID{ toChars(ID::envAttackCurve), 1 }, "Attack Curve",
-		linRange(0.1f, 10.f, 0.01f), 1.0f));
+		ParameterID{ toChars(ID::grainEnvAttackCurve), 1 }, "Attack Curve",
+		linRange(0.1f, 10.f, 0.01f, 0.25f), 1.0f));
 
 	envGroup->addChild(std::make_unique<AudioParameterFloat>(
-		ParameterID{ toChars(ID::envReleaseCurve), 1 }, "Release Curve",
-		linRange(0.1f, 10.f, 0.01f), 1.0f));
+		ParameterID{ toChars(ID::grainEnvReleaseCurve), 1 }, "Release Curve",
+		linRange(0.1f, 10.f, 0.01f, 0.25f), 1.0f));
 
 	layout.add(std::move(envGroup));
 

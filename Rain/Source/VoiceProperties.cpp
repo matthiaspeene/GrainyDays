@@ -1,15 +1,8 @@
-/*
-  ==============================================================================
-
-    VoiceProperties.cpp
-    Created: 14 Jun 2025 8:01:05pm
-    Author:  M8T
-
-  ==============================================================================
-*/
-
 #include <JuceHeader.h>
 #include "VoiceProperties.h"
+#include "ParameterIDs.h"
+
+using namespace ParamID;
 
 //==============================================================================
 VoiceProperties::VoiceProperties()
@@ -34,11 +27,14 @@ void VoiceProperties::paint (juce::Graphics& g)
 	g.setColour(juce::Colours::black);
 	g.drawRoundedRectangle(bounds, 20.0f, 2.0f);
 	g.drawLine(0, getHeight(), getWidth(), getHeight(), 2.0f); // Straight bottom line
+
+	// Title on top left
+	g.setFont(juce::Font(16.0f, juce::Font::bold));
+	g.setColour(juce::Colours::black);
+	g.drawText("Voice ADSR", 10, 5, getWidth() - 20, 20, juce::Justification::left);
 }
 
 void VoiceProperties::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
 
 }
