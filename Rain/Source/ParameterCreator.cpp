@@ -26,24 +26,13 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
 {
     AudioProcessorValueTreeState::ParameterLayout layout;
 
-	/* Disabled
-	layout.add(std::make_unique<AudioParameterFloat>(
-		ParameterID{ gyroStrength, 1 }, "Gyro Strength",
-		linRange(0.f, 200.f, 0.01f), 0.5f, " *"));
-
-    layout.add(std::make_unique<AudioParameterFloat>(
-        ParameterID{ masterGain, 1 }, "Master Gain",
-        linRange(-60.f, 0.f, 0.1f), 0.f, " dB"));
-	*/
-
-
 	layout.add(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainRate), 1}, "Grain Rate", // Would use ID::grainDensity which would be an int to string perhaps? If that's the case perhaps it would be more optimised to just use ID::grainDensity directly. If I want to use the string what dous it look like again?
-		linRange(1.f, 6000.f, 0.1f, 1.f), 50.f, " hz"));
+		linRange(1.f, 6000.f, 0.1f, 0.5f), 50.f, " hz"));
 
 	layout.add(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::delayRandomRange), 1}, "Delay Random Range", // This is not correct. Can we add a helper class in ParameterIDs.h to convert ID to string?
-		linRange(0.f, 1.f, 0.01f, 0.5f), 0.0f, " s"));
+		linRange(0.f, 1000.f, 0.1f, 0.5f), 0.f, " ms"));
 
 
 	// Drop down menu
@@ -93,53 +82,70 @@ AudioProcessorValueTreeState::ParameterLayout ParameterCreator::createLayout()
 		linRange(0.f, 100.f, 0.01f), 0.0f, " %"));
 
 
-
-    layout.add(std::move(grainGroup));
+	layout.add(std::move(grainGroup));
 
 	// ─── Env group ─────────────────────────────────────────────────────
-	auto envGroup = std::make_unique<AudioProcessorParameterGroup>(
-		"envGroup", "Envelope", "|");
+	auto grainShape = std::make_unique<AudioProcessorParameterGroup>(
+		"grainShape", "GrainShape", "|");
 
-	envGroup->addChild(std::make_unique<AudioParameterFloat>(
+	grainShape->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainEnvAttack), 1 }, "Attack",
 		linRange(0.1f, 1000.f, 0.1f, 0.5f), 45.0f, " ms"));
 
-    envGroup->addChild(std::make_unique<AudioParameterFloat>(
+	grainShape->addChild(std::make_unique<AudioParameterFloat>(
         ParameterID{ toChars(ID::grainEnvSustainLength), 1 }, "Sustain Length",
         linRange(0.1f, 1000.f, 0.1f, 0.5f), 0.1f, " ms"
     ));
 
-	envGroup->addChild(std::make_unique<AudioParameterFloat>(
+	grainShape->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainEnvRelease), 1 }, "Release",
 		linRange(0.1f, 1000.f, 0.1f, 0.5f), 45.0f, " ms"));
 
-	envGroup->addChild(std::make_unique<AudioParameterFloat>(
+	grainShape->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainEnvAttackCurve), 1 }, "Attack Curve",
-		linRange(0.1f, 10.f, 0.01f, 0.25f), 1.0f));
+		linRange(0.1f, 10.f, 0.01f, 0.25f), 2.0f));
 
-	envGroup->addChild(std::make_unique<AudioParameterFloat>(
+	grainShape->addChild(std::make_unique<AudioParameterFloat>(
 		ParameterID{ toChars(ID::grainEnvReleaseCurve), 1 }, "Release Curve",
-		linRange(0.1f, 10.f, 0.01f, 0.25f), 1.0f));
+		linRange(0.1f, 10.f, 0.01f, 0.25f), 3.0f));
 
-	layout.add(std::move(envGroup));
+	layout.add(std::move(grainShape));
 
-	/* Disabled
-    // ─── Filter group ────────────────────────────────────────────────────
-    auto filterGroup = std::make_unique<AudioProcessorParameterGroup>(
-        "filterGroup", "Filter", "|");
+	// ─── Voice group ─────────────────────────────────────────────────────
+	auto voiceEnvGroup = std::make_unique<AudioProcessorParameterGroup>(
+		"voiceEnvGroup", "Voice Envelope", "|");
 
-    filterGroup->addChild(std::make_unique<AudioParameterFloat>(
-        ParameterID{ filterCutoff, 1 }, "Cut-off",
-        logHzRange(20.f, 20'000.f), 10'000.f, " Hz"));
+	voiceEnvGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ toChars(ID::voiceAttack), 1 }, "Attack",
+		linRange(0.001f, 10.f, 0.001f, 0.5f), 1.0f, " s"));
 
-    filterGroup->addChild(std::make_unique<AudioParameterFloat>(
-        ParameterID{ filterResonance, 1 }, "Resonance",
-        linRange(0.1f, 10.f, 0.01f, 0.5f), 1.0f));
+	voiceEnvGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ toChars(ID::voiceDecay), 1 }, "Decay",
+		linRange(0.001f, 10.f, 0.001f, 0.5f), 2.0f, " s"));
 
-    layout.add(std::move(filterGroup));
-	*/
+	voiceEnvGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ toChars(ID::voiceSustain), 1 }, "Sustain",
+		linRange(0.f, 1.f, 0.01f, 0.5f), 0.5f));
 
-    return layout;                            // ← ready to pass to APVTS
+	voiceEnvGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ toChars(ID::voiceRelease), 1 }, "Release",
+		linRange(0.001f, 10.f, 0.001f, 0.5f), 1.0f, " s"));
+
+	voiceEnvGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ toChars(ID::voiceAttackPower), 1 }, "Attack Power",
+		linRange(0.1f, 10.f, 0.01f, 0.25f), 2.0f));
+
+	voiceEnvGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ toChars(ID::voiceDecayPower), 1 }, "Decay Power",
+		linRange(0.1f, 10.f, 0.01f, 0.25f), 3.0f));
+
+	voiceEnvGroup->addChild(std::make_unique<AudioParameterFloat>(
+		ParameterID{ toChars(ID::voiceReleasePower), 1 }, "Release Power",
+		linRange(0.1f, 10.f, 0.01f, 0.25f), 4.0f));
+	
+	layout.add(std::move(voiceEnvGroup));
+
+    return layout;
 }
 
 // ──────────────────────────────────────────────────────────────────────────

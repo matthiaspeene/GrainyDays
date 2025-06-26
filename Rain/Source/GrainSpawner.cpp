@@ -3,19 +3,15 @@
 #include "GrainVisualData.h"
 #include "PluginProcessor.h"
 #include "GlobalVariables.h"
+#include "VoiceEnvelope.h"
 #include "ParameterIDs.h"
 
 void GrainSpawner::prepare(double sampleRate, int maxBlockSize)
 {
 	this->sampleRate = sampleRate;
 	this->maxBlockSize = maxBlockSize;
-	// 1)  Set up the grain scheduler // TBA:: Use DOD for this?
-	for (auto& v : voices)
-	{
-		v.active = false;               // all voices are off
-		v.midiNote = -1;                // no MIDI note assigned
-		v.cursor = 0.0;                 // no grains scheduled yet
-	}
+
+    voices.clear();
 }
 
 void GrainSpawner::setParameterBank(const ParameterBank* params) noexcept
@@ -53,6 +49,7 @@ void GrainSpawner::processMidi(const juce::MidiBuffer& midi,
 
     currentSampleOffset = 0;
 	snapShot = loadSampleSnapShot(); // Take a snapshot of the current parameters for fast thread safe use
+    voiceSnapShot = loadVoiceSnapShot();
 
     // Walk MIDI events in ascending order
     for (const auto meta : midi)
@@ -109,11 +106,11 @@ void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
 
 	const float grainsPerSec = sampleRate / (params->get(ParamID::ID::grainRate));
 
-    for (auto& v : voices)
+    for (std::size_t v = 0; v < VoicePool::kMaxVoices; ++v)
     {
-        if (!v.active) continue;
+        if (!voices.active.test(v)) continue;
 
-        double cursor = v.cursor;           // position of next grain
+        double cursor = voices.spawnCursor[v];           // position of next grain
 
         while (cursor < numSamples)
         {
@@ -122,13 +119,13 @@ void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
             // Pick a free slot (drop if pool is full)
             const int index = findFreeGrainIndex(pool);
             if (index >= 0)
-                spawnGrain(index, pool, delay, v.midiNote);   // sample-accurate start
+                spawnGrain(index, pool, delay, v);   // sample-accurate start
             // else { /* overflow → graceful drop */ }
 
 			cursor += grainsPerSec;   // next grain in this voice
         }
 
-        v.cursor = cursor - numSamples;     // spill-over into next block
+        voices.spawnCursor[v] = cursor - numSamples;     // spill-over into next block
     }
 }
 
@@ -136,15 +133,20 @@ void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
 // MIDI helpers – start/stop one VoiceSpawner
 void GrainSpawner::handleNoteOn(int note)
 {
-    auto& v = voices[note];
-    v.active = true;
-    v.midiNote = note;
-    v.cursor = 0.0;                    // first grain hits immediately
+	voices.attackSamples[note] = static_cast<int>(voiceSnapShot.envAttack * sampleRate + 0.5);
+	voices.decaySamples[note] = static_cast<int>(voiceSnapShot.envDecay * sampleRate + 0.5);
+	voices.releaseSamples[note] = static_cast<int>(voiceSnapShot.envRelease * sampleRate + 0.5);
+	voices.sustainLevel[note] = voiceSnapShot.sustainLevel;
+	voices.attackPower[note] = voiceSnapShot.envAttackCurve;
+	voices.decayPower[note] = voiceSnapShot.envDecayCurve;
+	voices.releasePower[note] = voiceSnapShot.envReleaseCurve;
+
+	voice::env::noteOn(voices, note); // Set voice active
 }
 
 void GrainSpawner::handleNoteOff(int note)
 {
-    voices[note].active = false;
+	voice::env::noteOff(voices, note); // Set voice inactive
 }
 
 int GrainSpawner::findFreeGrainIndex(const GrainPool& pool) const
@@ -163,6 +165,7 @@ void GrainSpawner::spawnGrain(int index, GrainPool& pool, int delayOffset, int m
 {
     TRACE_DSP();
     pool.active.set(index);
+    pool.voiceIdx[index] = static_cast<uint8_t>(midiNote);
 
     const double hostRate = sampleRate;
     const double lenSec = snapShot.envAttack + snapShot.envSustainLength + snapShot.envRelease;
@@ -241,8 +244,24 @@ ParameterSnapshot GrainSpawner::loadSampleSnapShot()
 		.envSustainLength = params->get(ParamID::ID::grainEnvSustainLength)/1000,
 		.envAttackCurve = params->get(ParamID::ID::grainEnvAttackCurve),
 		.envReleaseCurve = params->get(ParamID::ID::grainEnvReleaseCurve),
-		.delayRandomRange = params->get(ParamID::ID::delayRandomRange),
+		.delayRandomRange = params->get(ParamID::ID::delayRandomRange)/1000,
         .rootMidi = static_cast<int>(params->get(ParamID::ID::midiRootNote))
+    };
+}
+
+VoiceParameterSnapshot GrainSpawner::loadVoiceSnapShot()
+{
+    return VoiceParameterSnapshot
+    {
+        //.gain = juce::Decibels::decibelsToGain(params->get(ParamID::ID::voiceGain)), // TBA
+        //.pan = params->get(ParamID::ID::voicePan),
+        .envAttack = params->get(ParamID::ID::voiceAttack),
+        .envDecay = params->get(ParamID::ID::voiceDecay),
+        .envRelease = params->get(ParamID::ID::voiceRelease),
+        .envAttackCurve = params->get(ParamID::ID::voiceAttackPower),
+        .envDecayCurve = params->get(ParamID::ID::voiceDecayPower),
+        .envReleaseCurve = params->get(ParamID::ID::voiceReleasePower),
+        .sustainLevel = params->get(ParamID::ID::voiceSustain)
     };
 }
 

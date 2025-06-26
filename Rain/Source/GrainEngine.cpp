@@ -1,7 +1,13 @@
 #include "GrainEngine.h"
 
 
-GrainEngine::GrainEngine() = default;
+GrainEngine::GrainEngine()
+	: spawner(voices)
+{
+	// Initialize the grain pool and voice pool
+	pool.clear();
+	voices.clear();
+};
 
 void GrainEngine::setParameterBank(const ParameterBank* bank) noexcept
 {
@@ -34,7 +40,7 @@ void GrainEngine::process(juce::AudioBuffer<float>& output, const juce::MidiBuff
 	}
 
 	spawner.processMidi(midi, pool);
-    processor.process(pool, output);
+    processor.process(pool, voices, output);
 }
 
 void GrainEngine::setLoadedSample(const LoadedSample& sample)

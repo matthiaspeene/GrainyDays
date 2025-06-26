@@ -24,6 +24,13 @@ namespace ParamID
         grainEnvRelease,
         grainEnvAttackCurve,
         grainEnvReleaseCurve,
+		voiceAttack,
+		voiceDecay,
+		voiceSustain,
+		voiceRelease,
+		voiceAttackPower,
+		voiceDecayPower,
+		voiceReleasePower,
         Count        // ← compile-time size
     };
 
@@ -44,7 +51,14 @@ namespace ParamID
         "grainEnvSustainLength",
         "grainEnvRelease",
         "grainEnvAttackCurve",
-        "grainEnvReleaseCurve"
+        "grainEnvReleaseCurve",
+		"voiceAttack",
+		"voiceDecay",
+		"voiceSustain",
+		"voiceRelease",
+		"voiceAttackPower",
+		"voiceDecayPower",
+		"voiceReleasePower"
     };
 
     static_assert(Names.size() == static_cast<std::size_t>(ID::Count),

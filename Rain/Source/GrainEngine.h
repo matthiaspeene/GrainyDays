@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GrainPool.h"
+#include "VoicePool.h"
 #include "GrainSpawner.h"
 #include "GrainProcessor.h"
 #include "ParameterBank.h"
@@ -29,6 +30,7 @@ private:
     int maxBlockSize = 512;
 
     GrainPool pool;
+	VoicePool voices;
     GrainSpawner spawner;
     GrainProcessor processor;
 };

@@ -2,6 +2,7 @@
 #include <juce_audio_basics/juce_audio_basics.h>
 #include "ParameterBank.h"
 #include "GrainPool.h"
+#include "VoicePool.h"
 #include "LoadedSample.h"
 
 /* Helpers ───────────────────────────────────────────────────────────────────────────*/
@@ -11,17 +12,26 @@ struct ParameterSnapshot {
 	float panMin, panMax, panMod = 0.f;             // -1 to 1
 	float pitchMin, pitchMax, pitchMod = 0.f;       // in semitones
     float posMin, posMax, posMod = 0.f;
-	float envAttack, envRelease, envSustainLength; // in seconds
-    float envAttackCurve, envReleaseCurve;
-    float delayRandomRange;
-    int   rootMidi;
+	float envAttack, envRelease, envSustainLength = 0.1f; // in seconds
+    float envAttackCurve, envReleaseCurve = 1.f;
+    float delayRandomRange = 0.f;
+	int   rootMidi = -1; // -1 means no root note, otherwise 0-127
 };
+
+struct VoiceParameterSnapshot {
+	float gain = 1.0f;
+	float pan = 0.0f; // -1 to 1
+	float envAttack, envDecay, envRelease = 1.f; // in seconds
+	float envAttackCurve, envDecayCurve, envReleaseCurve = 1.f; // power
+	float sustainLevel = 1.0f; // 0 to 1
+};;
 
 /*───────────────────────────────────────────────────────────────────────────*/
 class GrainSpawner
 {
 public:
-    // Lifecycle --------------------------------------------------------------
+    explicit GrainSpawner(VoicePool& vp) : voices(vp) {}
+
     void prepare(double sampleRate, int maxBlockSize);
     void setParameterBank(const ParameterBank* params) noexcept;
 
@@ -53,7 +63,9 @@ private:
     void initializeEnvelope(GrainPool& pool, int index, double hostRate);
     void initializePosition(GrainPool& pool, int index);
     void initializeDelay(GrainPool& pool, int index, int delayOffset, double hostRate);
+
     ParameterSnapshot loadSampleSnapShot();
+	VoiceParameterSnapshot loadVoiceSnapShot();
 
     bool playingRootNote = false;
 
@@ -67,11 +79,12 @@ private:
     int           maxBlockSize = 0;
     int           currentSampleOffset = 0;
 
-    VoiceGrainScheduler  voices[kNumMidiNotes]; // 4kb
+    VoicePool& voices;
 
     const ParameterBank* params = nullptr;
-    const LoadedSample* sample;
+    const LoadedSample* sample = nullptr;
 
     //snapshot
 	ParameterSnapshot snapShot;
+	VoiceParameterSnapshot voiceSnapShot;
 };

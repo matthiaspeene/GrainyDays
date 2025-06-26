@@ -5,11 +5,22 @@
 using namespace ParamID;
 
 //==============================================================================
-VoiceProperties::VoiceProperties()
+VoiceProperties::VoiceProperties(juce::AudioProcessorValueTreeState& apvts)
+	: attackSlider(apvts, ParamID::toChars(ID::voiceAttack), juce::Slider::RotaryHorizontalVerticalDrag, true, "Attack"),
+	decaySlider(apvts, ParamID::toChars(ID::voiceDecay), juce::Slider::RotaryHorizontalVerticalDrag, true, "Decay"),
+	sustainSlider(apvts, ParamID::toChars(ID::voiceSustain), juce::Slider::RotaryHorizontalVerticalDrag, true, "Sustain"),
+	releaseSlider(apvts, ParamID::toChars(ID::voiceRelease), juce::Slider::RotaryHorizontalVerticalDrag, true, "Release"),
+	attackPowerSlider(apvts, ParamID::toChars(ID::voiceAttackPower), juce::Slider::LinearVertical, true, "Attack Power"),
+	decayPowerSlider(apvts, ParamID::toChars(ID::voiceDecayPower), juce::Slider::LinearVertical, true, "Decay Power"),
+	releasePowerSlider(apvts, ParamID::toChars(ID::voiceReleasePower), juce::Slider::LinearVertical, true, "Release Power")
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-
+	addAndMakeVisible(attackSlider);
+	addAndMakeVisible(decaySlider);
+	addAndMakeVisible(sustainSlider);
+	addAndMakeVisible(releaseSlider);
+	addAndMakeVisible(attackPowerSlider);
+	addAndMakeVisible(decayPowerSlider);
+	addAndMakeVisible(releasePowerSlider);
 }
 
 VoiceProperties::~VoiceProperties()
@@ -36,5 +47,17 @@ void VoiceProperties::paint (juce::Graphics& g)
 
 void VoiceProperties::resized()
 {
+	auto bounds = getLocalBounds();
+	bounds.reduce(12, 6);
 
+	static const int sliderHeight = bounds.getHeight() - 20; // Leave some space for the top line
+	static const int sliderWidth = bounds.getWidth() / 5.5; // Normal width for each slider. Some slider count as half a slider width
+
+	attackSlider.setBounds(12, 26, sliderWidth, sliderHeight);
+	attackPowerSlider.setBounds(attackSlider.getRight(), 26, sliderWidth / 2, sliderHeight);
+	decaySlider.setBounds(attackPowerSlider.getRight(), 26, sliderWidth, sliderHeight);
+	decayPowerSlider.setBounds(decaySlider.getRight(), 26, sliderWidth / 2, sliderHeight);
+	sustainSlider.setBounds(decayPowerSlider.getRight(), 26, sliderWidth, sliderHeight);
+	releaseSlider.setBounds(sustainSlider.getRight(), 26, sliderWidth, sliderHeight);
+	releasePowerSlider.setBounds(releaseSlider.getRight(), 26, sliderWidth / 2, sliderHeight);
 }

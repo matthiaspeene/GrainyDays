@@ -60,6 +60,8 @@
               file="Source/ParameterCreator.h"/>
       </GROUP>
       <GROUP id="{0EB0171A-01BB-59F3-EC4E-357A88E84312}" name="DSP">
+        <FILE id="gCnkYE" name="VoiceEnvelope.h" compile="0" resource="0" file="Source/VoiceEnvelope.h"/>
+        <FILE id="rEbboh" name="VoicePool.h" compile="0" resource="0" file="Source/VoicePool.h"/>
         <FILE id="wFBdAm" name="ModulationManager.cpp" compile="1" resource="0"
               file="Source/ModulationManager.cpp"/>
         <FILE id="mExZIQ" name="ModulationManager.h" compile="0" resource="0"

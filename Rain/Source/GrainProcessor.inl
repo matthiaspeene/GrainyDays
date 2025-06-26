@@ -1,123 +1,176 @@
 /*==============================================================================
- GrainProcessor::process  – called once per audio block
+   GrainProcessor.inl  – inline definitions
 ==============================================================================*/
-void GrainProcessor::process(GrainPool& pool,
+#pragma once
+#include "GrainProcessor.h"
+#include "VoiceEnvelope.h"
+
+#include <algorithm>   // std::fill_n
+#include <cmath>       // std::pow, std::floor
+
+/*──────────────────────────────────────────────────────────────────────────────
+  prepare – allocate per-voice scratch buses once at start-up
+──────────────────────────────────────────────────────────────────────────────*/
+inline void GrainProcessor::prepare(double sr, int maxBlock) noexcept
+{
+    sampleRate = sr;
+
+    busStride = maxBlock;                                    // frames / channel
+    const std::size_t total =
+        static_cast<std::size_t>(VoicePool::kMaxVoices) * 2 * busStride;
+
+    voiceBus.assign(total, 0.0f);                            // allocate & zero
+
+#if JUCE_DEBUG
+    DBG("voiceBus alloc: "
+        << (total * sizeof(float)) / 1024 << " kB   stride = " << busStride);
+#endif
+}
+
+/*──────────────────────────────────────────────────────────────────────────────
+  process – render one audio block
+──────────────────────────────────────────────────────────────────────────────*/
+inline void GrainProcessor::process(GrainPool& pool,
+    VoicePool& voices,
     juce::AudioBuffer<float>& output) noexcept
 {
-    TRACE_DSP();
     output.clear();
 
     const int nOutFrames = output.getNumSamples();
     const int nOutCh = output.getNumChannels();
 
-    /*------------------------------------------------------------------*/
-    /* 1. Resolve the source buffer                                     */
-    /*------------------------------------------------------------------*/
+    /* ───────── grow bus if host delivers a larger buffer ────────────── */
+    if (voiceBus.empty() || nOutFrames > busStride)
+    {
+        busStride = nOutFrames;                                // grow, never shrink
+        const std::size_t total =
+            static_cast<std::size_t>(VoicePool::kMaxVoices) * 2 * busStride;
+
+        voiceBus.assign(total, 0.0f);                        // re-alloc & zero
+    }
+
+    jassert(nOutFrames <= busStride);
+
+    /* ───────── resolve sample source ─────────────────────────────────── */
     const auto* srcBuf = sampleSource.buffer.get();
-    jassert(srcBuf != nullptr);
+    if (srcBuf == nullptr)
+        return;                                               // no sample loaded
 
     const int nSrcCh = srcBuf->getNumChannels();
-    const int nSrcFrames = srcBuf->getNumSamples();          // last valid = nSrcFrames-1
+    const int nSrcFrames = srcBuf->getNumSamples();
 
-    /*------------------------------------------------------------------*/
-    /* 2. Helper: envelope value from “frames-left”                      */
-    /*------------------------------------------------------------------*/
-    const auto envGain = [&](const GrainPool& p, std::size_t gi, int framesLeft) -> float
+    /* ───────── clear the slice we touch this callback ────────────────── */
+    std::fill_n(voiceBus.data(),
+        static_cast<std::size_t>(VoicePool::kMaxVoices) * 2 * nOutFrames,
+        0.0f);
+
+    /* ───────── helper: grain ASR envelope ────────────────────────────── */
+    const auto grainEnv = [&](std::size_t gi, int framesLeft) -> float
         {
-            const int total = p.length[gi];
-            const int atk = p.envAttackFrames[gi];
-            const int rel = p.envReleaseFrames[gi];
+            const int total = pool.length[gi];
+            const int atk = pool.envAttackFrames[gi];
+            const int rel = pool.envReleaseFrames[gi];
 
-            /* Sanity guard – malformed grains                              */
             if (total <= 0 || atk + rel >= total)
                 return 0.0f;
 
-            /* Attack phase                                                 */
-            if (framesLeft > total - atk)
+            if (framesLeft > total - atk)                      // attack
             {
-                const float t = float(total - framesLeft) / atk;           // 0 … 1
-                return std::pow(t, p.envAttackCurve[gi]);
+                const float t = float(total - framesLeft) / atk;
+                return std::pow(t, pool.envAttackCurve[gi]);
             }
-
-            /* Release phase                                                */
-            if (framesLeft < rel)
+            if (framesLeft < rel)                              // release
             {
-                const float t = float(rel - framesLeft) / rel;             // 0 … 1
-                return std::pow(1.0f - t, p.envReleaseCurve[gi]);
+                const float t = float(rel - framesLeft) / rel;
+                return std::pow(1.0f - t, pool.envReleaseCurve[gi]);
             }
-
-            /* Sustain phase                                                */
-            return 1.0f;
+            return 1.0f;                                       // sustain
         };
 
-    /*------------------------------------------------------------------*/
-    /* 3. Walk the grain pool                                           */
-    /*------------------------------------------------------------------*/
+    /*──────────────────────────────────────────────────────────────────────
+      PASS 1 – grains → voice buses
+    ──────────────────────────────────────────────────────────────────────*/
     for (std::size_t g = 0; g < GrainPool::kMaxGrains; ++g)
     {
         if (!pool.active[g])
             continue;
 
-        /* 3-A  Handle start delay                                      */
-        int delay = pool.delay[g];
-        if (delay >= nOutFrames)
+        /* guard: valid voice index -------------------------------------- */
+        const int voiceId = pool.voiceIdx[g];
+        if (voiceId < 0 || voiceId >= VoicePool::kMaxVoices)
         {
-            pool.delay[g] = delay - nOutFrames;   // keep waiting
-            continue;
-        }
-
-        /* 3-B  Determine how many frames this grain can emit            */
-        const int startFrame = juce::jmax(0, delay);
-        const int wantFrames = juce::jmin(pool.frames[g], nOutFrames - startFrame);
-
-        double readHead = pool.samplePos[g];   // *floating* play-head
-        const double step = pool.step[g];
-
-        const int maxSrcFrames = static_cast<int> (
-            std::floor((nSrcFrames - 1 - readHead) / step) + 1.0);
-
-        const int framesHere = juce::jmin(wantFrames, maxSrcFrames);
-        if (framesHere <= 0)
-        {
+            DBG("*** BAD voiceId " << voiceId << "  in grain " << g);
             pool.active.reset(g);
             continue;
         }
 
-        /* 3-C  Pre-compute static gain & pan                            */
-        const float gain = pool.gain[g];
+        /* A. handle start delay ----------------------------------------- */
+        int delay = pool.delay[g];
+        if (delay >= nOutFrames)
+        {
+            pool.delay[g] = delay - nOutFrames;
+            continue;
+        }
+
+        const int startFrame = std::max(0, delay);
+        const int wantFrames = std::min(pool.frames[g],
+            nOutFrames - startFrame);
+
+        double      readPos = pool.samplePos[g];
+        const double step = pool.step[g];
+        const int    maxSrc = int(std::floor((nSrcFrames - 1 - readPos) /
+            step) + 1.0);
+        const int    framesHere = std::min(wantFrames, maxSrc);
+
+        /* guard: frame count -------------------------------------------- */
+        if (framesHere <= 0 || startFrame + framesHere > nOutFrames)
+        {
+            DBG("*** BAD framesHere (" << framesHere << ") in grain " << g);
+            pool.active.reset(g);
+            continue;
+        }
+
+        /* B. static grain gain + pan ------------------------------------ */
+        const float baseGain = pool.gain[g];
         const float pan = pool.pan[g];
-
-        const auto chGain = [gain, pan](int ch, int totalCh) -> float
+        const auto  gChGain = [=](int ch) -> float
             {
-                if (totalCh == 1)   return gain;
-
+                if (nOutCh == 1)
+                    return baseGain;
                 return (ch == 0)
-                    ? gain * (1.0f - pan) * 0.5f    // left
-                    : gain * (1.0f + pan) * 0.5f;   // right
+                    ? baseGain * (1.0f - pan) * 0.5f
+                    : baseGain * (1.0f + pan) * 0.5f;
             };
 
-        /*----------------------------------------------------------------*/
-        /* 3-D  Inner mix loop (linear interp + envelope)                  */
-        /*----------------------------------------------------------------*/
+        /* C. inner sample loop ------------------------------------------ */
         for (int ch = 0; ch < nOutCh; ++ch)
         {
-            const int   srcCh = juce::jmin(ch, nSrcCh - 1);
-            const float gCh = chGain(ch, nOutCh);
-
+            const int    srcCh = std::min(ch, nSrcCh - 1);
             const float* src = srcBuf->getReadPointer(srcCh);
-            float* dst = output.getWritePointer(ch) + startFrame;
+            float* dst = busPtr(voiceId, ch) + startFrame;
 
-            double rp = readHead;          // channel-local copy
-            int    fL = pool.frames[g];    // frames left (before current sample)
+            /* guard: pointer range -------------------------------------- */
+            const std::size_t offs =
+                static_cast<std::size_t>((voiceId * 2 + ch) * busStride + startFrame);
+            if (offs + framesHere > voiceBus.size())
+            {
+                DBG("*** BUS overrun risk in grain " << g
+                    << "  ch=" << ch << "  offs=" << offs
+                    << "  frames=" << framesHere
+                    << "  total=" << voiceBus.size());
+                pool.active.reset(g);
+                break;
+            }
+
+            double      rp = readPos;
+            int         fL = pool.frames[g];
+            const float gCh = gChGain(ch);
 
             for (int s = 0; s < framesHere; ++s, --fL)
             {
-                /* Envelope ----------------------------------------------*/
-                const float env = envGain(pool, g, fL);
-
-                /* Linear interpolation ----------------------------------*/
-                const int   idx = static_cast<int>(rp);
-                const float frac = static_cast<float>(rp - idx);
+                const float env = grainEnv(g, fL);
+                const int   idx = int(rp);
+                const float frac = float(rp - idx);
                 const float samp = src[idx] + frac * (src[idx + 1] - src[idx]);
 
                 dst[s] += gCh * env * samp;
@@ -125,13 +178,39 @@ void GrainProcessor::process(GrainPool& pool,
             }
         }
 
-        /* 3-E  Book-keeping                                             */
-        readHead += step * framesHere;
-        pool.samplePos[g] = readHead;
+        /* D. bookkeeping ------------------------------------------------ */
+        pool.samplePos[g] += step * framesHere;
         pool.frames[g] -= framesHere;
         pool.delay[g] = 0;
-
-        if (pool.frames[g] <= 0 || readHead >= nSrcFrames - 1)
+        if (pool.frames[g] <= 0 || pool.samplePos[g] >= nSrcFrames - 1)
             pool.active.reset(g);
+    }
+
+    /*──────────────────────────────────────────────────────────────────────
+      PASS 2 – update voice ADSR once per sample, mix buses to output
+    ──────────────────────────────────────────────────────────────────────*/
+    float* outL = output.getWritePointer(0);
+    float* outR = (nOutCh > 1) ? output.getWritePointer(1) : nullptr;
+
+    for (int s = 0; s < nOutFrames; ++s)
+    {
+        voice::env::updateOneSample(voices);             // all voices, once
+
+        float mixL = 0.0f, mixR = 0.0f;
+
+        for (std::size_t v = 0; v < VoicePool::kMaxVoices; ++v)
+        {
+            if (!voices.active.test(v))
+                continue;
+
+            const float vGain = voices.level[v];
+            mixL += vGain * busPtr(v, 0)[s];
+            if (outR)
+                mixR += vGain * busPtr(v, 1)[s];
+        }
+
+        outL[s] += mixL;
+        if (outR)
+            outR[s] += mixR;
     }
 }

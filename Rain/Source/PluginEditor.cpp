@@ -32,7 +32,7 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
 
 	grainVisualizer = std::make_unique<GrainVisualizer>();
 	grainSpawnProperties = std::make_unique<GrainSpawnProperties>(apvts);
-	voiceProperties = std::make_unique<VoiceProperties>();
+	voiceProperties = std::make_unique<VoiceProperties>(apvts);
 	grainParams = std::make_unique<GrainParams>(apvts);
 	grainMods = std::make_unique<GrainMods>(apvts);
 
