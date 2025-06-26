@@ -87,6 +87,14 @@ namespace voice::env
 
                     if (samplesLeft == 0)
                         setStage(vp, v, Stage::Sustain);
+
+					if (level < 0.0001f)  // stop silent notes
+					{
+						vp.active.reset(v);
+						vp.stage[v] = Stage::Idle;  // no more sound
+						level = 0.0f;               // reset level
+					}
+
                     break;
                 }
 
@@ -100,7 +108,8 @@ namespace voice::env
                     const float p = samplesLeft * progStep;       // 1 → 0  (positive now)
                     level = vp.releaseStart[v] *                 // fade from stored level
                         powCurve(p, vp.releasePower[v]);    // curved toward 0
-                    if (samplesLeft == 0)
+
+                    if (samplesLeft == 0 || level < 0.001)
                     {
                         vp.active.reset(v);
                         vp.stage[v] = Stage::Idle;
