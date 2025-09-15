@@ -25,6 +25,14 @@
           <FILE id="FYF1lM" name="VoiceProperties.h" compile="0" resource="0"
                 file="Source/VoiceProperties.h"/>
         </GROUP>
+        <GROUP id="{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}" name="SampleEditor">
+          <FILE id="SE001H" name="SampleEditor.h" compile="0" resource="0" 
+                file="../Audio/SampleEditor/SampleEditor.h"/>
+          <FILE id="SE001C" name="SampleEditor.cpp" compile="1" resource="0" 
+                file="../Audio/SampleEditor/SampleEditor.cpp"/>
+          <FILE id="SE001S" name="Scripts.cs" compile="0" resource="0" 
+                file="../Audio/SampleEditor/Scripts.cs"/>
+        </GROUP>
         <FILE id="r5Fjg2" name="GrainVisualData.h" compile="0" resource="0"
               file="Source/GrainVisualData.h"/>
         <FILE id="LWQdUA" name="GrainVisualizer.cpp" compile="1" resource="0"
