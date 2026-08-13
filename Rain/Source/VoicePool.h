@@ -2,6 +2,7 @@
 #include <bitset>
 #include <cmath>
 #include <algorithm>
+#include <cstdint>
 
 enum class Stage : uint8_t { Attack, Decay, Sustain, Release, Idle };
 

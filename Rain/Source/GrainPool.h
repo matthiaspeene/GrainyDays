@@ -2,6 +2,7 @@
 #include <bitset>
 #include <cstddef>
 #include <array>
+#include <cstdint>
 
 struct GrainPool
 {

@@ -3,12 +3,12 @@
 <JUCERPROJECT id="iZgf7S" name="Rain" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="M8T"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
-              cppLanguageStandard="20" headerPath="C:\Users\M8T\OneDrive - Hogeschool West-Vlaanderen\Documenten\GitHub\JUCE\modules\Perfetto_SDK\sdk">
+              cppLanguageStandard="20" headerPath="/home/m8t/Dev/JUCE/modules/">
   <MAINGROUP id="A6zpsG" name="Rain">
     <GROUP id="{6D33086C-A884-5700-8BF1-E6DDBEA81B5F}" name="Source">
       <GROUP id="{D8B76675-8270-7F4D-8653-80BEC1AED6A8}" name="sdk">
-        <FILE id="hWPkJV" name="perfetto.cc" compile="1" resource="0" file="../../JUCE/modules/Perfetto_SDK/sdk/perfetto.cc"/>
-        <FILE id="weDar1" name="perfetto.h" compile="0" resource="0" file="../../JUCE/modules/Perfetto_SDK/sdk/perfetto.h"/>
+        <FILE id="y7Me6C" name="perfetto.cc" compile="1" resource="0" file="../../../third_party/perfetto/sdk/perfetto.cc"/>
+        <FILE id="NWXXwy" name="perfetto.h" compile="0" resource="0" file="../../../third_party/perfetto/sdk/perfetto.h"/>
       </GROUP>
       <GROUP id="{D90834E8-7918-09ED-A63B-9EA8058A9A58}" name="UI">
         <GROUP id="{FC78CC46-A9DA-87D6-2A53-2C507173493B}" name="Collections">
@@ -62,10 +62,6 @@
       <GROUP id="{0EB0171A-01BB-59F3-EC4E-357A88E84312}" name="DSP">
         <FILE id="gCnkYE" name="VoiceEnvelope.h" compile="0" resource="0" file="Source/VoiceEnvelope.h"/>
         <FILE id="rEbboh" name="VoicePool.h" compile="0" resource="0" file="Source/VoicePool.h"/>
-        <FILE id="wFBdAm" name="ModulationManager.cpp" compile="1" resource="0"
-              file="Source/ModulationManager.cpp"/>
-        <FILE id="mExZIQ" name="ModulationManager.h" compile="0" resource="0"
-              file="Source/ModulationManager.h"/>
         <FILE id="JWL4tD" name="GrainEngine.cpp" compile="1" resource="0" file="Source/GrainEngine.cpp"/>
         <FILE id="R3abGq" name="GrainEngine.h" compile="0" resource="0" file="Source/GrainEngine.h"/>
         <FILE id="N7O8ok" name="GrainPool.h" compile="0" resource="0" file="Source/GrainPool.h"/>
@@ -97,6 +93,8 @@
     <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
             useGlobalPath="1"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors_headless" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -111,30 +109,30 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
-    <VS2022 targetFolder="Builds/VisualStudio2022">
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Rain" extraCompilerFlags="/bigobj&#10;/Zc:__cplusplus&#10;/permissive-&#10;/Zc:externC-"
-                       defines="NOMINMAX=1 &#10;WIN32_LEAN_AND_MEAN=1&#10;PERFETTO=0"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="Rain"/>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
-        <MODULEPATH id="melatonin_perfetto" path="../../JUCE/usermodules/melatonin_perfetto"/>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors_headless" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_dsp" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_opengl" path="../../juce"/>
+        <MODULEPATH id="juce_osc" path="../../juce"/>
+        <MODULEPATH id="melatonin_perfetto" path="../../../usermodules/melatonin_perfetto"/>
       </MODULEPATHS>
-    </VS2022>
+    </LINUX_MAKE>
   </EXPORTFORMATS>
 </JUCERPROJECT>

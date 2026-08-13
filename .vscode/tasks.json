@@ -7,14 +7,14 @@
             "command": "make",
             "args": ["-j", "CONFIG=Release", "VST3"],
             "options": {
-                "cwd": "${workspaceFolder}/Builds/LinuxMakefile"
+                "cwd": "${workspaceFolder}/Rain/Builds/LinuxMakefile"
             },
             "problemMatcher": ["$gcc"],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "Builds build/Sammy.vst3 and copies it to ~/.vst3."
+            "detail": "Builds build/Rain.vst3 and copies it to ~/.vst3."
         },
         {
             "label": "Build VST3 (Debug)",
@@ -22,7 +22,7 @@
             "command": "make",
             "args": ["-j", "CONFIG=Debug", "VST3"],
             "options": {
-                "cwd": "${workspaceFolder}/Builds/LinuxMakefile"
+                "cwd": "${workspaceFolder}/Rain/Builds/LinuxMakefile"
             },
             "problemMatcher": ["$gcc"],
             "detail": "Builds a symbol-rich VST3 and copies it to ~/.vst3 for DAW debugging."
@@ -33,7 +33,7 @@
             "command": "make",
             "args": ["-j", "CONFIG=Debug", "Standalone"],
             "options": {
-                "cwd": "${workspaceFolder}/Builds/LinuxMakefile"
+                "cwd": "${workspaceFolder}/Rain/Builds/LinuxMakefile"
             },
             "problemMatcher": ["$gcc"],
             "detail": "Builds the JUCE standalone version for direct debugging."
