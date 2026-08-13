@@ -42,7 +42,9 @@ public:
         {
             // both parameters share an identical range
             configureSlider(style, paramLo->range, false, paramLo->getLabel());          // main range slider
-            createTextBoxes(paramLo->range, paramLo->getLabel());                        // editable min / max boxes
+
+            if (showTextBox)
+                createTextBoxes(paramLo->range, paramLo->getLabel());                    // editable min / max boxes
 
             // main slider ─► parameters
             slider.onValueChange = [this]
@@ -93,17 +95,17 @@ public:
 
         // reserve space for the editable boxes
         juce::Rectangle<int> boxArea;
-        if (showTextBox && slider.getSliderStyle() == juce::Slider::TwoValueHorizontal)
+        if (minBox != nullptr && maxBox != nullptr)
             boxArea = area.removeFromRight(58);
 
         slider.setBounds(area);
 
         // lay out the two text boxes (stacked vertically)
-        if (showTextBox && paramLo && paramHi)
+        if (minBox != nullptr && maxBox != nullptr)
         {
             auto top = boxArea.removeFromTop(boxArea.getHeight() / 2);
-            minBox.setBounds(top.reduced(1));
-            maxBox.setBounds(boxArea.reduced(1));
+            minBox->setBounds(top.reduced(1));
+            maxBox->setBounds(boxArea.reduced(1));
         }
     }
 
@@ -154,6 +156,9 @@ private:
     // build editable min / max boxes and hook them up
     void createTextBoxes(const juce::NormalisableRange<float>& r, const juce::String suffix)
     {
+        minBox = std::make_unique<juce::Slider>();
+        maxBox = std::make_unique<juce::Slider>();
+
         auto setup = [&](juce::Slider& box)
             {
                 box.setSliderStyle(juce::Slider::SliderStyle::LinearBar);
@@ -168,11 +173,11 @@ private:
                 addAndMakeVisible(box);
             };
 
-        setup(minBox);
-        setup(maxBox);
+        setup(*minBox);
+        setup(*maxBox);
 
-        minAttach = std::make_unique<Attachment>(*paramLo, minBox, apvts.undoManager);
-        maxAttach = std::make_unique<Attachment>(*paramHi, maxBox, apvts.undoManager);
+        minAttach = std::make_unique<Attachment>(*paramLo, *minBox, apvts.undoManager);
+        maxAttach = std::make_unique<Attachment>(*paramHi, *maxBox, apvts.undoManager);
     }
 
     // ──────────────────────────────────────────────── members
@@ -180,7 +185,7 @@ private:
     juce::String                         name;
 
     juce::Slider                         slider;   // rotary or two-value range
-    juce::Slider                         minBox, maxBox; // editable numeric fields
+    std::unique_ptr<juce::Slider>        minBox, maxBox; // only used for two-value sliders
 
     juce::AudioParameterFloat* paramLo{ nullptr };
     juce::AudioParameterFloat* paramHi{ nullptr };
