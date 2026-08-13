@@ -21,14 +21,14 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
 				DBG("Loaded audio with " << sample.buffer->getNumSamples()
 					<< " samples at " << sample.sampleRate << " Hz");
 
-				audioProcessor.getEngine().setLoadedSample(sample);
-				gSampleSize = sample.buffer->getNumSamples();
+				audioProcessor.setLoadedSample(sample);
 			}
 			else
 			{
 				DBG("LoadedSample came back empty!");
 			}
 		});
+	waveformDisplay->setSample(audioProcessor.getLoadedSample());
 
 	grainVisualizer = std::make_unique<GrainVisualizer>();
 	grainSpawnProperties = std::make_unique<GrainSpawnProperties>(apvts);

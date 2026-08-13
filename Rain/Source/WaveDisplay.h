@@ -21,6 +21,7 @@ public:
     void filesDropped(const juce::StringArray& files, int x, int y) override;
 
     void setOnAudioLoaded(AudioLoadedCallback callback);
+    void setSample(const LoadedSample& sample);
 
 private:
 

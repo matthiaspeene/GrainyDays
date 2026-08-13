@@ -49,10 +49,13 @@ public:
 	//==============================================================================
 	GrainEngine& getEngine() { return engine; }
 	ParameterManager& getParameterManager() { return parameterManager; }
+	void setLoadedSample(const LoadedSample& sample);
+	LoadedSample getLoadedSample() const;
 
 private:
 	// ------------------------------------------------------ Functions
     void applyLimiter(juce::AudioBuffer<float>& buffer);
+    void applyLoadedSample(const LoadedSample& sample, bool notifyHost);
 
     // ------------------------------------------------------ parameters (UI)
     ParameterManager parameterManager{ *this };   // owns the APVTS the host sees
@@ -60,6 +63,9 @@ private:
 
     // ------------------------------------------------------ real-time DSP
     GrainEngine      engine;                       // the granular synth core
+
+    mutable juce::CriticalSection loadedSampleLock;
+    LoadedSample loadedSample;
 
 #if PERFETTO
     MelatoninPerfetto tracingSession;

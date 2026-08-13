@@ -52,6 +52,14 @@ void WaveDisplay::setOnAudioLoaded(AudioLoadedCallback callback)
     onAudioLoaded = std::move(callback);
 }
 
+void WaveDisplay::setSample(const LoadedSample& sample)
+{
+    currentSample = sample;
+    sampleBuffer.store(sample.buffer, std::memory_order_release);
+    startPosSlider.setVisible(sample.buffer != nullptr && sample.buffer->getNumSamples() > 0);
+    repaint();
+}
+
 void WaveDisplay::loadFile(const juce::File& file)
 {
     juce::AudioFormatManager fm;  
@@ -64,15 +72,9 @@ void WaveDisplay::loadFile(const juce::File& file)
             (int)reader->lengthInSamples);
         reader->read(newBuf.get(), 0, (int)reader->lengthInSamples, 0, true, true);
 
-        sampleBuffer.store(newBuf, std::memory_order_release);
-
-        currentSample.buffer = newBuf;
-        currentSample.sampleRate = reader->sampleRate;
-
-        juce::MessageManager::callAsync([this] { repaint(); });
+        setSample({ newBuf, reader->sampleRate, file.getFullPathName() });
 
         if (onAudioLoaded) onAudioLoaded(currentSample);
-        startPosSlider.setVisible(true);
     }
 }
 

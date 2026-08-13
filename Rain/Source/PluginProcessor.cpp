@@ -2,6 +2,30 @@
 #include "PluginEditor.h"
 #include "GlobalVariables.h"
 
+namespace
+{
+const juce::Identifier sampleStateType { "SAMPLE" };
+const juce::Identifier sampleFileProperty { "filePath" };
+
+LoadedSample loadSampleFromFile(const juce::File& file)
+{
+    juce::AudioFormatManager formatManager;
+    formatManager.registerBasicFormats();
+
+    if (auto reader = std::unique_ptr<juce::AudioFormatReader>(formatManager.createReaderFor(file)))
+    {
+        auto buffer = std::make_shared<juce::AudioBuffer<float>>(
+            static_cast<int>(reader->numChannels),
+            static_cast<int>(reader->lengthInSamples));
+
+        reader->read(buffer.get(), 0, static_cast<int>(reader->lengthInSamples), 0, true, true);
+        return { std::move(buffer), reader->sampleRate, file.getFullPathName() };
+    }
+
+    return {};
+}
+}
+
 //==============================================================================
 #pragma region Constructor & Setup
 
@@ -128,6 +152,32 @@ void RainAudioProcessor::changeProgramName(int, const juce::String&) {}
 //==============================================================================
 #pragma region State & Editor
 
+void RainAudioProcessor::setLoadedSample(const LoadedSample& sample)
+{
+    applyLoadedSample(sample, true);
+}
+
+LoadedSample RainAudioProcessor::getLoadedSample() const
+{
+    const juce::ScopedLock lock(loadedSampleLock);
+    return loadedSample;
+}
+
+void RainAudioProcessor::applyLoadedSample(const LoadedSample& sample, bool notifyHost)
+{
+    {
+        const juce::ScopedLock lock(loadedSampleLock);
+        loadedSample = sample;
+    }
+
+    engine.setLoadedSample(sample);
+    gSampleSize = sample.buffer != nullptr ? sample.buffer->getNumSamples() : 0;
+
+    if (notifyHost)
+        updateHostDisplay(juce::AudioProcessorListener::ChangeDetails()
+                              .withNonParameterStateChanged(true));
+}
+
 bool RainAudioProcessor::hasEditor() const
 {
     return true;
@@ -148,6 +198,16 @@ void RainAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 
     // 2) internal engine parameters
     root.addChild(parameterManager.serialiseInternals(), -1, nullptr);
+
+    // 3) non-parameter sample state. Keep the file path rather than embedding a
+    // potentially very large audio file in the host's plugin state.
+    const auto sample = getLoadedSample();
+    if (sample.sourceFilePath.isNotEmpty())
+    {
+        juce::ValueTree sampleState(sampleStateType);
+        sampleState.setProperty(sampleFileProperty, sample.sourceFilePath, nullptr);
+        root.addChild(sampleState, -1, nullptr);
+    }
 
     // write to the binary block JUCE expects
     juce::MemoryOutputStream mos(destData, false);
@@ -171,6 +231,19 @@ void RainAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
     // 2) internal engine params
     if (auto intern = root.getChildWithName("INTERNALS"); intern.isValid())
         parameterManager.deserialiseInternals(intern);
+
+    // 3) reload the sample before an editor is created, so WaveDisplay can
+    // initialise from the same restored state as the parameter controls.
+    if (auto sampleState = root.getChildWithName(sampleStateType); sampleState.isValid())
+    {
+        const juce::File file(sampleState.getProperty(sampleFileProperty).toString());
+        if (file.existsAsFile())
+        {
+            auto sample = loadSampleFromFile(file);
+            if (sample.buffer && sample.buffer->getNumSamples() > 0)
+                applyLoadedSample(sample, false);
+        }
+    }
 }
 
 
