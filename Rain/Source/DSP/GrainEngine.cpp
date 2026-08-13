@@ -48,4 +48,3 @@ void GrainEngine::setLoadedSample(const LoadedSample& sample)
 	processor.setSampleSource(sample); // Source is stored in the proccesor for quick acces
     spawner.setSample(&processor.getSample());  
 }
-

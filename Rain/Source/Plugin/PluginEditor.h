@@ -10,14 +10,14 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "WaveDisplay.h"
-#include "GrainVisualizer.h"
-#include "ParameterSlider.h"
-#include "ParameterIDs.h"
-#include "GrainMods.h"
-#include "GrainSpawnProperties.h"
-#include "VoiceProperties.h"
-#include "GrainParams.h"
+#include "../UI/WaveDisplay.h"
+#include "../UI/GrainVisualizer.h"
+#include "../UI/ParameterSlider.h"
+#include "../Parameters/ParameterIDs.h"
+#include "../UI/Collections/GrainMods.h"
+#include "../UI/Collections/GrainSpawnProperties.h"
+#include "../UI/Collections/VoiceProperties.h"
+#include "../UI/Collections/GrainParams.h"
 
 
 

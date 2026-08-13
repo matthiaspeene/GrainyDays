@@ -2,9 +2,9 @@
 
 #include <JuceHeader.h>
 #include <melatonin_perfetto/melatonin_perfetto.h> // for performance tracing
-#include "GrainEngine.h"
-#include "ParameterManager.h"
-#include "ParameterBank.h"
+#include "../DSP/GrainEngine.h"
+#include "../Parameters/ParameterManager.h"
+#include "../Parameters/ParameterBank.h"
 
 class RainAudioProcessor  : public juce::AudioProcessor
 {

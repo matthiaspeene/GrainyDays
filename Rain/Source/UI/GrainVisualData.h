@@ -2,7 +2,7 @@
 #include <bitset>
 #include <cstddef>
 #include <array>
-#include "GrainPool.h"
+#include "../DSP/GrainPool.h"
 
 struct GrainVisualData
 {

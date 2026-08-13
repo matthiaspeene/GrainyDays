@@ -1,10 +1,10 @@
 // GrainSpawner.cpp – implementation -------------------------------------------
 #include "GrainSpawner.h"
-#include "GrainVisualData.h"
-#include "PluginProcessor.h"
-#include "GlobalVariables.h"
+#include "../UI/GrainVisualData.h"
+#include "../Plugin/PluginProcessor.h"
+#include "../Extras/GlobalVariables.h"
 #include "VoiceEnvelope.h"
-#include "ParameterIDs.h"
+#include "../Parameters/ParameterIDs.h"
 
 void GrainSpawner::prepare(double sampleRate, int maxBlockSize)
 {

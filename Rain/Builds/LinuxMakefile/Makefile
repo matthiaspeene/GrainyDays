@@ -235,72 +235,72 @@ $(JUCE_OBJDIR)/perfetto_567aac5a.o: ../../../../../third_party/perfetto/sdk/perf
 	@echo "Compiling perfetto.cc"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/GrainMods_1fa5082d.o: ../../Source/GrainMods.cpp
+$(JUCE_OBJDIR)/GrainMods_1fa5082d.o: ../../Source/UI/Collections/GrainMods.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GrainMods.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/GrainParams_ee06dfc2.o: ../../Source/GrainParams.cpp
+$(JUCE_OBJDIR)/GrainParams_ee06dfc2.o: ../../Source/UI/Collections/GrainParams.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GrainParams.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/GrainSpawnProperties_b4ef6c1c.o: ../../Source/GrainSpawnProperties.cpp
+$(JUCE_OBJDIR)/GrainSpawnProperties_b4ef6c1c.o: ../../Source/UI/Collections/GrainSpawnProperties.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GrainSpawnProperties.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/VoiceProperties_73884de6.o: ../../Source/VoiceProperties.cpp
+$(JUCE_OBJDIR)/VoiceProperties_73884de6.o: ../../Source/UI/Collections/VoiceProperties.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling VoiceProperties.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/GrainVisualizer_52b9579a.o: ../../Source/GrainVisualizer.cpp
+$(JUCE_OBJDIR)/GrainVisualizer_52b9579a.o: ../../Source/UI/GrainVisualizer.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GrainVisualizer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/WaveDisplay_3a6f316a.o: ../../Source/WaveDisplay.cpp
+$(JUCE_OBJDIR)/WaveDisplay_3a6f316a.o: ../../Source/UI/WaveDisplay.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling WaveDisplay.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/ParameterBank_bf1a4666.o: ../../Source/ParameterBank.cpp
+$(JUCE_OBJDIR)/ParameterBank_bf1a4666.o: ../../Source/Parameters/ParameterBank.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ParameterBank.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/ParameterManager_f45ad84d.o: ../../Source/ParameterManager.cpp
+$(JUCE_OBJDIR)/ParameterManager_f45ad84d.o: ../../Source/Parameters/ParameterManager.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ParameterManager.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/ParameterCreator_e6a5f14c.o: ../../Source/ParameterCreator.cpp
+$(JUCE_OBJDIR)/ParameterCreator_e6a5f14c.o: ../../Source/Parameters/ParameterCreator.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ParameterCreator.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/GrainEngine_27cd227e.o: ../../Source/GrainEngine.cpp
+$(JUCE_OBJDIR)/GrainEngine_27cd227e.o: ../../Source/DSP/GrainEngine.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GrainEngine.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/GrainProcessor_d3060e60.o: ../../Source/GrainProcessor.cpp
+$(JUCE_OBJDIR)/GrainProcessor_d3060e60.o: ../../Source/DSP/GrainProcessor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GrainProcessor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/GrainSpawner_1747a676.o: ../../Source/GrainSpawner.cpp
+$(JUCE_OBJDIR)/GrainSpawner_1747a676.o: ../../Source/DSP/GrainSpawner.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GrainSpawner.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/PluginProcessor_a059e380.o: ../../Source/PluginProcessor.cpp
+$(JUCE_OBJDIR)/PluginProcessor_a059e380.o: ../../Source/Plugin/PluginProcessor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling PluginProcessor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/PluginEditor_94d4fb09.o: ../../Source/PluginEditor.cpp
+$(JUCE_OBJDIR)/PluginEditor_94d4fb09.o: ../../Source/Plugin/PluginEditor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling PluginEditor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"

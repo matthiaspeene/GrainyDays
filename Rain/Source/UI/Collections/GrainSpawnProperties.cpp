@@ -1,6 +1,6 @@
 #include <JuceHeader.h>
 #include "GrainSpawnProperties.h"
-#include "ParameterIDs.h"
+#include "../../Parameters/ParameterIDs.h"
 
 using namespace ParamID;
 

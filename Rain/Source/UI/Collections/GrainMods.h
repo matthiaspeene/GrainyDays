@@ -1,6 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-#include "ParameterSlider.h"
+#include "../ParameterSlider.h"
 
 class GrainMods : public juce::Component
 {

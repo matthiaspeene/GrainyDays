@@ -1,9 +1,9 @@
 #pragma once
 #include <juce_audio_basics/juce_audio_basics.h>
-#include "ParameterBank.h"
+#include "../Parameters/ParameterBank.h"
 #include "GrainPool.h"
 #include "VoicePool.h"
-#include "LoadedSample.h"
+#include "../Extras/LoadedSample.h"
 
 /* Helpers ───────────────────────────────────────────────────────────────────────────*/
 struct ParameterSnapshot {

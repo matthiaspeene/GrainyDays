@@ -1,6 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-#include "GlobalVariables.h"
+#include "../Extras/GlobalVariables.h"
 #include "GrainVisualData.h"
 
 // ---------------------------------------------------------------- GrainVisualizer

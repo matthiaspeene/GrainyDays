@@ -1,6 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "GlobalVariables.h"
+#include "../Extras/GlobalVariables.h"
 
 namespace
 {

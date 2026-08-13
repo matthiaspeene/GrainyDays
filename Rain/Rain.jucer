@@ -12,77 +12,77 @@
       </GROUP>
       <GROUP id="{D90834E8-7918-09ED-A63B-9EA8058A9A58}" name="UI">
         <GROUP id="{FC78CC46-A9DA-87D6-2A53-2C507173493B}" name="Collections">
-          <FILE id="FcrjuZ" name="GrainMods.cpp" compile="1" resource="0" file="Source/GrainMods.cpp"/>
-          <FILE id="jzLdZc" name="GrainMods.h" compile="0" resource="0" file="Source/GrainMods.h"/>
-          <FILE id="EUIqLu" name="GrainParams.cpp" compile="1" resource="0" file="Source/GrainParams.cpp"/>
-          <FILE id="qDxtVp" name="GrainParams.h" compile="0" resource="0" file="Source/GrainParams.h"/>
+          <FILE id="FcrjuZ" name="GrainMods.cpp" compile="1" resource="0" file="Source/UI/Collections/GrainMods.cpp"/>
+          <FILE id="jzLdZc" name="GrainMods.h" compile="0" resource="0" file="Source/UI/Collections/GrainMods.h"/>
+          <FILE id="EUIqLu" name="GrainParams.cpp" compile="1" resource="0" file="Source/UI/Collections/GrainParams.cpp"/>
+          <FILE id="qDxtVp" name="GrainParams.h" compile="0" resource="0" file="Source/UI/Collections/GrainParams.h"/>
           <FILE id="h87UYB" name="GrainSpawnProperties.cpp" compile="1" resource="0"
-                file="Source/GrainSpawnProperties.cpp"/>
+                file="Source/UI/Collections/GrainSpawnProperties.cpp"/>
           <FILE id="kcEiDh" name="GrainSpawnProperties.h" compile="0" resource="0"
-                file="Source/GrainSpawnProperties.h"/>
+                file="Source/UI/Collections/GrainSpawnProperties.h"/>
           <FILE id="if8dcQ" name="VoiceProperties.cpp" compile="1" resource="0"
-                file="Source/VoiceProperties.cpp"/>
+                file="Source/UI/Collections/VoiceProperties.cpp"/>
           <FILE id="FYF1lM" name="VoiceProperties.h" compile="0" resource="0"
-                file="Source/VoiceProperties.h"/>
+                file="Source/UI/Collections/VoiceProperties.h"/>
         </GROUP>
         <FILE id="r5Fjg2" name="GrainVisualData.h" compile="0" resource="0"
-              file="Source/GrainVisualData.h"/>
+              file="Source/UI/GrainVisualData.h"/>
         <FILE id="LWQdUA" name="GrainVisualizer.cpp" compile="1" resource="0"
-              file="Source/GrainVisualizer.cpp"/>
+              file="Source/UI/GrainVisualizer.cpp"/>
         <FILE id="sBH7im" name="GrainVisualizer.h" compile="0" resource="0"
-              file="Source/GrainVisualizer.h"/>
+              file="Source/UI/GrainVisualizer.h"/>
         <FILE id="izNo1i" name="ParameterSlider.h" compile="0" resource="0"
-              file="Source/ParameterSlider.h"/>
-        <FILE id="dhu84D" name="WaveDisplay.cpp" compile="1" resource="0" file="Source/WaveDisplay.cpp"/>
-        <FILE id="Wb96qR" name="WaveDisplay.h" compile="0" resource="0" file="Source/WaveDisplay.h"/>
+              file="Source/UI/ParameterSlider.h"/>
+        <FILE id="dhu84D" name="WaveDisplay.cpp" compile="1" resource="0" file="Source/UI/WaveDisplay.cpp"/>
+        <FILE id="Wb96qR" name="WaveDisplay.h" compile="0" resource="0" file="Source/UI/WaveDisplay.h"/>
       </GROUP>
       <GROUP id="{FE5483DC-4B80-919E-1189-1F9288318C84}" name="Extras">
         <FILE id="Uwyt0x" name="GlobalVariables.h" compile="0" resource="0"
-              file="Source/GlobalVariables.h"/>
-        <FILE id="JFBGkf" name="LoadedSample.h" compile="0" resource="0" file="Source/LoadedSample.h"/>
+              file="Source/Extras/GlobalVariables.h"/>
+        <FILE id="JFBGkf" name="LoadedSample.h" compile="0" resource="0" file="Source/Extras/LoadedSample.h"/>
         <FILE id="bageAQ" name="TwoValueSliderAttachment.h" compile="0" resource="0"
-              file="Source/TwoValueSliderAttachment.h"/>
+              file="Source/Extras/TwoValueSliderAttachment.h"/>
       </GROUP>
       <GROUP id="{AE426295-0A77-F032-DDA3-3A3A29F5372C}" name="Parameters">
         <FILE id="p8eb3z" name="ParameterInterfaces.h" compile="0" resource="0"
-              file="Source/ParameterInterfaces.h"/>
+              file="Source/Parameters/ParameterInterfaces.h"/>
         <FILE id="TSnJgd" name="ParameterBank.cpp" compile="1" resource="0"
-              file="Source/ParameterBank.cpp"/>
-        <FILE id="flJZ1U" name="ParameterBank.h" compile="0" resource="0" file="Source/ParameterBank.h"/>
-        <FILE id="RnLwYC" name="ParameterIDs.h" compile="0" resource="0" file="Source/ParameterIDs.h"/>
+              file="Source/Parameters/ParameterBank.cpp"/>
+        <FILE id="flJZ1U" name="ParameterBank.h" compile="0" resource="0" file="Source/Parameters/ParameterBank.h"/>
+        <FILE id="RnLwYC" name="ParameterIDs.h" compile="0" resource="0" file="Source/Parameters/ParameterIDs.h"/>
         <FILE id="M4IQUa" name="ParameterManager.cpp" compile="1" resource="0"
-              file="Source/ParameterManager.cpp"/>
+              file="Source/Parameters/ParameterManager.cpp"/>
         <FILE id="os2bnl" name="ParameterManager.h" compile="0" resource="0"
-              file="Source/ParameterManager.h"/>
+              file="Source/Parameters/ParameterManager.h"/>
         <FILE id="Wb2rzi" name="ParameterCreator.cpp" compile="1" resource="0"
-              file="Source/ParameterCreator.cpp"/>
+              file="Source/Parameters/ParameterCreator.cpp"/>
         <FILE id="wLisHh" name="ParameterCreator.h" compile="0" resource="0"
-              file="Source/ParameterCreator.h"/>
+              file="Source/Parameters/ParameterCreator.h"/>
       </GROUP>
       <GROUP id="{0EB0171A-01BB-59F3-EC4E-357A88E84312}" name="DSP">
-        <FILE id="gCnkYE" name="VoiceEnvelope.h" compile="0" resource="0" file="Source/VoiceEnvelope.h"/>
-        <FILE id="rEbboh" name="VoicePool.h" compile="0" resource="0" file="Source/VoicePool.h"/>
-        <FILE id="JWL4tD" name="GrainEngine.cpp" compile="1" resource="0" file="Source/GrainEngine.cpp"/>
-        <FILE id="R3abGq" name="GrainEngine.h" compile="0" resource="0" file="Source/GrainEngine.h"/>
-        <FILE id="N7O8ok" name="GrainPool.h" compile="0" resource="0" file="Source/GrainPool.h"/>
+        <FILE id="gCnkYE" name="VoiceEnvelope.h" compile="0" resource="0" file="Source/DSP/VoiceEnvelope.h"/>
+        <FILE id="rEbboh" name="VoicePool.h" compile="0" resource="0" file="Source/DSP/VoicePool.h"/>
+        <FILE id="JWL4tD" name="GrainEngine.cpp" compile="1" resource="0" file="Source/DSP/GrainEngine.cpp"/>
+        <FILE id="R3abGq" name="GrainEngine.h" compile="0" resource="0" file="Source/DSP/GrainEngine.h"/>
+        <FILE id="N7O8ok" name="GrainPool.h" compile="0" resource="0" file="Source/DSP/GrainPool.h"/>
         <FILE id="GahWYu" name="GrainProcessor.cpp" compile="1" resource="0"
-              file="Source/GrainProcessor.cpp"/>
+              file="Source/DSP/GrainProcessor.cpp"/>
         <FILE id="Kc9yf2" name="GrainProcessor.inl" compile="0" resource="0"
-              file="Source/GrainProcessor.inl"/>
+              file="Source/DSP/GrainProcessor.inl"/>
         <FILE id="HzTQs8" name="GrainProcessor.h" compile="0" resource="0"
-              file="Source/GrainProcessor.h"/>
+              file="Source/DSP/GrainProcessor.h"/>
         <FILE id="bv5u8E" name="GrainSpawner.cpp" compile="1" resource="0"
-              file="Source/GrainSpawner.cpp"/>
-        <FILE id="g0WjZl" name="GrainSpawner.h" compile="0" resource="0" file="Source/GrainSpawner.h"/>
+              file="Source/DSP/GrainSpawner.cpp"/>
+        <FILE id="g0WjZl" name="GrainSpawner.h" compile="0" resource="0" file="Source/DSP/GrainSpawner.h"/>
       </GROUP>
       <GROUP id="{1539A67F-C1D9-FD6A-6202-0177CD375E9B}" name="Plugin">
         <FILE id="fUurLP" name="PluginProcessor.cpp" compile="1" resource="0"
-              file="Source/PluginProcessor.cpp"/>
+              file="Source/Plugin/PluginProcessor.cpp"/>
         <FILE id="Z1aTin" name="PluginProcessor.h" compile="0" resource="0"
-              file="Source/PluginProcessor.h"/>
+              file="Source/Plugin/PluginProcessor.h"/>
         <FILE id="h1hAXt" name="PluginEditor.cpp" compile="1" resource="0"
-              file="Source/PluginEditor.cpp"/>
-        <FILE id="LlX6Fh" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+              file="Source/Plugin/PluginEditor.cpp"/>
+        <FILE id="LlX6Fh" name="PluginEditor.h" compile="0" resource="0" file="Source/Plugin/PluginEditor.h"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

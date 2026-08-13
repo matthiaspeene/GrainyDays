@@ -1,7 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "LoadedSample.h"
+#include "../Extras/LoadedSample.h"
 #include "ParameterSlider.h"
 
 class WaveDisplay : public juce::Component,

@@ -4,8 +4,8 @@
 #include "VoicePool.h"
 #include "GrainSpawner.h"
 #include "GrainProcessor.h"
-#include "ParameterBank.h"
-#include "LoadedSample.h"
+#include "../Parameters/ParameterBank.h"
+#include "../Extras/LoadedSample.h"
 
 #include <juce_audio_basics/juce_audio_basics.h>
 

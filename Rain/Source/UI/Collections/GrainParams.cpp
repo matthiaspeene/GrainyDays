@@ -1,7 +1,7 @@
 #include <JuceHeader.h>
 #include "GrainParams.h"
-#include "ParameterSlider.h"
-#include "ParameterIDs.h"
+#include "../ParameterSlider.h"
+#include "../../Parameters/ParameterIDs.h"
 
 using namespace ParamID;
 
