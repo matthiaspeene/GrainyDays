@@ -1,0 +1,103 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Standalone",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Builds/LinuxMakefile/build/Sammy",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "preLaunchTask": "Build Standalone (Debug)",
+            "setupCommands": [
+                {
+                    "description": "Enable GDB pretty printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Do not download debug symbols for REAPER or system libraries",
+                    "text": "set debuginfod enabled off",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Hide REAPER thread lifecycle messages",
+                    "text": "set print thread-events off",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Debug VST3 in DAW",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${input:dawExecutable}",
+            "args": ["-newinst"],
+            "cwd": "/opt/REAPER",
+            "environment": [
+                {
+                    "name": "GDK_BACKEND",
+                    "value": "x11"
+                }
+            ],
+            "stopAtEntry": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "preLaunchTask": "Build VST3 (Debug)",
+            "setupCommands": [
+                {
+                    "description": "Enable GDB pretty printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Do not download debug symbols for REAPER or system libraries",
+                    "text": "set debuginfod enabled off",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Hide REAPER thread lifecycle messages",
+                    "text": "set print thread-events off",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Attach to DAW (VST3)",
+            "type": "cppdbg",
+            "request": "attach",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "preLaunchTask": "Build VST3 (Debug)",
+            "setupCommands": [
+                {
+                    "description": "Enable GDB pretty printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Do not download debug symbols for REAPER or system libraries",
+                    "text": "set debuginfod enabled off",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Hide REAPER thread lifecycle messages",
+                    "text": "set print thread-events off",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "dawExecutable",
+            "type": "promptString",
+            "description": "Full path to the DAW executable to debug",
+            "default": "/opt/REAPER/reaper"
+        }
+    ]
+}
