@@ -1,6 +1,5 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "../Extras/GlobalVariables.h"
 
 namespace
 {
@@ -96,8 +95,9 @@ void RainAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
     engine.process(buffer, midi);
     applyLimiter(buffer);
 
-	// Update the global sample counter
-    gTotalSamplesRendered.fetch_add(buffer.getNumSamples(), std::memory_order_relaxed);
+	// Advance only this plugin instance's visualization clock.
+    engine.getGrainVisualData().totalSamplesRendered.fetch_add(
+        static_cast<uint64_t>(buffer.getNumSamples()), std::memory_order_relaxed);
 }
 
 #pragma endregion
@@ -171,7 +171,6 @@ void RainAudioProcessor::applyLoadedSample(const LoadedSample& sample, bool noti
     }
 
     engine.setLoadedSample(sample);
-    gSampleSize = sample.buffer != nullptr ? sample.buffer->getNumSamples() : 0;
 
     if (notifyHost)
         updateHostDisplay(juce::AudioProcessorListener::ChangeDetails()

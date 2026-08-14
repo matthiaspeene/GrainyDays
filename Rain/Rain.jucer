@@ -37,8 +37,6 @@
         <FILE id="Wb96qR" name="WaveDisplay.h" compile="0" resource="0" file="Source/UI/WaveDisplay.h"/>
       </GROUP>
       <GROUP id="{FE5483DC-4B80-919E-1189-1F9288318C84}" name="Extras">
-        <FILE id="Uwyt0x" name="GlobalVariables.h" compile="0" resource="0"
-              file="Source/Extras/GlobalVariables.h"/>
         <FILE id="JFBGkf" name="LoadedSample.h" compile="0" resource="0" file="Source/Extras/LoadedSample.h"/>
         <FILE id="bageAQ" name="TwoValueSliderAttachment.h" compile="0" resource="0"
               file="Source/Extras/TwoValueSliderAttachment.h"/>

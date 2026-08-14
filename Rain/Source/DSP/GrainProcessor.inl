@@ -4,9 +4,10 @@
 #pragma once
 #include "GrainProcessor.h"
 #include "VoiceEnvelope.h"
+#include "SamplePosition.h"
 
 #include <algorithm>   // std::fill_n
-#include <cmath>       // std::pow, std::floor
+#include <cmath>       // std::pow
 
 /*──────────────────────────────────────────────────────────────────────────────
   prepare – allocate per-voice scratch buses once at start-up
@@ -118,8 +119,7 @@ inline void GrainProcessor::process(GrainPool& pool,
 
         double      readPos = pool.samplePos[g];
         const double step = pool.step[g];
-        const int    maxSrc = int(std::floor((nSrcFrames - 1 - readPos) /
-            step) + 1.0);
+        const int    maxSrc = samplePosition::availableOutputFrames(nSrcFrames, readPos, step);
         const int    framesHere = std::min(wantFrames, maxSrc);
 
         /* guard: frame count -------------------------------------------- */

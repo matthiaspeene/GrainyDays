@@ -1,6 +1,5 @@
 #pragma once
 #include <JuceHeader.h>
-#include "../Extras/GlobalVariables.h"
 #include "GrainVisualData.h"
 
 // ---------------------------------------------------------------- GrainVisualizer
@@ -8,7 +7,7 @@ class GrainVisualizer : public juce::Component,
     private juce::Timer
 {
 public:
-    GrainVisualizer();
+    explicit GrainVisualizer(GrainVisualData& visualDataToUse);
     ~GrainVisualizer() override = default;
 
 private:
@@ -17,6 +16,8 @@ private:
 
     // juce::Timer -------------------------------------------------------------
     void timerCallback() override;
+
+    GrainVisualData& visualData;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainVisualizer)
 };

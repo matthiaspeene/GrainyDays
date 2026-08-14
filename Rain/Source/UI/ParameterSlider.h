@@ -49,31 +49,47 @@ public:
             // main slider ─► parameters
             slider.onValueChange = [this]
                 {
-                    if (paramLo && paramHi)
+                    if (loAttach != nullptr && hiAttach != nullptr)
                     {
-                        paramLo->setValueNotifyingHost(paramLo->convertTo0to1((float)slider.getMinValue()));
-                        paramHi->setValueNotifyingHost(paramHi->convertTo0to1((float)slider.getMaxValue()));
+                        loAttach->setValueAsPartOfGesture((float)slider.getMinValue());
+                        hiAttach->setValueAsPartOfGesture((float)slider.getMaxValue());
+                    }
+                };
+
+            slider.onDragStart = [this]
+                {
+                    if (loAttach != nullptr && hiAttach != nullptr)
+                    {
+                        loAttach->beginGesture();
+                        hiAttach->beginGesture();
+                    }
+                };
+
+            slider.onDragEnd = [this]
+                {
+                    if (loAttach != nullptr && hiAttach != nullptr)
+                    {
+                        loAttach->endGesture();
+                        hiAttach->endGesture();
                     }
                 };
 
             // parameters ─► main slider
             loAttach = std::make_unique<GenericAttachment>(
                 *paramLo,
-                [this](float newNorm)
-                {
-                    if (!slider.isMouseButtonDown())
-                        slider.setMinValue(newNorm, juce::sendNotificationSync, true);
-                },
+                [this](float) { syncRangeSliderFromParameters(); },
                 apvts.undoManager);
 
             hiAttach = std::make_unique<GenericAttachment>(
                 *paramHi,
-                [this](float newNorm)
-                {
-                    if (!slider.isMouseButtonDown())
-                        slider.setMaxValue(newNorm, juce::sendNotificationSync, true);
-                },
+                [this](float) { syncRangeSliderFromParameters(); },
                 apvts.undoManager);
+
+            // ParameterAttachment does not initialise the control automatically.
+            // Explicitly pull the current values so a newly-created/reopened editor
+            // immediately reflects restored plugin state.
+            loAttach->sendInitialUpdate();
+            hiAttach->sendInitialUpdate();
         }
         else
             jassertfalse;    // bad IDs?
@@ -128,6 +144,12 @@ public:
 
 private:
     // ──────────────────────────────────────────────── helpers
+    void syncRangeSliderFromParameters()
+    {
+        if (paramLo != nullptr && paramHi != nullptr)
+            slider.setMinAndMaxValues(paramLo->get(), paramHi->get(), juce::dontSendNotification);
+    }
+
     void configureSlider(juce::Slider::SliderStyle          st,
         const juce::NormalisableRange<float>& r,
         bool                               wantTextBox,

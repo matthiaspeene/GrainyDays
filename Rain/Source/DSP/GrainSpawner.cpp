@@ -1,10 +1,8 @@
 // GrainSpawner.cpp – implementation -------------------------------------------
 #include "GrainSpawner.h"
-#include "../UI/GrainVisualData.h"
-#include "../Plugin/PluginProcessor.h"
-#include "../Extras/GlobalVariables.h"
 #include "VoiceEnvelope.h"
 #include "../Parameters/ParameterIDs.h"
+#include "SamplePosition.h"
 
 void GrainSpawner::prepare(double sampleRate, int maxBlockSize)
 {
@@ -119,7 +117,7 @@ void GrainSpawner::advanceTime(int numSamples, GrainPool& pool)
             // Pick a free slot (drop if pool is full)
             const int index = findFreeGrainIndex(pool);
             if (index >= 0)
-                spawnGrain(index, pool, delay, v);   // sample-accurate start
+                spawnGrain(index, pool, currentSampleOffset + delay, v);   // sample-accurate start
             // else { /* overflow → graceful drop */ }
 
 			cursor += grainsPerSec;   // next grain in this voice
@@ -215,10 +213,7 @@ void GrainSpawner::initializeEnvelope(GrainPool& pool, int index, double hostRat
 void GrainSpawner::initializePosition(GrainPool& pool, int index)
 {
     float pos = snapShot.posMin + rng.nextFloat() * (snapShot.posMax - snapShot.posMin) + snapShot.posMod;
-
-	if (pos < 0.0f) pos = 0.0f; // Clamp to 0%
-	if (pos > 100.0f) pos = 100.0f; // Clamp to 100%
-    pool.samplePos[index] = static_cast<int>(sample->buffer->getNumSamples() * (pos/100));
+    pool.samplePos[index] = samplePosition::fromPercent(sample->buffer->getNumSamples(), pos);
 }
 
 void GrainSpawner::initializeDelay(GrainPool& pool, int index, int delayOffset, double hostRate)
@@ -267,14 +262,21 @@ VoiceParameterSnapshot GrainSpawner::loadVoiceSnapShot()
 
 void GrainSpawner::copyGrainToUI(int index, GrainPool& pool)
 {
-	gGrainVisualData.samplePos[index] = pool.samplePos[index];
-    gGrainVisualData.startTime[index] = gTotalSamplesRendered.load(std::memory_order_relaxed) + static_cast<uint64_t>(pool.delay[index]);
-    gGrainVisualData.length[index] = pool.length[index];
-	gGrainVisualData.step[index] = pool.step[index];
-	gGrainVisualData.envAttackTime[index] = pool.envAttackFrames[index];
-	gGrainVisualData.envReleaseTime[index] = pool.envReleaseFrames[index];
-	gGrainVisualData.envAttackCurve[index] = pool.envAttackCurve[index];
-	gGrainVisualData.envReleaseCurve[index] = pool.envReleaseCurve[index];
-	gGrainVisualData.maxGain[index] = pool.gain[index];
-	gGrainVisualData.active[index].store(true, std::memory_order_relaxed); // Activate grain
+	visualData.active[index].store(false, std::memory_order_release);
+	visualData.samplePos[index] = pool.samplePos[index];
+    visualData.startTime[index] = visualData.totalSamplesRendered.load(std::memory_order_relaxed)
+        + static_cast<uint64_t>(pool.delay[index]);
+
+	const auto sampleLength = sample->buffer->getNumSamples();
+	visualData.sampleLength[index] = sampleLength;
+	visualData.length[index] = std::min(
+		pool.length[index],
+		samplePosition::availableOutputFrames(sampleLength, pool.samplePos[index], pool.step[index]));
+	visualData.step[index] = pool.step[index];
+	visualData.envAttackTime[index] = pool.envAttackFrames[index];
+	visualData.envReleaseTime[index] = pool.envReleaseFrames[index];
+	visualData.envAttackCurve[index] = pool.envAttackCurve[index];
+	visualData.envReleaseCurve[index] = pool.envReleaseCurve[index];
+	visualData.maxGain[index] = pool.gain[index];
+	visualData.active[index].store(true, std::memory_order_release); // Publish grain to this instance's editor
 }

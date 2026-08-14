@@ -1,5 +1,6 @@
 #include "WaveDisplay.h"
 #include "../Parameters/ParameterIDs.h"
+#include "WaveformDisplayMetrics.h"
 
 using namespace ParamID;
 
@@ -81,17 +82,27 @@ void WaveDisplay::loadFile(const juce::File& file)
 void WaveDisplay::drawWaveform(juce::Graphics& g,
     const juce::AudioBuffer<float>& buffer)
 {
-    const int w = getWidth(), h = getHeight() - 24;
     const int n = buffer.getNumSamples();
+    if (n <= 0)
+        return;
+
+    const auto sampleBounds = waveformDisplay::getSampleBounds(getLocalBounds());
+    const int displayWidth = juce::jmax(1, juce::roundToInt(sampleBounds.getWidth()));
+    const float top = 24.0f;
+    const float bottom = static_cast<float>(getHeight() - 60);
     const float* samples = buffer.getReadPointer(0);
 
-    juce::Path path;  path.startNewSubPath(0, h * 0.5f);
+    juce::Path path;
+    path.startNewSubPath(sampleBounds.getX(), (top + bottom) * 0.5f);
 
-    for (int x = 0; x < w; ++x)
+    for (int pixel = 0; pixel <= displayWidth; ++pixel)
     {
-        int si = juce::jlimit(0, n - 1, juce::jmap(x, 0, w, 0, n));  // bounds-safe
-        float y = juce::jmap(samples[si], -1.0f, 1.0f, (float)h, 24.0f);
-        path.lineTo((float)x, y);
+        const float proportion = static_cast<float>(pixel) / static_cast<float>(displayWidth);
+        const int sampleIndex = juce::jlimit(0, n - 1,
+            juce::roundToInt(proportion * static_cast<float>(n - 1)));
+        const float x = sampleBounds.getX() + proportion * sampleBounds.getWidth();
+        const float y = juce::jmap(samples[sampleIndex], -1.0f, 1.0f, bottom, top);
+        path.lineTo(x, y);
     }
 
     g.setColour(juce::Colours::black);

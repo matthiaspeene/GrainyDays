@@ -2,7 +2,7 @@
 
 
 GrainEngine::GrainEngine()
-	: spawner(voices)
+	: spawner(voices, visualData)
 {
 	// Initialize the grain pool and voice pool
 	pool.clear();
@@ -24,11 +24,13 @@ void GrainEngine::prepare(double sr, int blockSize)
     spawner.prepare(sr, blockSize);
     processor.prepare(sr, blockSize);
     pool.clear();
+    visualData.clear();
 }
 
 void GrainEngine::reset()
 {
     pool.clear();
+    visualData.clear();
 }
 
 void GrainEngine::process(juce::AudioBuffer<float>& output, const juce::MidiBuffer& midi)

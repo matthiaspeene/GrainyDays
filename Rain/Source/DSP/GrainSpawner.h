@@ -4,6 +4,7 @@
 #include "GrainPool.h"
 #include "VoicePool.h"
 #include "../Extras/LoadedSample.h"
+#include "../UI/GrainVisualData.h"
 
 /* Helpers ───────────────────────────────────────────────────────────────────────────*/
 struct ParameterSnapshot {
@@ -30,7 +31,8 @@ struct VoiceParameterSnapshot {
 class GrainSpawner
 {
 public:
-    explicit GrainSpawner(VoicePool& vp) : voices(vp) {}
+    GrainSpawner(VoicePool& vp, GrainVisualData& visualDataToUse)
+        : voices(vp), visualData(visualDataToUse) {}
 
     void prepare(double sampleRate, int maxBlockSize);
     void setParameterBank(const ParameterBank* params) noexcept;
@@ -80,6 +82,7 @@ private:
     int           currentSampleOffset = 0;
 
     VoicePool& voices;
+    GrainVisualData& visualData;
 
     const ParameterBank* params = nullptr;
     const LoadedSample* sample = nullptr;

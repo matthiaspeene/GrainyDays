@@ -30,7 +30,7 @@ RainAudioProcessorEditor::RainAudioProcessorEditor (RainAudioProcessor& p)
 		});
 	waveformDisplay->setSample(audioProcessor.getLoadedSample());
 
-	grainVisualizer = std::make_unique<GrainVisualizer>();
+	grainVisualizer = std::make_unique<GrainVisualizer>(audioProcessor.getEngine().getGrainVisualData());
 	grainSpawnProperties = std::make_unique<GrainSpawnProperties>(apvts);
 	voiceProperties = std::make_unique<VoiceProperties>(apvts);
 	grainParams = std::make_unique<GrainParams>(apvts);

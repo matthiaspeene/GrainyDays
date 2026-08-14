@@ -21,6 +21,7 @@ public:
     void process(juce::AudioBuffer<float>& output, const juce::MidiBuffer& midi);
 
     void setLoadedSample(const LoadedSample& sample);
+    GrainVisualData& getGrainVisualData() noexcept { return visualData; }
 
 private:
 
@@ -31,6 +32,7 @@ private:
 
     GrainPool pool;
 	VoicePool voices;
+    GrainVisualData visualData;
     GrainSpawner spawner;
     GrainProcessor processor;
 };
